@@ -1,0 +1,8 @@
+name = "heirright-probate-lead-engine"
+main = "src/cloudflare.ts"
+compatibility_date = "2026-05-18"
+account_id = "e7a583857399cb19fd86f879c3a4629f"
+
+[vars]
+DEPLOYMENT_KEY = "heirright"
+COUNTY_LIST = "miami-dade"

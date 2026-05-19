@@ -1,0 +1,12 @@
+.DS_Store
+.idea/
+.claude/
+.firecrawl/
+node_modules/
+dist/
+output/
+.turbo/
+.wrangler/
+*.tsbuildinfo
+.env
+.env.local

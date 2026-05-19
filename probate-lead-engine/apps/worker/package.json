@@ -1,0 +1,23 @@
+{
+  "name": "@ple/worker",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "deploy:cloudflare": "wrangler deploy",
+    "dev": "tsc --watch",
+    "dev:cloudflare": "wrangler dev",
+    "test": "node dist/validation/run-validation.js",
+    "run:dry": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@ple/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.92.0"
+  }
+}

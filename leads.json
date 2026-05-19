@@ -1,0 +1,365 @@
+{
+  "leads": [
+    {
+      "id": "moreau-estate",
+      "name": "Amaranthe Moreau Est. of Achille V. Moreau",
+      "shortName": "Moreau Estate",
+      "dateAdded": "2026-04-10",
+      "property": {
+        "address": "3850 NW 176th St, Miami Gardens, FL 33055",
+        "county": "miami-dade",
+        "folio": "34-2024-001-0120",
+        "type": "residential",
+        "asIsValue": null,
+        "taxesDue": null,
+        "liens": null,
+        "mortgages": "$130,000",
+        "mortgageDetail": "Principal: $130,000 — Maturity: Apr 1, 2036",
+        "taxPayment": { "paidBy": "Carrington Mortgage", "amount": "$7,942.68" }
+      },
+      "owner": {
+        "name": "Amaranthe Moreau",
+        "dob": "Feb 8, 1935",
+        "dod": "Aug 13, 2021",
+        "age": 86,
+        "obituary": "Found via Intelius"
+      },
+      "backStory": "No indication of an adverse possession claim. Taxes are up to date; the last payment on record was made by Carrington Mortgage for a total of $7,942.68. The most recent reassessment appears to have taken place in 2021.\n\nThe property is currently registered on the county website under Amaranthe and Achille Moreau. However, the last Quit-Claim Deed, recorded on February 22, 2016, shows that Achille Moreau waived his interest in favor of Amaranthe Moreau. Prior to that, there is a Quit-Claim Deed recorded in March 2006, in which Achille V. Moreau was granted ownership of the property; however, this deed appears as disqualified on the county website.\n\nThere is an outstanding mortgage recorded on March 23, 2006, with a principal amount of $130,000.00 and a maturity date of April 1, 2036.\n\nNo marriage records were found. A Petition for Summary Administration was opened in October 2022, with Sandra Moreau as the petitioner. An Order Determining Homestead was issued in November 2022, distributing the property to eight of Amaranthe's children and three grandchildren. The probate proceedings have remained closed since then.",
+      "titleChain": [
+        { "color": "green", "label": "Quit-Claim Deed (Feb 22, 2016)", "detail": "Achille V. Moreau waived interest in favor of Amaranthe Moreau" },
+        { "color": "yellow", "label": "Quit-Claim Deed (Mar 2006)", "detail": "Achille V. Moreau granted ownership — disqualified on county site" },
+        { "color": "red", "label": "Outstanding Mortgage (Mar 23, 2006)", "detail": "Principal: $130,000 — Maturity: Apr 1, 2036" },
+        { "color": "blue", "label": "Petition for Summary Administration (Oct 2022)", "detail": "Sandra Moreau as petitioner" },
+        { "color": "blue", "label": "Order Determining Homestead (Nov 2022)", "detail": "Distributed to 8 children + 3 grandchildren. Probate closed." }
+      ],
+      "probateStatus": "closed",
+      "heirs": [
+        {
+          "name": "Sandra Lianie Moreau",
+          "age": 52,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "237 Wedgewood Cir, Lake Worth, FL 33463",
+          "county": "Palm Beach",
+          "addressHistory": [
+            "237 Wedgewood Cir, Lake Worth, FL 33463 (Palm Beach) — 01/2005-Current",
+            "30 Wisteria Dr, Ormond Beach, FL 32176 (Volusia) — 02/2019",
+            "7711 NW 23rd St, Pompano Beach, FL 33063 (Broward) — 01/2014",
+            "12268 Cassino Ave, Port Charlotte, FL 33953 (Charlotte) — 09/2012-09/2020",
+            "58 Arkinda Dr, Cherokee Village, AR 72529 (Sharp) — 09/2008",
+            "1864 W Riley Dr, Dunnellon, FL 34434 (Citrus) — 02/2007-03/2020",
+            "22 Fisher Trce, Ocklawaha, FL 32179 (Marion) — 12/2004-09/2005",
+            "18 Fisher Trce, Ocklawaha, FL 32179 (Marion) — 12/2004-09/2005"
+          ],
+          "phones": ["561-603-5449","913-620-0876","561-337-4867","954-964-6432","561-215-4557","305-974-5670","305-624-3435","786-657-3420"],
+          "email": "JOLIEFLEUR1234@YAHOO.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Hidly M Joseph",
+          "age": 66,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "2911 Walnut Springs Dr, Katy, TX 77449",
+          "county": "Harris",
+          "addressHistory": [
+            "2911 Walnut Springs Dr, Katy, TX 77449 (Harris) — 01/1995-Current",
+            "1072 Beach St, Port Charlotte, FL 33953 (Charlotte) — 10/2012-06/2015",
+            "237 Wedgewood Ci, Greenacres, FL 33463 (Palm Beach) — 10/2012",
+            "18931 NW 12th St, Hollywood, FL 33029 (Broward) — 07/2007",
+            "402 SW Holden Ter, Port Saint Lucie, FL 34984 (Saint Lucie) — 04/2006-12/2010",
+            "9325 NW 55th St, Fort Lauderdale, FL 33351 (Broward) — 11/2000-12/2001",
+            "PO Box 26074, Richmond, VA 23260 (Richmond City) — 01/2000",
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 01/1995-11/1995"
+          ],
+          "phones": ["281-433-3668","281-932-9729","281-923-6342","281-468-5177","281-578-9794","281-579-3020","713-465-2944","281-639-9794"],
+          "email": "JOSEPHURANIE@GMAIL.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Achille F Moreau",
+          "age": 64,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "20521 NW 10th Ave, Miami, FL 33169",
+          "county": "Miami-Dade",
+          "addressHistory": [
+            "20521 NW 10th Ave, Miami, FL 33169 (Miami-Dade) — 01/2006-Current",
+            "58 Arkinda Dr, Cherokee Village, AR 72529 (Sharp) — 09/2008",
+            "237 Wedgewood Ci, Greenacres, FL 33463 (Palm Beach) — 09/2008",
+            "14906 W Dixie Hwy, Miami, FL 33181 (Miami-Dade) — 01/2008",
+            "20521 NW Penn Ave, Miami, FL 33169 (Miami-Dade) — 04/2007",
+            "2821 SW 88th Ave, Hollywood, FL 33025 (Broward) — 01/2006-05/2007",
+            "311 SW 68th Blvd, Hollywood, FL 33023 (Broward) — 01/2004-12/2004",
+            "261 NW 100th Ter, Miami, FL 33150 (Miami-Dade) — 01/1997-06/2006"
+          ],
+          "phones": ["305-305-2931","305-923-3559","786-520-0532","305-949-0070","305-625-1681","305-758-9888","786-520-0533","786-657-8489","305-758-9879","305-624-3435","305-758-5898"],
+          "email": "ACHILLE@EARTHLINK.NET",
+          "status": "confirmed"
+        },
+        {
+          "name": "Jacques Patrick Moreau",
+          "age": 63,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "3850 NW 176th St, Opa Locka, FL 33055",
+          "county": "Miami-Dade",
+          "addressHistory": [
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 09/1993-Current",
+            "829 E Oakland Park Blvd, Oakland Park, FL 33334 (Broward) — 03/2026",
+            "20544 NW 8th Ave, Miami, FL 33169 (Miami-Dade) — 01/2010-04/2019",
+            "6611 SW 9th St, Hollywood, FL 33023 (Broward) — 01/2008-05/2009",
+            "2321 Casablanca Dr, Hollywood, FL 33023 (Broward) — 01/2005-12/2014",
+            "820 NW 210th St, Miami, FL 33169 (Miami-Dade) — 01/2001-12/2004",
+            "700 Cummins Hwy, Mattapan, MA 02126 (Suffolk) — 10/1992-12/1993",
+            "1930 NW 187th St, Miami Gardens, FL 33056 (Miami-Dade) — 05/1990-12/1990"
+          ],
+          "phones": ["786-332-1271"],
+          "email": "JACKMARLY01@GMAIL.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Eliane Myrlene Joseph",
+          "age": 61,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "324 NE 210th Way, Miami, FL 33179",
+          "county": "Miami-Dade",
+          "addressHistory": [
+            "324 NE 210th Way, Miami, FL 33179 (Miami-Dade) — 07/2019-Current",
+            "14740 NE 10th Ave, Miami, FL 33161 (Miami-Dade) — 12/1996-07/2019",
+            "16295 SW 19th St, Hollywood, FL 33027 (Broward) — 10/2018",
+            "132 Avens Dr, Nokomis, FL 34275 (Sarasota) — 05/2016-12/2022",
+            "1072 Beach St, Port Charlotte, FL 33953 (Charlotte) — 10/2012-06/2015",
+            "237 Wedgewood Cir, Lake Worth, FL 33463 (Palm Beach) — 10/2012",
+            "837 Gaylord Ave S, Lehigh Acres, FL 33974 (Lee) — 09/2008",
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 06/1993-12/1995"
+          ],
+          "phones": ["786-992-3021","786-200-9265","305-354-0542","305-586-6282","786-449-4336","786-564-4565","305-945-1976"],
+          "email": "EMJOS33161@AOL.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Augustin Moreau",
+          "age": 59,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "16295 SW 19th St, Hollywood, FL 33027",
+          "county": "Broward",
+          "addressHistory": [
+            "16295 SW 19th St, Hollywood, FL 33027 (Broward) — 09/2023-Current",
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 02/1991-03/2026",
+            "1751 SW 112th Ter, Hollywood, FL 33025 (Broward) — 01/1999-12/2001",
+            "3541 NW 188th St, Miami Gardens, FL 33056 (Miami-Dade) — 07/1997",
+            "19377 NE 10th Ave Apt 111, Miami, FL 33179 (Miami-Dade) — 07/1996-12/1996",
+            "6828 3 Ave 4 NW, Miami, FL 33150 (Miami-Dade) — 01/1990-04/1990",
+            "1930 NW 187th St, Miami Gardens, FL 33056 (Miami-Dade) — 01/1989-12/2011",
+            "12220 N Miami Ave, Miami, FL 33168 (Miami-Dade) — 01/1989-12/1995"
+          ],
+          "phones": ["305-742-6720"],
+          "email": null,
+          "status": "confirmed"
+        },
+        {
+          "name": "Pierre Armand Moreau",
+          "age": 57,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "16295 SW 19th St, Hollywood, FL 33027",
+          "county": "Broward",
+          "addressHistory": [
+            "16295 SW 19th St, Hollywood, FL 33027 (Broward) — 01/2008-Current",
+            "2911 Walnut Springs Dr, Katy, TX 77449 (Harris) — 08/2018",
+            "1845 W Stanton Dr, Citrus Springs, FL 34434 (Citrus) — 05/2005-05/2006",
+            "1043 Blue St, Lake Placid, FL 33852 (Highlands) — 03/2005",
+            "18931 NW 12th St, Hollywood, FL 33029 (Broward) — 12/2004-04/2009",
+            "6980 NW 186th St Apt 424, Hialeah, FL 33015 (Miami-Dade) — 01/2002-12/2004",
+            "1451 SW 97th Ave, Hollywood, FL 33025 (Broward) — 01/1997-12/1997",
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 01/1993-12/2005"
+          ],
+          "phones": ["305-333-4915","786-716-1166","305-336-8978","954-873-2577","754-208-2556","954-743-3652","954-438-4072","954-272-0695","305-974-5670","305-628-0947"],
+          "email": "MOPIERA@YAHOO.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Louis Joubert Moreau",
+          "age": 55,
+          "share": "1/9",
+          "relationship": "Child",
+          "currentAddress": "6881 Sea Daisy Dr, Lake Worth, FL 33462",
+          "county": "Palm Beach",
+          "addressHistory": [
+            "6881 Sea Daisy Dr, Lake Worth, FL 33462 (Palm Beach) — 01/2005-Current",
+            "6881 Mill Brook Pl House, Lake Worth, FL 33463 (Palm Beach) — 09/2018",
+            "33828 Terragona Dr, Sorrento, FL 32776 (Lake) — 02/2005-03/2005",
+            "211 SW 96th Ter, Hollywood, FL 33025 (Broward) — 05/2003",
+            "211 SW 95th Ter Apt 104, Hollywood, FL 33025 (Broward) — 09/2002-12/2005",
+            "301 NE 80th Ter Apt 109, Miami, FL 33138 (Miami-Dade) — 05/2002",
+            "8420 N Sherman Cir Apt 105, Hollywood, FL 33025 (Broward) — 01/2000-12/2005",
+            "1751 SW 112th Ter, Hollywood, FL 33025 (Broward) — 01/2000-03/2000"
+          ],
+          "phones": ["754-368-8213","561-385-7131","561-967-5547","305-974-5670"],
+          "email": "LOUIS189@LIVE.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Ashley M Moreau",
+          "age": 40,
+          "share": "1/27",
+          "relationship": "Grandchild",
+          "currentAddress": "126 Chickasaw Ct, Byron, GA 31008",
+          "county": "Peach",
+          "addressHistory": [
+            "126 Chickasaw Ct, Byron, GA 31008 (Peach) — 12/2013-Current",
+            "1910 19th Ln, Lake Worth, FL 33463 (Palm Beach) — 01/2020",
+            "6080 Lakeview Rd Apt 3807, Warner Robins, GA 31088 (Houston) — 01/2013-04/2014",
+            "1105 Treelodge Pkwy, Atlanta, GA 30350 (Fulton) — 12/2012-02/2013",
+            "3450 Mission Ridge Cir, Atlanta, GA 30339 (Cobb) — 01/2011-02/2012",
+            "2383 Akers Mill Rd SE Apt K17, Atlanta, GA 30339 (Cobb) — 08/2009-02/2012",
+            "950 Lake Ridge Pkwy Apt 5003, Riverdale, GA 30296 (Clayton) — 01/2008-07/2008",
+            "2500 Pleasant Hill Rd Apt 1626, Duluth, GA 30096 (Gwinnett) — 12/2007-12/2009"
+          ],
+          "phones": ["215-450-0620","215-776-1131","478-478-9564","404-256-9023","215-776-1264","478-956-4375"],
+          "email": "ASHLEYMOREAU224@GMAIL.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Claud E Moreau",
+          "age": 37,
+          "share": "1/27",
+          "relationship": "Grandchild",
+          "currentAddress": "7048 Souder St, Philadelphia, PA 19149",
+          "county": "Philadelphia",
+          "addressHistory": [
+            "7048 Souder St, Philadelphia, PA 19149 (Philadelphia) — 05/2007-Current",
+            "1804 Harrison St, Philadelphia, PA 19124 (Philadelphia) — 12/2023-01/2024",
+            "3850 NW 176th St, Opa Locka, FL 33055 (Miami-Dade) — 02/2013",
+            "950 Lake Ridge Pkwy Apt 5003, Riverdale, GA 30296 (Clayton) — 01/2008-12/2014",
+            "810 Wadsworth St Apt 300B, Tallahassee, FL 32304 (Leon) — 01/2007-12/2008"
+          ],
+          "phones": ["215-470-9994","215-745-2157"],
+          "email": "CLAUD.MOREAU@YAHOO.COM",
+          "status": "confirmed"
+        },
+        {
+          "name": "Mahalia Alexandra Moreau",
+          "age": 32,
+          "share": "1/27",
+          "relationship": "Grandchild",
+          "currentAddress": "2144 N Marvine St, Philadelphia, PA 19122",
+          "county": "Philadelphia",
+          "addressHistory": [
+            "2144 N Marvine St, Philadelphia, PA 19122 (Philadelphia) — 12/2025-Current",
+            "126 Chickasaw Ct, Byron, GA 31008 (Peach) — 11/2017-07/2025",
+            "2223 N 19th St, Philadelphia, PA 19132 (Philadelphia) — 09/2022-10/2022",
+            "4991 Parkside Ave N Apt 54, Philadelphia, PA 19131 (Philadelphia) — 12/2021-09/2024",
+            "1513 S 31st St, Philadelphia, PA 19146 (Philadelphia) — 11/2021-06/2022",
+            "20 S Euclid Ave, Pittsburgh, PA 15202 (Allegheny) — 05/2019-04/2020",
+            "2354 McCook St, Pittsburgh, PA 15212 (Allegheny) — 09/2018-10/2019",
+            "1303 Melrose Place Dr, Newark, DE 19711 (New Castle) — 07/2017-10/2017"
+          ],
+          "phones": ["215-776-1262","215-470-9994","215-745-2157","215-533-0533"],
+          "email": "MAHALIA_MOREAU@YAHOO.COM",
+          "status": "confirmed"
+        }
+      ]
+    },
+    {
+      "id": "cooper-estate",
+      "name": "Zilphy Mae Cooper Est.",
+      "shortName": "Cooper Estate",
+      "dateAdded": "2026-04-10",
+      "property": {
+        "address": "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+        "county": "miami-dade",
+        "folio": "",
+        "type": "residential",
+        "asIsValue": null,
+        "taxesDue": null,
+        "liens": null,
+        "mortgages": null,
+        "mortgageDetail": null,
+        "taxPayment": { "paidBy": "Donald Knight", "amount": "$5,154.43" }
+      },
+      "owner": {
+        "name": "Zilphy Mae Cooper/Lee",
+        "dob": "Jan 20, 1926",
+        "dod": "Apr 14, 1999",
+        "age": 73,
+        "obituary": "Not found — Intelius / Ancestry"
+      },
+      "backStory": "No indication of an adverse possession claim. Taxes are up to date; the last payment on record was made by Donald Knight for a total of $5,154.43. There is no indication of a recent reassessment.\n\nNo deed was found for this property. Searches using the name registered on the county website do not return any results, including searches by legal description. No outstanding mortgage was found.\n\nMarriage records indicate that Zilphy married Frazer Knight in Miami-Dade County in November 1956. Intelius records indicate that Frazer passed away on October 12, 2009; however, other records found on Ancestry indicate a date of death in 2004. This discrepancy needs to be confirmed. The case might be that father and son passed away.\n\nNo probate records were found for either individual. Zilphy does not have relatives listed on IDI. However, multiple individuals with the Knight surname appear to be connected to the property; further confirmation is needed to determine whether they are heirs.",
+      "titleChain": [
+        { "color": "yellow", "label": "No Deed Found", "detail": "County searches by name and legal description return no results" },
+        { "color": "green", "label": "No Outstanding Mortgage", "detail": "No mortgage liens found on property" },
+        { "color": "blue", "label": "Marriage Record (Nov 1956)", "detail": "Zilphy married Frazer Knight in Miami-Dade County" },
+        { "color": "red", "label": "No Probate Records Found", "detail": "No probate for Zilphy or Frazer Knight — heir status unconfirmed" },
+        { "color": "yellow", "label": "DOD Discrepancy — Frazer Knight", "detail": "Intelius says Oct 12, 2009; Ancestry records suggest 2004. Needs confirmation." }
+      ],
+      "probateStatus": "none",
+      "heirs": [
+        {
+          "name": "Donald Lee Knight",
+          "age": 70,
+          "share": "Unknown",
+          "relationship": "Possible heir (last tax payment)",
+          "currentAddress": "14280 NE 6th Ave, Miami, FL 33161",
+          "county": "Miami-Dade",
+          "addressHistory": [
+            "14280 NE 6th Ave, Miami, FL 33161 (Miami-Dade) — 04/2002-Current",
+            "20611 NW 33rd Pl, Miami Gardens, FL 33056 (Miami-Dade) — 01/1991-03/2026",
+            "807 NW 14th Ave, Fort Lauderdale, FL 33311 (Broward) — 08/2023",
+            "3240 NW 210th Ter, Miami Gardens, FL 33056 (Miami-Dade) — 04/2021",
+            "20030 NW 39th Ct, Opa Locka, FL 33055 (Miami-Dade) — 01/2005-06/2005",
+            "1457 E 111th St, Los Angeles, CA 90059 (Los Angeles) — 01/2004-12/2007",
+            "2118 Adams St, Hollywood, FL 33020 (Broward) — 05/2002-04/2008",
+            "14675 NE 6th Ave Apt 133, Miami, FL 33161 (Miami-Dade) — 01/2000-04/2025"
+          ],
+          "phones": ["786-539-7215","305-624-4660","385-893-3347"],
+          "email": null,
+          "status": "possible"
+        },
+        {
+          "name": "Francis Wyjulies Knight",
+          "age": 66,
+          "share": "Unknown",
+          "relationship": "Possible heir (resides at property)",
+          "currentAddress": "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+          "county": "Miami-Dade",
+          "addressHistory": [
+            "20611 NW 33rd Pl, Miami Gardens, FL 33056 (Miami-Dade) — 09/2021-Current",
+            "750 NW 18th Ter Apt 507, Miami, FL 33136 (Miami-Dade) — 02/2017-10/2020",
+            "458 NW 7th St Apt 4, Miami, FL 33136 (Miami-Dade) — 02/2015-04/2022",
+            "1801 NW 2nd Ct Apt 303, Miami, FL 33136 (Miami-Dade) — 02/2003-04/2018",
+            "540 NW 7th St Apt 21, Miami, FL 33136 (Miami-Dade) — 01/1999-12/2008",
+            "15700 NW 27th Ct, Opa Locka, FL 33054 (Miami-Dade) — 01/1987-12/1995"
+          ],
+          "phones": ["786-230-0443","305-903-6573","310-467-5470","305-571-7150","305-381-6379","305-375-0929"],
+          "email": "FRANKNIGHT4@GMAIL.COM",
+          "status": "possible"
+        },
+        {
+          "name": "Randolph Kerry Cooper Jr",
+          "age": 40,
+          "share": "Unknown",
+          "relationship": "Possible heir (only Intelius-listed relative of Zilphy)",
+          "currentAddress": "310 W Gapway Rd Apt 205, Andrews, SC 29510",
+          "county": "Georgetown",
+          "addressHistory": [
+            "310 W Gapway Rd Apt 205, Andrews, SC 29510 (Georgetown) — 10/2015-Current",
+            "1342 Aimwell Rd, Andrews, SC 29510 (Williamsburg) — 02/2009-04/2024",
+            "17730 NW 33rd Ct, Miami Gardens, FL 33056 (Miami-Dade) — 05/2019-02/2020",
+            "2910 NW 193rd St, Miami Gardens, FL 33056 (Miami-Dade) — 06/2018-12/2018",
+            "112 Jones Ave, Andrews, SC 29510 (Georgetown) — 01/2016-11/2022",
+            "128 Howell St, Andrews, SC 29510 (Georgetown) — 01/2015-04/2015",
+            "4 Hackberry Rd, Andrews, SC 29510 (Georgetown) — 12/2012-01/2013",
+            "6484 Paula Ct, Rex, GA 30273 (Clayton) — 01/2012-05/2012"
+          ],
+          "phones": ["843-461-7308","843-264-1040","843-833-7321","786-210-8864","305-434-0950","843-387-6288"],
+          "email": "RANDOLPHCOOPER85@GMAIL.COM",
+          "status": "possible"
+        }
+      ]
+    }
+  ]
+}
