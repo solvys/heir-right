@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HeirRight Operator Artifact</title>
+  <title>HeirRight Lead Review</title>
   <style>
     :root {
       color-scheme: dark;
       --bg: #050402;
       --panel: rgba(255,255,255,.055);
+      --panel-strong: rgba(255,255,255,.09);
       --line: rgba(199,159,74,.25);
       --gold: #c79f4a;
       --text: #f0ead6;
       --muted: #a99f86;
       --bad: #ff6b6b;
+      --warn: #f7c65f;
       --good: #30d158;
     }
     * { box-sizing: border-box; }
@@ -21,14 +23,29 @@
     main { max-width: 1180px; margin: 0 auto; padding: 28px; }
     header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; margin-bottom: 24px; }
     h1 { margin: 0; font-family: Georgia, serif; font-size: 34px; letter-spacing: 0; }
-    .sub { color: var(--muted); margin-top: 8px; }
+    h2 { margin: 0 0 12px; font-size: 20px; letter-spacing: 0; }
+    .sub { color: var(--muted); margin-top: 8px; max-width: 760px; }
     .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; }
     .card { grid-column: span 6; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
     .wide { grid-column: span 12; }
     .kicker { color: var(--gold); text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: .08em; margin-bottom: 10px; }
-    pre { white-space: pre-wrap; word-break: break-word; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .lead-state { display: grid; gap: 12px; }
+    .status-pill { display: inline-flex; align-items: center; width: fit-content; border: 1px solid var(--line); border-radius: 999px; padding: 6px 10px; font-size: 13px; font-weight: 800; }
+    .status-pill.review { color: var(--warn); }
+    .status-pill.move-on { color: var(--bad); }
+    .status-pill.ready { color: var(--good); }
+    .next-action { font-size: 22px; font-weight: 800; line-height: 1.25; }
+    .fact-list, .task-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .fact-list li, .task-list li { border-top: 1px solid rgba(199,159,74,.18); padding-top: 10px; }
+    .fact-label { color: var(--muted); display: block; font-size: 12px; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .06em; }
+    .task-title { display: block; font-weight: 800; margin-bottom: 4px; }
+    .task-next { color: var(--muted); line-height: 1.45; }
+    .empty { color: var(--muted); }
+    .doc-frame { width: 100%; min-height: 620px; border: 1px solid var(--line); border-radius: 8px; background: #fffaf0; display: block; }
     button { background: var(--gold); color: #090806; border: 0; border-radius: 6px; padding: 10px 14px; font-weight: 800; cursor: pointer; }
-    .flag { display: inline-block; border: 1px solid var(--line); padding: 4px 8px; border-radius: 999px; color: var(--gold); margin: 0 6px 6px 0; font-size: 12px; }
+    details { grid-column: span 12; background: var(--panel-strong); border: 1px solid rgba(255,255,255,.14); border-radius: 8px; padding: 16px; }
+    summary { cursor: pointer; color: var(--gold); font-weight: 800; }
+    pre { white-space: pre-wrap; word-break: break-word; color: var(--muted); font-size: 12px; line-height: 1.5; }
     .ok { color: var(--good); }
     .bad { color: var(--bad); }
     @media (max-width: 800px) { main { padding: 18px; } .card { grid-column: span 12; } header { display: block; } }
@@ -38,66 +55,133 @@
 <main>
   <header>
     <div>
-      <h1>HeirRight Operator Artifact</h1>
-      <div class="sub">Friday dry-run surface: public-source run, raw dossier, Podio dry-run, document packet, blockers.</div>
+      <h1>HeirRight Lead Review</h1>
+      <div class="sub">Review the latest lead, see why it needs attention, and know exactly what to check next before outreach or offers.</div>
     </div>
-    <button id="refresh">Load Latest Run</button>
+    <button id="refresh">Load Latest Lead</button>
   </header>
 
   <section class="grid">
+    <article class="card wide lead-state">
+      <div class="kicker">Lead Decision</div>
+      <div id="status">No lead loaded.</div>
+      <div id="nextAction" class="next-action"></div>
+    </article>
+
+    <article class="card">
+      <div class="kicker">Property</div>
+      <ul id="propertyFacts" class="fact-list"></ul>
+    </article>
+
+    <article class="card">
+      <div class="kicker">What Needs Review</div>
+      <ul id="reviewList" class="task-list"></ul>
+    </article>
+
+    <article class="card">
+      <div class="kicker">Tax Work</div>
+      <ul id="taxTasks" class="task-list"></ul>
+    </article>
+
+    <article class="card">
+      <div class="kicker">Deed And Title Work</div>
+      <ul id="deedTasks" class="task-list"></ul>
+    </article>
+
     <article class="card wide">
-      <div class="kicker">Run Status</div>
-      <div id="status">No run loaded.</div>
+      <div class="kicker">Lead Report</div>
+      <iframe id="doc" class="doc-frame" sandbox="" title="Rendered lead report"></iframe>
     </article>
-    <article class="card">
-      <div class="kicker">Dossier</div>
-      <div id="dossier"></div>
-    </article>
-    <article class="card">
-      <div class="kicker">Review Flags</div>
-      <div id="flags"></div>
-    </article>
-    <article class="card wide">
-      <div class="kicker">Narrative</div>
-      <pre id="narrative"></pre>
-    </article>
-    <article class="card">
-      <div class="kicker">Podio Dry Run</div>
-      <pre id="podio"></pre>
-    </article>
-    <article class="card">
-      <div class="kicker">Document Packet</div>
-      <pre id="doc"></pre>
-    </article>
-    <article class="card wide">
-      <div class="kicker">Source Facts</div>
-      <pre id="facts"></pre>
-    </article>
+
+    <details>
+      <summary>Internal diagnostics</summary>
+      <pre id="internalDetails"></pre>
+    </details>
   </section>
 </main>
 <script>
+function decisionCopy(dossier) {
+  if (dossier.workflow.status === "stop") {
+    return {
+      label: "Move on unless Joshua overrides",
+      className: "move-on",
+      next: dossier.summary.nextBestAction
+    };
+  }
+  if (dossier.operatorQueue.state === "manual_review" || dossier.workflow.status === "review_required") {
+    return {
+      label: "Needs review before outreach",
+      className: "review",
+      next: dossier.summary.nextBestAction
+    };
+  }
+  return {
+    label: "Ready for operator review",
+    className: "ready",
+    next: "Review the completed lead packet before taking any external action."
+  };
+}
+
+function claimValue(claim, fallback = "Needs review") {
+  if (!claim || claim.value === null || claim.value === undefined || claim.value === "") return fallback;
+  if (typeof claim.value === "object") return Object.values(claim.value).filter(Boolean).join(" / ") || fallback;
+  return String(claim.value);
+}
+
+function renderFacts(element, rows) {
+  element.innerHTML = rows.map((row) => `
+    <li>
+      <span class="fact-label">${row.label}</span>
+      <strong>${row.value}</strong>
+    </li>
+  `).join("");
+}
+
+function renderTasks(element, tasks, emptyText) {
+  if (!tasks.length) {
+    element.innerHTML = `<li class="empty">${emptyText}</li>`;
+    return;
+  }
+  element.innerHTML = tasks.map((task) => `
+    <li>
+      <span class="task-title">${task.title || task.label || task.code}</span>
+      <span class="task-next">${task.nextAction || task.reason || "Review this item before moving forward."}</span>
+    </li>
+  `).join("");
+}
+
 async function loadRun() {
   const status = document.getElementById("status");
   try {
     const response = await fetch("/latest-run.json", { cache: "no-store" });
-    if (!response.ok) throw new Error("No latest run found. Build worker and run pnpm --filter @ple/worker run:dry first.");
+    if (!response.ok) throw new Error("No latest lead found. Run the lead review pipeline first.");
     const data = await response.json();
     const dossier = data.dossier;
-    status.innerHTML = `<span class="ok">Loaded</span> ${data.runId}`;
-    document.getElementById("dossier").innerHTML = `
-      <strong>${dossier.summary.displayName}</strong><br>
-      Status: ${dossier.status}<br>
-      Address: ${dossier.property.address.value || "Needs review"}<br>
-      Owner: ${dossier.property.ownerName.value || "Needs review"}<br>
-      Next: ${dossier.summary.nextBestAction}
-    `;
-    document.getElementById("flags").innerHTML = dossier.audit.reviewFlags.map(flag => `<span class="flag">${flag}</span>`).join("");
-    document.getElementById("narrative").textContent = dossier.narrative;
-    document.getElementById("podio").textContent = JSON.stringify(dossier.crm.payload, null, 2);
-    document.getElementById("doc").textContent = dossier.documentPacket.formats.markdown;
-    document.getElementById("facts").textContent = JSON.stringify(data.facts, null, 2);
+    const decision = decisionCopy(dossier);
+
+    status.innerHTML = `<span class="status-pill ${decision.className}">${decision.label}</span><h2>${dossier.summary.displayName}</h2>`;
+    document.getElementById("nextAction").textContent = decision.next;
+    renderFacts(document.getElementById("propertyFacts"), [
+      { label: "Address", value: claimValue(dossier.property.address) },
+      { label: "Owner", value: claimValue(dossier.property.ownerName) },
+      { label: "County", value: claimValue(dossier.property.county, "Miami-Dade") },
+      { label: "Folio", value: claimValue(dossier.property.parcelId) },
+      { label: "Lead state", value: decision.label }
+    ]);
+    renderTasks(document.getElementById("reviewList"), dossier.operatorQueue.items, "No review items are open.");
+    renderTasks(document.getElementById("taxTasks"), dossier.taxHistory.reviewTasks, "No tax review tasks are open.");
+    renderTasks(document.getElementById("deedTasks"), dossier.deedHistory.reviewTasks, "No deed or title review tasks are open.");
+
+    document.getElementById("doc").srcdoc = dossier.documentPacket.formats.html;
+    document.getElementById("internalDetails").textContent = JSON.stringify({
+      runId: data.runId,
+      reviewCodes: dossier.audit.reviewFlags,
+      crmTaskPreview: dossier.crm.payload.tasks,
+      sourceFacts: data.facts
+    }, null, 2);
   } catch (error) {
     status.innerHTML = `<span class="bad">Blocked</span> ${error.message}`;
+    document.getElementById("nextAction").textContent = "Run the lead review pipeline, then reload this page.";
   }
 }
 document.getElementById("refresh").addEventListener("click", loadRun);

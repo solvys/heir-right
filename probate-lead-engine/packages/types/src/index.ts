@@ -162,6 +162,19 @@ export type ReviewFlag =
   | "MISSING_TAX_FACT"
   | "MISSING_PROBATE_FACT"
   | "MISSING_OWNER_FACT"
+  | "MISSING_OWNER_TYPE_FACT"
+  | "MISSING_MAILING_ADDRESS_FACT"
+  | "MISSING_DEED_FACT"
+  | "MISSING_OR_BOOK_PAGE_FACT"
+  | "MISSING_RECENT_SALE_FACT"
+  | "MISSING_ADVERSE_POSSESSION_FACT"
+  | "MISSING_LEAD_QUALITY_SIGNAL"
+  | "MISSING_TAX_HISTORY_FACT"
+  | "MISSING_TAX_RECEIPT_FACT"
+  | "MISSING_TAX_PAYER_FACT"
+  | "SOURCE_EVIDENCE_REQUIRED"
+  | "MANUAL_TAX_RECEIPT_DOWNLOAD_REQUIRED"
+  | "REASSESSMENT_REVIEW_REQUIRED"
   | "MISSING_CRM_CREDENTIALS"
   | "MISSING_DOCUMENT_TEMPLATE"
   | "HUMAN_REVIEW_REQUIRED"
@@ -174,6 +187,25 @@ export type FactType =
   | "property_owner"
   | "property_folio"
   | "property_county"
+  | "owner_type"
+  | "mailing_address_signal"
+  | "tax_history_status"
+  | "unpaid_tax_years"
+  | "tax_amount_due"
+  | "tax_reassessment_signal"
+  | "tax_receipt_status"
+  | "tax_payer_identity"
+  | "deed_history_status"
+  | "latest_deed"
+  | "or_book_page"
+  | "last_sale_date"
+  | "ownership_activity_note"
+  | "mortgage_signal"
+  | "lien_signal"
+  | "lis_pendens_signal"
+  | "foreclosure_signal"
+  | "adverse_possession_signal"
+  | "lead_quality_signal"
   | "title_signal"
   | "official_records_status"
   | "podio_payload"
@@ -210,6 +242,16 @@ export interface DossierClaim<T = unknown> {
   reviewFlags: ReviewFlag[];
 }
 
+export interface SourceEvidenceReviewTask {
+  code: string;
+  title: string;
+  source: SourceKey;
+  reason: string;
+  nextAction: string;
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
 export interface DossierEvent {
   id: string;
   label: string;
@@ -218,6 +260,141 @@ export interface DossierEvent {
   sourceRef: SourceRef;
   risk: "low" | "medium" | "high" | "unknown";
   explanation: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export type WorkflowRuleStatus = "continue" | "review_required" | "stop";
+
+export type WorkflowRuleCode =
+  | "OWNER_TYPE"
+  | "RECENT_SALE"
+  | "ADVERSE_POSSESSION"
+  | "SOURCE_EVIDENCE"
+  | "LEAD_QUALITY";
+
+export interface WorkflowRuleResult {
+  code: WorkflowRuleCode;
+  label: string;
+  status: WorkflowRuleStatus;
+  explanation: string;
+  reasonCodes: string[];
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
+export interface LeadQualitySignalSetting {
+  code: string;
+  label: string;
+  enabled: boolean;
+  weight: number;
+  requiresSourceEvidence: boolean;
+  reasonCode: string;
+}
+
+export interface LeadQualitySettings {
+  model: "heirright-s5-v1";
+  minEnabledSignalWeightForPromotion: number;
+  genericPullSuppression: boolean;
+  enabledSignals: string[];
+  disabledSignals: string[];
+  signals: LeadQualitySignalSetting[];
+  reasonCodes: string[];
+}
+
+export interface WorkflowRuleEvaluation {
+  status: WorkflowRuleStatus;
+  evaluatedAt: string;
+  nextAction: string;
+  rules: WorkflowRuleResult[];
+  leadQuality: LeadQualitySettings;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface TaxAmountDue {
+  amount: number;
+  currency: "USD";
+  years: number[];
+}
+
+export interface TaxHistory {
+  sourceStatus: DossierClaim<string>;
+  unpaidYears: DossierClaim<number[]>;
+  amountDue: DossierClaim<TaxAmountDue>;
+  reassessment: DossierClaim<string>;
+  receiptStatus: DossierClaim<string>;
+  payerIdentity: DossierClaim<string>;
+  reviewTasks: SourceEvidenceReviewTask[];
+  manualReceiptTask: {
+    required: boolean;
+    reason: string;
+    sourceRefs: SourceRef[];
+    reviewFlags: ReviewFlag[];
+  };
+}
+
+export interface OrBookPageRef {
+  book?: string;
+  page?: string;
+  instrumentNumber?: string;
+}
+
+export interface LatestDeedRecord {
+  recordingDate?: string;
+  documentType?: string;
+  orBookPage?: OrBookPageRef;
+  grantor?: string;
+  grantee?: string;
+}
+
+export interface DeedHistory {
+  sourceStatus: DossierClaim<string>;
+  latestDeed: DossierClaim<LatestDeedRecord>;
+  orBookPage: DossierClaim<OrBookPageRef>;
+  lastSaleDate: DossierClaim<string>;
+  mailingAddressSignal: DossierClaim<string>;
+  ownershipActivity: DossierClaim<string>;
+  mortgageSignal: DossierClaim<string>;
+  lienSignal: DossierClaim<string>;
+  lisPendensSignal: DossierClaim<string>;
+  foreclosureSignal: DossierClaim<string>;
+  adversePossessionSignal: DossierClaim<boolean>;
+  reviewTasks: SourceEvidenceReviewTask[];
+}
+
+export type OperatorQueueState = "ready_for_review" | "manual_review" | "blocked" | "disqualified";
+
+export interface OperatorQueueItem {
+  code: string;
+  label: string;
+  state: OperatorQueueState;
+  reason: string;
+  nextAction: string;
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OperatorQueue {
+  state: OperatorQueueState;
+  reasonCodes: string[];
+  nextAction: string;
+  items: OperatorQueueItem[];
+}
+
+export type SourceEvidenceQaStatus = "passed" | "review_required" | "failed";
+
+export interface SourceEvidenceQaCheck {
+  code: string;
+  label: string;
+  status: SourceEvidenceQaStatus;
+  explanation: string;
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
+export interface SourceEvidenceQaResult {
+  status: SourceEvidenceQaStatus;
+  checkedAt: string;
+  checks: SourceEvidenceQaCheck[];
   reviewFlags: ReviewFlag[];
 }
 
@@ -237,7 +414,12 @@ export interface RawDossier {
     county: DossierClaim<string>;
     parcelId: DossierClaim<string>;
   };
+  taxHistory: TaxHistory;
+  deedHistory: DeedHistory;
   titleEvents: DossierEvent[];
+  workflow: WorkflowRuleEvaluation;
+  operatorQueue: OperatorQueue;
+  evidenceQa: SourceEvidenceQaResult;
   narrative: string;
   crm: {
     provider: "podio";
@@ -266,6 +448,7 @@ export interface DocumentPacket {
   id: string;
   dossierId: string;
   status: "draft_review_required";
+  renderer: "streamdown";
   generatedAt: string;
   formats: {
     markdown: string;

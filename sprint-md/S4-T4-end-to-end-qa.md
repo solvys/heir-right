@@ -4,7 +4,7 @@ Owner: TP
 Parent: `S4-ORCH`  
 Dependencies: S1-S4
 
-Run public source -> facts -> raw dossier -> Podio dry-run -> document packet -> artifact.
+Run public source -> facts -> raw dossier -> CRM adapter dry-run -> document packet -> artifact.
 
 Acceptance:
 

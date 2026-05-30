@@ -5,7 +5,7 @@ Purpose: define how planned public sources feed the raw dossier engine.
 
 ## Adapter Output Principle
 
-Adapters return normalized `SourceFact[]`. They do not decide CRM state, score, outreach strategy, or legal interpretation. The dossier builder converts facts into claims, title events, review flags, document fields, and Podio dry-run payloads.
+Adapters return normalized `SourceFact[]`. They do not decide CRM state, score, outreach strategy, or legal interpretation. The dossier builder converts facts into claims, title events, review flags, document fields, and CRM adapter dry-run payloads.
 
 Minimum adapter output:
 
@@ -42,6 +42,24 @@ type SourceFact = {
 | Podio | Dry-run only unless config exists | raw dossier | CRM payload fact | missing credentials block live sync |
 | Document packet | Draft internal summary first | raw dossier | document output fact | `HUMAN_REVIEW_REQUIRED` |
 
+## Workflow-Informed Source Backlog
+
+The workflow PDF expands the source plan beyond the Friday public-source slice. These sources should be modeled explicitly so the system can distinguish automated public checks from manual, paid, or compliance-sensitive steps.
+
+| Source/workflow | Posture | Primary inputs | Output facts | Guardrail |
+| --- | --- | --- | --- | --- |
+| Estate-name search | First-class input path | estate name, owner name, case number | estate seed, possible owner, possible probate case | Never infer heirship without source refs |
+| Owner type qualification | Automatable when source exposes owner type | owner name, property record | individual owner, company owner, trust/estate owner, disqualification status | Company-owned properties default out of scope |
+| Recent sale / deed history | Public-source target | folio, address, owner, OR book/page | deed event, sale date, book/page, ownership activity | Sale within 5 years defaults disqualified/review |
+| Adverse possession | Public-source target where available | owner, address, folio | adverse-possession claim/status | Missing signal becomes review flag |
+| Tax history | Public-source target | folio, address, owner | unpaid tax years, tax amount, receipt status, reassessment, payer identity | PDF receipt download stays manual until validated |
+| Civil/family/probate docket | Public-source target | estate name, decedent, case number | case status, docket refs, affidavit of heirs, document availability | No legal conclusion; record-only facts |
+| Marriage licenses | Public-source target | decedent/heir names | marriage-license signal, spouse hypothesis | Human review required |
+| Obituary/death indicators | Public web/manual target | name, DOB/DOD, location | obituary link, death date, family names | Human review required |
+| Voter/professional/license/incarceration records | Manual/public target | name, DOB, address | possible address/status signal | Do not use without source policy review |
+| Code enforcement / door knock / neighbor research | Manual-only | property address, case details | manual task, photos/notes, officer contact | Never automate external contact by default |
+| IDI / Intelius / Ancestry / ForeWarn / VitalChek / PI | Paid/manual source | identity, address, DOB/DOD | contact/address/family tree evidence | Requires client credentials and storage approval |
+
 ## SourceRef Rule
 
 Every dossier claim must have at least one source ref or a review flag explaining why it is not source-confirmed.
@@ -55,6 +73,15 @@ Example:
   "fetchedAt": "2026-05-19T00:00:00.000Z"
 }
 ```
+
+Every source ref must also identify its access class:
+
+- `public_automated`
+- `public_manual`
+- `paid_manual`
+- `paid_automated_pending_approval`
+- `operator_observed`
+- `client_supplied`
 
 ## Stop Conditions
 
@@ -73,6 +100,8 @@ Stop and report a blocker instead of forcing source extraction when:
 - Friday mode must not synthesize tax, probate, death, lien, or heirship facts.
 - Friday mode must not use enrichment or skip trace.
 - Friday mode can produce source-health facts while marking unverified property/title claims for review.
+- Paid/manual facts may be represented as placeholders or task requirements, but should not be synthesized as completed evidence.
+- Outreach facts must remain task/status metadata until compliance approval exists.
 
 ## Implementation Order
 
@@ -80,6 +109,11 @@ Stop and report a blocker instead of forcing source extraction when:
 2. Miami-Dade Property Appraiser adapter.
 3. Miami-Dade Official Records / Clerk adapter.
 4. Raw dossier builder with source-ref discipline.
-5. Podio dry-run payload.
+5. CRM adapter dry-run payload.
 6. Internal summary document packet.
 7. Dashboard/intake and Friday handoff.
+8. Workflow rule engine for disqualifications and review-required states.
+9. Tax/deed depth adapters.
+10. Probate/heirship research queue.
+11. Paid/manual source governance.
+12. Completed lead report and offer math payload.

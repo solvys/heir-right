@@ -1,0 +1,96 @@
+import type { IntakeSeed, SourceFact } from "@ple/types";
+import { fact, nowIso, slug } from "../lib";
+
+const TAX_COLLECTOR_REVIEW_URL = "https://www.miamidade.gov/global/service.page?Mduid_service=ser1499797463762502";
+
+export async function fetchTaxHistoryFacts(runId: string, seed: IntakeSeed): Promise<SourceFact[]> {
+  const fetchedAt = nowIso();
+  const rawId = `tax-history:${slug(seed.parcelId || seed.propertyAddress)}`;
+  const subject = {
+    ownerName: seed.ownerName,
+    propertyAddress: seed.propertyAddress,
+    parcelId: seed.parcelId,
+    county: seed.county,
+  };
+
+  return [
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:status`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "tax_history_status",
+      value: "manual_review_required",
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["MISSING_TAX_HISTORY_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:unpaid-years`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "unpaid_tax_years",
+      value: null,
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["MISSING_TAX_HISTORY_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:amount-due`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "tax_amount_due",
+      value: null,
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["MISSING_TAX_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:reassessment`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "tax_reassessment_signal",
+      value: null,
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["REASSESSMENT_REVIEW_REQUIRED", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:receipt-status`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "tax_receipt_status",
+      value: null,
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["MISSING_TAX_RECEIPT_FACT", "MANUAL_TAX_RECEIPT_DOWNLOAD_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+    fact({
+      runId,
+      source: "tax_collector",
+      rawId: `${rawId}:payer-identity`,
+      fetchedAt,
+      county: seed.county,
+      subject,
+      factType: "tax_payer_identity",
+      value: null,
+      confidence: 0,
+      sourceUrl: TAX_COLLECTOR_REVIEW_URL,
+      reviewFlags: ["MISSING_TAX_PAYER_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+    }),
+  ];
+}

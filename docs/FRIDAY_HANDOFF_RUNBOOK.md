@@ -9,7 +9,7 @@ Friday done is a working local/dry-run system unless external credentials arrive
 - public-source property-first run;
 - official-records/title source availability and blocker flags;
 - no-enrichment raw dossier;
-- Podio dry-run payload and direct API config requirements;
+- CRM adapter dry-run payload and provider config requirements;
 - internal summary document packet;
 - operator artifact dashboard;
 - explicit blockers for missing credentials and source extraction gaps.
@@ -30,7 +30,7 @@ Open `http://localhost:4173` after the artifact server starts.
 
 ## Cloudflare Worker Deploy
 
-The dry-run pipeline also has a Cloudflare Worker HTTP surface. It does not persist files in the Worker runtime; it returns the same run, dossier, Podio dry-run, and summary payloads directly from HTTP endpoints.
+The dry-run pipeline also has a Cloudflare Worker HTTP surface. It does not persist files in the Worker runtime; it returns the same run, dossier, CRM dry-run, and summary payloads directly from HTTP endpoints.
 
 Live Worker URL:
 
@@ -73,8 +73,14 @@ Worker dry-run outputs are written under:
 
 - CI/non-interactive Cloudflare deploy still needs a scoped `CLOUDFLARE_API_TOKEN`.
 - Podio API credentials are not configured.
+- Podio integration viability still needs account-level validation, but heavy custom Podio work should wait until Podio proves automation-friendly.
+- Macro account/admin access is not configured yet.
+- Podio is the leading CRM path if API/MCP/hooks/readback smoke tests pass.
+- Macro and Close remain fallback candidates if Podio fails technical validation.
 - Browserbase fallback credentials are not configured.
+- Zoom meeting notes link is not readable from this session; Zoom Docs returned permission/authorization errors. User-supplied pasted notes are incorporated, but direct export/share is still needed for provenance.
 - Public Miami-Dade apps are reachable, but server-side result extraction still needs endpoint discovery or browser automation.
+- Workflow PDF introduces paid/manual sources that need explicit approval before automation or storage: IDI, Intelius, Ancestry, ForeWarn, VitalChek, PI requests, code enforcement, door knocks, neighbor research, and outreach scripts.
 - Enrichment is intentionally not part of the first milestone.
 - No live outreach sends are implemented.
 - No legal review or lead-volume guarantees are included.
@@ -84,7 +90,36 @@ Worker dry-run outputs are written under:
 - Run generates `SourceFact[]`.
 - Run generates a no-enrichment raw dossier.
 - Dossier has sourceRefs or review flags for every major claim.
-- Podio dry-run payload is present.
+- CRM dry-run payload is present.
 - Internal summary document packet is present.
 - Operator artifact displays latest run.
 - Missing external systems are listed as blockers.
+
+## Post-Friday Planning Notes
+
+`HeirRight Workflow. pdf.pdf` confirms that the next roadmap should move from a narrow public-source dry run into the real operator workflow:
+
+- workflow rule engine for individual-owner qualification, company-owner disqualification, recent-sale disqualification, adverse possession, unpaid taxes, and missing source evidence;
+- estate-name-first search path;
+- tax/deed/OR book-page depth;
+- probate, civil, family, affidavit-of-heirs, and marriage-license research;
+- family tree hypothesis and paid/manual source governance;
+- completed lead report generation with offer/profit math;
+- draft-only outreach script library with compliance review gates.
+
+The pasted Zoom onboarding notes add:
+
+- MVP before June 6, 2026 with at least 2 testing days before Joshua leaves for Alaska;
+- June 6-20 debugging/refinement window while Joshua is unavailable;
+- 30-day target of 60%+ front-end qualified lead/report automation and text/email workflow scaffolding;
+- 90-day target of full document prep automation and a functioning deal engine;
+- CRM validation path: adapter-first, Podio API/MCP/hooks/readback validation, Claude Cowork automation artifact, Macro/Close fallback only if Podio fails;
+- website redesign after lead engine delivery and forward testing starts.
+
+Post-Friday execution now runs through milestone gates instead of sprint-by-sprint human review:
+
+- Project Semi-Automation Setup proves the daily Codex Automation, Cursor Web PWA handoff, Linear updates, and `/solvys-run-point` skill.
+- Pre-Alaska MVP Testing Handoff tests S5-S9 together.
+- 30-Day Workflow Automation Milestone tests the automation percentage, completed lead reports, Podio task flow, and draft outreach scaffolding together.
+- 90-Day Deal Engine Milestone tests document prep automation, the Podio-backed deal engine, and reusable shell extraction together.
+- Human-only tickets go to `sam@solvys.io` only for credentials, approvals, legal/compliance review, live-write approval, or milestone acceptance.

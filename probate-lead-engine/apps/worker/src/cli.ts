@@ -9,7 +9,10 @@ runDryPipeline()
       ok: true,
       runId: result.runId,
       status: result.dossier.status,
+      workflowStatus: result.dossier.workflow.status,
+      operatorQueueState: result.dossier.operatorQueue.state,
       displayName: result.dossier.summary.displayName,
+      nextBestAction: result.dossier.summary.nextBestAction,
       reviewFlags: result.dossier.audit.reviewFlags,
       outputs: result.outputs,
     }, null, 2));

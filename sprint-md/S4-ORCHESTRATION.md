@@ -18,7 +18,7 @@ Goal: tie the system together into a Friday-complete runnable delivery.
 
 - One fresh live public-source run works.
 - No-enrichment raw dossier renders.
-- Podio dry-run/free API path is proven or blocked clearly.
+- CRM adapter dry-run path is proven; provider-specific live sync remains blocked until validation.
 - Internal document output exists.
 - Landing/intake and dashboard are runnable.
 - Missing external systems are blockers, not fabricated success.

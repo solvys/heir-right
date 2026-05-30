@@ -1,6 +1,8 @@
 import type { IntakeSeed, RawDossier, SourceFact } from "@ple/types";
+import { fetchDeedEvidenceFacts } from "./adapters/deed-evidence";
 import { fetchOfficialRecordFacts } from "./adapters/official-records";
 import { fetchPropertyFacts } from "./adapters/property-appraiser";
+import { fetchTaxHistoryFacts } from "./adapters/tax-history";
 import { PodioAdapter } from "./crm/podio-adapter";
 import { buildRawDossier } from "./dossier/build-raw-dossier";
 import { generateInternalSummary } from "./documents/internal-summary";
@@ -56,11 +58,13 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
     reviewFlags: ["NO_ENRICHMENT_RUN"],
   });
 
-  const [propertyFacts, officialRecordFacts] = await Promise.all([
+  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts] = await Promise.all([
     fetchPropertyFacts(runId, seed),
     fetchOfficialRecordFacts(runId, seed),
+    fetchTaxHistoryFacts(runId, seed),
+    fetchDeedEvidenceFacts(runId, seed),
   ]);
-  const facts = [intakeFact, ...propertyFacts, ...officialRecordFacts];
+  const facts = [intakeFact, ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts];
   const propertyCountyFact = fact({
     runId,
     source: "property_appraiser",
@@ -84,7 +88,7 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   const podio = new PodioAdapter(options.env);
   const podioPayload = await podio.dryRun(dossier);
   dossier.crm.payload = podioPayload;
-  dossier.documentPacket = generateInternalSummary(dossier);
+  dossier.documentPacket = await generateInternalSummary(dossier);
 
   const outputFiles = {
     latestRun: jsonOutput("latest-run.json", { runId, seed, facts, dossier }),

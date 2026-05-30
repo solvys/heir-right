@@ -28,7 +28,7 @@ export async function fetchOfficialRecordFacts(runId: string, seed: IntakeSeed):
         status: status.status,
         finalUrl: status.finalUrl,
         note: status.ok
-          ? "Official Records public app is reachable. Result extraction needs endpoint discovery or browser automation because the app is client-rendered."
+          ? "Official Records is reachable. A person still needs to confirm the exact deed, title, and court-record details before this lead moves forward."
           : status.error ?? "Official Records was not reachable.",
       },
       confidence: status.ok ? 0.75 : 0.2,
