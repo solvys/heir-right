@@ -179,7 +179,9 @@ export type ReviewFlag =
   | "MISSING_CRM_CREDENTIALS"
   | "MISSING_DOCUMENT_TEMPLATE"
   | "HUMAN_REVIEW_REQUIRED"
-  | "NO_ENRICHMENT_RUN";
+  | "NO_ENRICHMENT_RUN"
+  | "MISSING_AFFIDAVIT_OF_HEIRS_FACT"
+  | "PROBATE_DOCUMENT_REQUEST_REQUIRED";
 
 export type FactType =
   | "source_status"
@@ -214,7 +216,13 @@ export type FactType =
   | "intake_seed"
   | "estate_name"
   | "estate_search_key"
-  | "case_number";
+  | "case_number"
+  | "probate_docket_status"
+  | "probate_case_status"
+  | "civil_family_docket_ref"
+  | "affidavit_of_heirs_status"
+  | "probate_document_availability"
+  | "official_record_cross_link";
 
 export interface SourceSubject {
   ownerName?: string;
@@ -366,6 +374,37 @@ export interface DeedHistory {
   reviewTasks: SourceEvidenceReviewTask[];
 }
 
+export interface DocketReference {
+  court?: string;
+  division?: string;
+  docketNumber?: string;
+  caseType?: string;
+}
+
+export interface OfficialRecordCrossLink {
+  label: string;
+  url?: string;
+  orBookPage?: OrBookPageRef;
+  note?: string;
+}
+
+export interface ProbateDocket {
+  sourceStatus: DossierClaim<string>;
+  caseNumber: DossierClaim<string>;
+  caseStatus: DossierClaim<string>;
+  civilFamilyDocket: DossierClaim<DocketReference>;
+  affidavitOfHeirs: DossierClaim<string>;
+  documentAvailability: DossierClaim<string>;
+  officialRecordCrossLinks: DossierClaim<OfficialRecordCrossLink[]>;
+  reviewTasks: SourceEvidenceReviewTask[];
+  documentRequestTask: {
+    required: boolean;
+    reason: string;
+    sourceRefs: SourceRef[];
+    reviewFlags: ReviewFlag[];
+  };
+}
+
 export type OperatorQueueState = "ready_for_review" | "manual_review" | "blocked" | "disqualified";
 
 export interface OperatorQueueItem {
@@ -426,6 +465,7 @@ export interface RawDossier {
   };
   taxHistory: TaxHistory;
   deedHistory: DeedHistory;
+  probateDocket: ProbateDocket;
   titleEvents: DossierEvent[];
   workflow: WorkflowRuleEvaluation;
   operatorQueue: OperatorQueue;

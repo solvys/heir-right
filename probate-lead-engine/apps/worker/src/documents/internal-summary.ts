@@ -78,6 +78,25 @@ export async function generateInternalSummary(dossier: RawDossier): Promise<Docu
         : ["- No deed/title review tasks open."]
     ),
     "",
+    "## Probate / Court Research",
+    `Status: ${dossier.probateDocket.sourceStatus.value ?? "Needs review"}`,
+    `Case number: ${dossier.probateDocket.caseNumber.value ?? "Needs review"}`,
+    `Case status: ${dossier.probateDocket.caseStatus.value ?? "Needs review"}`,
+    `Civil/family docket: ${readableRecord(dossier.probateDocket.civilFamilyDocket.value)}`,
+    `Affidavit of heirs: ${dossier.probateDocket.affidavitOfHeirs.value ?? "Needs review"}`,
+    `Document availability: ${dossier.probateDocket.documentAvailability.value ?? "Needs review"}`,
+    `Official record cross-links: ${dossier.probateDocket.officialRecordCrossLinks.value?.map((link) => link.label).join(", ") ?? "Needs review"}`,
+    "",
+    "### Probate Review Tasks",
+    ...(
+      dossier.probateDocket.reviewTasks.length
+        ? dossier.probateDocket.reviewTasks.map((task) => `- ${task.title}: ${task.nextAction}`)
+        : ["- No probate review tasks open."]
+    ),
+    ...(dossier.probateDocket.documentRequestTask.required
+      ? ["", "### Probate Document Request", `- ${dossier.probateDocket.documentRequestTask.reason}`]
+      : []),
+    "",
     "## Operator Queue",
     `State: ${dossier.operatorQueue.state}`,
     `Next: ${dossier.operatorQueue.nextAction}`,

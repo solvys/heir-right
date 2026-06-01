@@ -1,6 +1,7 @@
 import type { IntakeSeed, RawDossier, SourceFact } from "@ple/types";
 import { fetchDeedEvidenceFacts } from "./adapters/deed-evidence";
 import { fetchOfficialRecordFacts } from "./adapters/official-records";
+import { fetchProbateCourtFacts } from "./adapters/probate-court";
 import { fetchPropertyFacts } from "./adapters/property-appraiser";
 import { fetchTaxHistoryFacts } from "./adapters/tax-history";
 import { PodioAdapter } from "./crm/podio-adapter";
@@ -128,13 +129,14 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   const runId = `run-${Date.now()}-${slug(identity)}`;
   const subject = intakeSubject(seed);
 
-  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts] = await Promise.all([
+  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts, probateFacts] = await Promise.all([
     fetchPropertyFacts(runId, seed),
     fetchOfficialRecordFacts(runId, seed),
     fetchTaxHistoryFacts(runId, seed),
     fetchDeedEvidenceFacts(runId, seed),
+    fetchProbateCourtFacts(runId, seed),
   ]);
-  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts];
+  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts, ...probateFacts];
   const propertyCountyFact = fact({
     runId,
     source: "property_appraiser",

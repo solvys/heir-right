@@ -85,6 +85,17 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
             adverse_possession_signal: dossier.deedHistory.adversePossessionSignal.value,
             review_tasks: dossier.deedHistory.reviewTasks,
           },
+          probate_docket: {
+            status: dossier.probateDocket.sourceStatus.value,
+            case_number: dossier.probateDocket.caseNumber.value,
+            case_status: dossier.probateDocket.caseStatus.value,
+            civil_family_docket: dossier.probateDocket.civilFamilyDocket.value,
+            affidavit_of_heirs: dossier.probateDocket.affidavitOfHeirs.value,
+            document_availability: dossier.probateDocket.documentAvailability.value,
+            official_record_cross_links: dossier.probateDocket.officialRecordCrossLinks.value,
+            review_tasks: dossier.probateDocket.reviewTasks,
+            document_request_task: dossier.probateDocket.documentRequestTask,
+          },
           workflow_status: dossier.workflow.status,
           workflow_rules: dossier.workflow.rules.map((rule) => ({
             code: rule.code,
@@ -113,6 +124,16 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
           description: task.nextAction,
         })),
         ...dossier.deedHistory.reviewTasks.map((task) => ({
+          title: task.title,
+          description: task.nextAction,
+        })),
+        ...(dossier.probateDocket.documentRequestTask.required
+          ? [{
+            title: "Request missing probate documents",
+            description: dossier.probateDocket.documentRequestTask.reason,
+          }]
+          : []),
+        ...dossier.probateDocket.reviewTasks.map((task) => ({
           title: task.title,
           description: task.nextAction,
         })),

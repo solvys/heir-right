@@ -81,6 +81,11 @@ async function main(): Promise<void> {
   if (!result.dossier.taxHistory.manualReceiptTask.required) failures.push("Manual tax receipt fallback missing.");
   if (result.dossier.taxHistory.reviewTasks.length < 5) failures.push("Tax history review tasks missing.");
   if (result.dossier.deedHistory.reviewTasks.length < 7) failures.push("Deed/title review tasks missing.");
+  if (!result.dossier.probateDocket.reviewTasks.length) failures.push("Probate docket review tasks missing.");
+  if (!result.dossier.probateDocket.documentRequestTask.required) failures.push("Probate document request task missing.");
+  if (!result.facts.some((item) => item.factType === "probate_docket_status")) failures.push("Probate docket status fact missing.");
+  const podioProbate = (result.dossier.crm.payload as { appModel?: { fields?: { probate_docket?: unknown } } })?.appModel?.fields?.probate_docket;
+  if (!podioProbate) failures.push("Podio probate_docket payload missing.");
   if (!result.dossier.deedHistory.mailingAddressSignal.reviewFlags.includes("MISSING_MAILING_ADDRESS_FACT")) failures.push("Mailing-address review flag missing.");
   if (!result.dossier.deedHistory.orBookPage.reviewFlags.length) failures.push("OR book/page review flags missing.");
   if (!result.dossier.operatorQueue.items.length) failures.push("Operator queue items missing.");
@@ -98,6 +103,15 @@ async function main(): Promise<void> {
   const podioFields = (estateResult.dossier.crm.payload as { appModel?: { fields?: Record<string, unknown> } })?.appModel?.fields;
   if (podioFields?.estate_name !== "Estate of Maria Lopez") failures.push("Estate-only seed missing Podio estate_name field.");
   if (podioFields?.estate_search_key !== "maria-lopez") failures.push("Estate-only seed missing normalized Podio estate_search_key.");
+  if (!estateResult.dossier.probateDocket.reviewTasks.length) failures.push("Estate-only seed missing probate docket review tasks.");
+
+  const caseResult = await runDryPipeline({
+    estateName: "Estate of Maria Lopez",
+    caseNumber: "2024-CP-001234",
+    county: "miami-dade",
+    source: "operator_cli",
+  });
+  if (caseResult.dossier.probateDocket.caseNumber.value !== "2024-CP-001234") failures.push("Case-number seed missing probateDocket.caseNumber.");
 
   for (const path of Object.values(result.outputs)) {
     if (!existsSync(path)) failures.push(`Expected output missing: ${path}`);

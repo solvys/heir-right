@@ -63,6 +63,12 @@ export function runSourceEvidenceQa(dossier: Omit<RawDossier, "evidenceQa">): So
     checkClaim({ code: "LAST_SALE_DATE", label: "Last sale date", claim: dossier.deedHistory.lastSaleDate }),
     checkClaim({ code: "MAILING_ADDRESS_SIGNAL", label: "Mailing address signal", claim: dossier.deedHistory.mailingAddressSignal }),
     checkClaim({ code: "ADVERSE_POSSESSION", label: "Adverse possession signal", claim: dossier.deedHistory.adversePossessionSignal }),
+    checkClaim({ code: "PROBATE_DOCKET_STATUS", label: "Probate docket status", claim: dossier.probateDocket.sourceStatus }),
+    checkClaim({ code: "PROBATE_CASE_NUMBER", label: "Probate case number", claim: dossier.probateDocket.caseNumber }),
+    checkClaim({ code: "PROBATE_CASE_STATUS", label: "Probate case status", claim: dossier.probateDocket.caseStatus }),
+    checkClaim({ code: "AFFIDAVIT_OF_HEIRS", label: "Affidavit of heirs", claim: dossier.probateDocket.affidavitOfHeirs }),
+    checkClaim({ code: "PROBATE_DOCUMENTS", label: "Probate document availability", claim: dossier.probateDocket.documentAvailability }),
+    checkClaim({ code: "PROBATE_OR_CROSS_LINK", label: "Official record cross-links", claim: dossier.probateDocket.officialRecordCrossLinks }),
   ];
   const reviewFlags = unique(checks.flatMap((check) => check.reviewFlags));
   const status = rollup(checks);

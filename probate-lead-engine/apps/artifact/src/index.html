@@ -88,6 +88,11 @@
       <ul id="deedTasks" class="task-list"></ul>
     </article>
 
+    <article class="card">
+      <div class="kicker">Probate And Court Work</div>
+      <ul id="probateTasks" class="task-list"></ul>
+    </article>
+
     <article class="card wide">
       <div class="kicker">Lead Report</div>
       <iframe id="doc" class="doc-frame" sandbox="" title="Rendered lead report"></iframe>
@@ -173,6 +178,7 @@ async function loadRun() {
     renderTasks(document.getElementById("reviewList"), dossier.operatorQueue.items, "No review items are open.");
     renderTasks(document.getElementById("taxTasks"), dossier.taxHistory.reviewTasks, "No tax review tasks are open.");
     renderTasks(document.getElementById("deedTasks"), dossier.deedHistory.reviewTasks, "No deed or title review tasks are open.");
+    renderTasks(document.getElementById("probateTasks"), dossier.probateDocket.reviewTasks, "No probate or court review tasks are open.");
 
     document.getElementById("doc").srcdoc = dossier.documentPacket.formats.html;
     document.getElementById("internalDetails").textContent = JSON.stringify({

@@ -1,4 +1,4 @@
-import type { DossierClaim, DossierEvent, LatestDeedRecord, OrBookPageRef, RawDossier, ReviewFlag, SourceEvidenceReviewTask, SourceFact, SourceKey, SourceRef, TaxAmountDue } from "@ple/types";
+import type { DossierClaim, DossierEvent, DocketReference, LatestDeedRecord, OfficialRecordCrossLink, OrBookPageRef, RawDossier, ReviewFlag, SourceEvidenceReviewTask, SourceFact, SourceKey, SourceRef, TaxAmountDue } from "@ple/types";
 import { nowIso, sourceRef, slug } from "../lib";
 import { runSourceEvidenceQa } from "../qa/source-evidence";
 import { buildOperatorQueue } from "../queue/operator-queue";
@@ -238,6 +238,87 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
       }),
     ]),
   };
+  const probateSourceStatus = claim<string>(facts, "probate_docket_status", "MISSING_PROBATE_FACT");
+  const probateCaseNumber = claim<string>(facts, "case_number", "MISSING_PROBATE_FACT");
+  const probateCaseStatus = claim<string>(facts, "probate_case_status", "MISSING_PROBATE_FACT");
+  const civilFamilyDocket = claim<DocketReference>(facts, "civil_family_docket_ref", "MISSING_PROBATE_FACT");
+  const affidavitOfHeirs = claim<string>(facts, "affidavit_of_heirs_status", "MISSING_AFFIDAVIT_OF_HEIRS_FACT");
+  const documentAvailability = claim<string>(facts, "probate_document_availability", "MISSING_PROBATE_FACT");
+  const officialRecordCrossLinks = claim<OfficialRecordCrossLink[]>(facts, "official_record_cross_link", "MISSING_PROBATE_FACT");
+  const probateDocket = {
+    sourceStatus: probateSourceStatus,
+    caseNumber: probateCaseNumber,
+    caseStatus: probateCaseStatus,
+    civilFamilyDocket,
+    affidavitOfHeirs,
+    documentAvailability,
+    officialRecordCrossLinks,
+    reviewTasks: compactTasks([
+      reviewTask({
+        code: "PROBATE_CASE_NUMBER",
+        title: "Confirm probate case number",
+        source: "probate_court",
+        reason: "Court docket research needs a case number or a visible review flag when it is still unknown.",
+        nextAction: "Search probate/civil/family dockets by estate name and record the case number with a source reference.",
+        claim: probateCaseNumber,
+        fallbackFlags: ["MISSING_PROBATE_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+      reviewTask({
+        code: "PROBATE_CASE_STATUS",
+        title: "Capture probate case status",
+        source: "probate_court",
+        reason: "Case status must be recorded as a docket fact, not a legal conclusion about heirship or outcome.",
+        nextAction: "Record open/closed/pending status from the public docket with source refs.",
+        claim: probateCaseStatus,
+        fallbackFlags: ["MISSING_PROBATE_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+      reviewTask({
+        code: "CIVIL_FAMILY_DOCKET",
+        title: "Capture civil/family docket references",
+        source: "probate_court",
+        reason: "Related civil or family docket references may affect research routing.",
+        nextAction: "Record court, division, docket number, and case type when found.",
+        claim: civilFamilyDocket,
+        fallbackFlags: ["MISSING_PROBATE_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+      reviewTask({
+        code: "AFFIDAVIT_OF_HEIRS",
+        title: "Check affidavit of heirs availability",
+        source: "probate_court",
+        reason: "Affidavit availability is a document fact, not proof of heirship.",
+        nextAction: "Record whether the affidavit is available, requested, or still missing.",
+        claim: affidavitOfHeirs,
+        fallbackFlags: ["MISSING_AFFIDAVIT_OF_HEIRS_FACT", "PROBATE_DOCUMENT_REQUEST_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+      reviewTask({
+        code: "PROBATE_DOCUMENTS",
+        title: "Review probate document availability",
+        source: "probate_court",
+        reason: "Missing court documents must become explicit operator tasks.",
+        nextAction: "List available/missing probate documents and create a document request task when needed.",
+        claim: documentAvailability,
+        fallbackFlags: ["PROBATE_DOCUMENT_REQUEST_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+      reviewTask({
+        code: "PROBATE_OR_CROSS_LINK",
+        title: "Cross-link official records",
+        source: "official_records",
+        reason: "Probate docket facts should cross-link to recorded instruments when possible.",
+        nextAction: "Attach OR book/page or instrument references that support the docket research trail.",
+        claim: officialRecordCrossLinks,
+        fallbackFlags: ["SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED"],
+      }),
+    ]),
+    documentRequestTask: {
+      required: affidavitOfHeirs.value === null || documentAvailability.value === null,
+      reason: "Affidavit of heirs or other probate documents are not yet captured; keep document requests as operator tasks.",
+      sourceRefs: Array.from(new Map(
+        [...affidavitOfHeirs.sourceRefs, ...documentAvailability.sourceRefs]
+          .map((ref) => [`${ref.source}:${ref.rawId}:${ref.fetchedAt}`, ref]),
+      ).values()),
+      reviewFlags: ["PROBATE_DOCUMENT_REQUEST_REQUIRED", "HUMAN_REVIEW_REQUIRED"] as ReviewFlag[],
+    },
+  };
   const workflow = evaluateWorkflowRules(facts);
   const auditFlags = Array.from(new Set(
     facts
@@ -270,6 +351,7 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     address.value ? `Property seed: ${address.value}.` : "Property address is missing and must be reviewed.",
     ownerName.value ? `Owner seed: ${ownerName.value}.` : "Owner name was not confirmed by the current run.",
     caseNumber.value ? `Case number seed: ${caseNumber.value}.` : null,
+    "Probate/civil/family docket facts are record-only and do not assert legal conclusions.",
     "Miami-Dade public source availability was checked before any CRM or outreach action.",
     "This is not a skip-traced or scored dossier. It is a raw public-source shell for human review.",
   ];
@@ -298,6 +380,7 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     },
     taxHistory,
     deedHistory,
+    probateDocket,
     titleEvents,
     workflow,
     narrative,
