@@ -52,6 +52,9 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
         pipelineStages: ["Marketing", "Acquisition", "Disposition"],
         fields: {
           title: dossier.summary.displayName,
+          estate_name: dossier.summary.estateName,
+          estate_search_key: dossier.summary.estateSearchKey,
+          case_number: dossier.summary.caseNumber,
           property_address: dossier.property.address.value,
           owner_name: dossier.property.ownerName.value,
           county: dossier.property.county.value ?? "miami-dade",

@@ -6,7 +6,7 @@ import { fetchTaxHistoryFacts } from "./adapters/tax-history";
 import { PodioAdapter } from "./crm/podio-adapter";
 import { buildRawDossier } from "./dossier/build-raw-dossier";
 import { generateInternalSummary } from "./documents/internal-summary";
-import { fact, nowIso, slug } from "./lib";
+import { fact, intakeSubject, normalizeEstateSearchKey, nowIso, seedIdentity, slug } from "./lib";
 import { jsonOutput, PipelineOutput, textOutput } from "./storage/output-manifest";
 
 type RuntimeEnv = Record<string, string | undefined>;
@@ -22,14 +22,99 @@ function arg(name: string): string | undefined {
 }
 
 function seedFromArgs(): IntakeSeed {
-  const propertyAddress = arg("address") ?? "3850 NW 176th St, Miami Gardens, FL 33055";
+  const estateName = arg("estate");
+  const propertyAddress = arg("address");
+  const ownerName = arg("owner");
+  const caseNumber = arg("case-number");
+  const parcelId = arg("folio");
+  const county = arg("county") ?? "miami-dade";
+
+  if (!estateName && !propertyAddress && !parcelId && !caseNumber) {
+    return {
+      propertyAddress: "3850 NW 176th St, Miami Gardens, FL 33055",
+      ownerName: ownerName ?? "Fresh public-source lead",
+      county,
+      parcelId,
+      source: "operator_cli",
+    };
+  }
+
   return {
+    estateName,
     propertyAddress,
-    ownerName: arg("owner") ?? "Fresh public-source lead",
-    county: arg("county") ?? "miami-dade",
-    parcelId: arg("folio"),
+    ownerName,
+    caseNumber,
+    county,
+    parcelId,
     source: "operator_cli",
   };
+}
+
+function intakeFacts(runId: string, seed: IntakeSeed): SourceFact[] {
+  const identity = seedIdentity(seed);
+  const subject = intakeSubject(seed);
+  const facts: SourceFact[] = [
+    fact({
+      runId,
+      source: "intake",
+      rawId: `intake:${slug(identity)}`,
+      fetchedAt: nowIso(),
+      county: seed.county,
+      subject,
+      factType: "intake_seed",
+      value: seed,
+      confidence: 0.95,
+      reviewFlags: ["NO_ENRICHMENT_RUN"],
+    }),
+  ];
+
+  if (seed.estateName) {
+    facts.push(
+      fact({
+        runId,
+        source: "intake",
+        rawId: `intake:${slug(identity)}:estate`,
+        fetchedAt: nowIso(),
+        county: seed.county,
+        subject,
+        factType: "estate_name",
+        value: seed.estateName,
+        confidence: 0.95,
+        reviewFlags: ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+      }),
+      fact({
+        runId,
+        source: "intake",
+        rawId: `intake:${slug(identity)}:estate-search-key`,
+        fetchedAt: nowIso(),
+        county: seed.county,
+        subject,
+        factType: "estate_search_key",
+        value: normalizeEstateSearchKey(seed.estateName),
+        confidence: 0.95,
+        reviewFlags: ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+      }),
+    );
+  }
+
+  if (seed.caseNumber) {
+    facts.push(
+      fact({
+        runId,
+        source: "intake",
+        rawId: `intake:${slug(identity)}:case-number`,
+        fetchedAt: nowIso(),
+        county: seed.county,
+        subject,
+        factType: "case_number",
+        value: seed.caseNumber,
+        confidence: 0.9,
+        reviewFlags: ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+      }),
+    );
+  }
+
+  return facts;
 }
 
 export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options: RunDryPipelineOptions = {}): Promise<{
@@ -39,24 +124,9 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   outputs: Record<string, string>;
   outputFiles: Record<string, PipelineOutput>;
 }> {
-  const runId = `run-${Date.now()}-${slug(seed.propertyAddress)}`;
-  const intakeFact = fact({
-    runId,
-    source: "intake",
-    rawId: `intake:${slug(seed.propertyAddress)}`,
-    fetchedAt: nowIso(),
-    county: seed.county,
-    subject: {
-      ownerName: seed.ownerName,
-      propertyAddress: seed.propertyAddress,
-      parcelId: seed.parcelId,
-      county: seed.county,
-    },
-    factType: "intake_seed",
-    value: seed,
-    confidence: 0.95,
-    reviewFlags: ["NO_ENRICHMENT_RUN"],
-  });
+  const identity = seedIdentity(seed);
+  const runId = `run-${Date.now()}-${slug(identity)}`;
+  const subject = intakeSubject(seed);
 
   const [propertyFacts, officialRecordFacts, taxFacts, deedFacts] = await Promise.all([
     fetchPropertyFacts(runId, seed),
@@ -64,19 +134,14 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
     fetchTaxHistoryFacts(runId, seed),
     fetchDeedEvidenceFacts(runId, seed),
   ]);
-  const facts = [intakeFact, ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts];
+  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts];
   const propertyCountyFact = fact({
     runId,
     source: "property_appraiser",
-    rawId: `property-search:${slug(seed.propertyAddress)}:county`,
+    rawId: `property-search:${slug(identity)}:county`,
     fetchedAt: nowIso(),
     county: seed.county,
-    subject: {
-      ownerName: seed.ownerName,
-      propertyAddress: seed.propertyAddress,
-      parcelId: seed.parcelId,
-      county: seed.county,
-    },
+    subject,
     factType: "property_county",
     value: seed.county,
     confidence: 0.8,

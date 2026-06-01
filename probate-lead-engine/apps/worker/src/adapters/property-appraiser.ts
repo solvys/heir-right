@@ -1,5 +1,5 @@
 import type { IntakeSeed, SourceFact } from "@ple/types";
-import { fact, fetchStatus, nowIso, slug } from "../lib";
+import { fact, fetchStatus, intakeSubject, nowIso, seedIdentity, slug } from "../lib";
 
 const PROPERTY_SEARCH_URL = "https://www.miamidade.gov/Apps/PA/PropertySearch/#/";
 const ENTITY_OWNER_PATTERN = /\b(LLC|L\.L\.C\.|INC|CORP|CORPORATION|COMPANY|CO\.|LTD|LP|LLP|BANK|TRUST|ASSOCIATION|FOUNDATION)\b/i;
@@ -12,14 +12,9 @@ function ownerTypeFromSeed(ownerName?: string): "company" | "individual_review" 
 export async function fetchPropertyFacts(runId: string, seed: IntakeSeed): Promise<SourceFact[]> {
   const fetchedAt = nowIso();
   const status = await fetchStatus(PROPERTY_SEARCH_URL);
-  const rawId = `property-search:${slug(seed.propertyAddress)}`;
+  const rawId = `property-search:${slug(seedIdentity(seed))}`;
   const ownerType = ownerTypeFromSeed(seed.ownerName);
-  const subject = {
-    ownerName: seed.ownerName,
-    propertyAddress: seed.propertyAddress,
-    parcelId: seed.parcelId,
-    county: seed.county,
-  };
+  const subject = intakeSubject(seed);
 
   return [
     fact({
@@ -63,10 +58,12 @@ export async function fetchPropertyFacts(runId: string, seed: IntakeSeed): Promi
       county: seed.county,
       subject,
       factType: "property_address",
-      value: seed.propertyAddress,
-      confidence: 0.7,
+      value: seed.propertyAddress ?? null,
+      confidence: seed.propertyAddress ? 0.7 : 0,
       sourceUrl: PROPERTY_SEARCH_URL,
-      reviewFlags: ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
+      reviewFlags: seed.propertyAddress
+        ? ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"]
+        : ["MISSING_PROPERTY_FACT", "HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"],
     }),
     fact({
       runId,

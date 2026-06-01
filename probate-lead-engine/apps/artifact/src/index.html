@@ -162,6 +162,8 @@ async function loadRun() {
     status.innerHTML = `<span class="status-pill ${decision.className}">${decision.label}</span><h2>${dossier.summary.displayName}</h2>`;
     document.getElementById("nextAction").textContent = decision.next;
     renderFacts(document.getElementById("propertyFacts"), [
+      { label: "Estate", value: claimValue(dossier.property.estateName) },
+      { label: "Case number", value: claimValue(dossier.property.caseNumber) },
       { label: "Address", value: claimValue(dossier.property.address) },
       { label: "Owner", value: claimValue(dossier.property.ownerName) },
       { label: "County", value: claimValue(dossier.property.county, "Miami-Dade") },

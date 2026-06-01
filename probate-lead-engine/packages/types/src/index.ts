@@ -169,6 +169,7 @@ export type ReviewFlag =
   | "MISSING_RECENT_SALE_FACT"
   | "MISSING_ADVERSE_POSSESSION_FACT"
   | "MISSING_LEAD_QUALITY_SIGNAL"
+  | "MISSING_ESTATE_NAME_FACT"
   | "MISSING_TAX_HISTORY_FACT"
   | "MISSING_TAX_RECEIPT_FACT"
   | "MISSING_TAX_PAYER_FACT"
@@ -210,13 +211,17 @@ export type FactType =
   | "official_records_status"
   | "podio_payload"
   | "document_output"
-  | "intake_seed";
+  | "intake_seed"
+  | "estate_name"
+  | "estate_search_key"
+  | "case_number";
 
 export interface SourceSubject {
   ownerName?: string;
   propertyAddress?: string;
   parcelId?: string;
   caseNumber?: string;
+  estateName?: string;
   county?: string;
 }
 
@@ -405,12 +410,17 @@ export interface RawDossier {
   generatedAt: string;
   summary: {
     displayName: string;
+    estateName: string | null;
+    estateSearchKey: string | null;
+    caseNumber: string | null;
     priority: "review" | "low" | "medium" | "high";
     nextBestAction: string;
   };
   property: {
     address: DossierClaim<string>;
     ownerName: DossierClaim<string>;
+    estateName: DossierClaim<string>;
+    caseNumber: DossierClaim<string>;
     county: DossierClaim<string>;
     parcelId: DossierClaim<string>;
   };
@@ -459,7 +469,9 @@ export interface DocumentPacket {
 
 export interface IntakeSeed {
   ownerName?: string;
-  propertyAddress: string;
+  estateName?: string;
+  propertyAddress?: string;
+  caseNumber?: string;
   county: string;
   parcelId?: string;
   source: "landing_page" | "operator_cli";

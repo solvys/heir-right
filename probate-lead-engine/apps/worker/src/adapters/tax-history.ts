@@ -1,17 +1,12 @@
 import type { IntakeSeed, SourceFact } from "@ple/types";
-import { fact, nowIso, slug } from "../lib";
+import { fact, intakeSubject, nowIso, seedIdentity, slug } from "../lib";
 
 const TAX_COLLECTOR_REVIEW_URL = "https://www.miamidade.gov/global/service.page?Mduid_service=ser1499797463762502";
 
 export async function fetchTaxHistoryFacts(runId: string, seed: IntakeSeed): Promise<SourceFact[]> {
   const fetchedAt = nowIso();
-  const rawId = `tax-history:${slug(seed.parcelId || seed.propertyAddress)}`;
-  const subject = {
-    ownerName: seed.ownerName,
-    propertyAddress: seed.propertyAddress,
-    parcelId: seed.parcelId,
-    county: seed.county,
-  };
+  const rawId = `tax-history:${slug(seedIdentity(seed))}`;
+  const subject = intakeSubject(seed);
 
   return [
     fact({

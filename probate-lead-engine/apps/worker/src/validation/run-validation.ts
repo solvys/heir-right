@@ -86,6 +86,19 @@ async function main(): Promise<void> {
   if (!result.dossier.operatorQueue.items.length) failures.push("Operator queue items missing.");
   if (!result.dossier.evidenceQa.checks.length) failures.push("Source evidence QA checks missing.");
   if (result.dossier.evidenceQa.status === "failed") failures.push("Source evidence QA failed.");
+
+  const estateResult = await runDryPipeline({
+    estateName: "Estate of Maria Lopez",
+    county: "miami-dade",
+    source: "operator_cli",
+  });
+  if (!estateResult.dossier.summary.estateName) failures.push("Estate-only seed missing summary.estateName.");
+  if (!estateResult.dossier.summary.estateSearchKey) failures.push("Estate-only seed missing summary.estateSearchKey.");
+  if (!estateResult.dossier.summary.displayName.startsWith("Estate of Maria Lopez")) failures.push("Estate-only seed did not use estate-first displayName.");
+  const podioFields = (estateResult.dossier.crm.payload as { appModel?: { fields?: Record<string, unknown> } })?.appModel?.fields;
+  if (podioFields?.estate_name !== "Estate of Maria Lopez") failures.push("Estate-only seed missing Podio estate_name field.");
+  if (podioFields?.estate_search_key !== "maria-lopez") failures.push("Estate-only seed missing normalized Podio estate_search_key.");
+
   for (const path of Object.values(result.outputs)) {
     if (!existsSync(path)) failures.push(`Expected output missing: ${path}`);
   }

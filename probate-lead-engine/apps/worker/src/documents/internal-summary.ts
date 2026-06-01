@@ -27,6 +27,8 @@ export async function generateInternalSummary(dossier: RawDossier): Promise<Docu
     "AI score: Not generated",
     "",
     "## Property",
+    `Estate: ${dossier.summary.estateName ?? "Needs review"}`,
+    `Case number: ${dossier.summary.caseNumber ?? "Needs review"}`,
     `Address: ${dossier.property.address.value ?? "Needs review"}`,
     `Owner: ${dossier.property.ownerName.value ?? "Needs review"}`,
     `County: ${dossier.property.county.value ?? "miami-dade"}`,

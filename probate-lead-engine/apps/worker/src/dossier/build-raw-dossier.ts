@@ -27,6 +27,17 @@ function claim<T>(facts: SourceFact[], factType: SourceFact["factType"], missing
   };
 }
 
+function optionalClaim<T>(facts: SourceFact[], factType: SourceFact["factType"]): DossierClaim<T> {
+  const value = valueFor<T>(facts, factType);
+  const related = facts.filter((item) => item.factType === factType);
+  return {
+    value,
+    confidence: related.length ? Math.max(...related.map((item) => item.confidence)) : 0,
+    sourceRefs: refsFor(facts, factType),
+    reviewFlags: Array.from(new Set(related.flatMap((item) => item.reviewFlags))),
+  };
+}
+
 function reviewTask(input: {
   code: string;
   title: string;
@@ -66,6 +77,9 @@ function combineClaims(claims: Array<DossierClaim<unknown>>): DossierClaim<unkno
 export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier {
   const address = claim<string>(facts, "property_address", "MISSING_PROPERTY_FACT");
   const ownerName = claim<string>(facts, "property_owner", "MISSING_OWNER_FACT");
+  const estateName = optionalClaim<string>(facts, "estate_name");
+  const estateSearchKey = optionalClaim<string>(facts, "estate_search_key");
+  const caseNumber = optionalClaim<string>(facts, "case_number");
   const county = claim<string>(facts, "property_county", "MISSING_PROPERTY_FACT");
   const parcelId = claim<string>(facts, "property_folio", "MISSING_PROPERTY_FACT");
   const taxSourceStatus = claim<string>(facts, "tax_history_status", "MISSING_TAX_HISTORY_FACT");
@@ -244,17 +258,22 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     reviewFlags: item.reviewFlags,
   }));
 
-  const displayName = ownerName.value
-    ? `${ownerName.value} - ${address.value ?? "Property Review"}`
-    : address.value ?? "HeirRight Public-Source Lead";
+  const displayName = estateName.value
+    ? [estateName.value, address.value ?? ownerName.value].filter(Boolean).join(" - ")
+    : ownerName.value
+      ? `${ownerName.value} - ${address.value ?? "Property Review"}`
+      : address.value ?? "HeirRight Public-Source Lead";
 
-  const narrative = [
+  const narrativeParts = [
     `Raw no-enrichment dossier generated for ${displayName}.`,
+    estateName.value ? `Estate seed: ${estateName.value}.` : null,
     address.value ? `Property seed: ${address.value}.` : "Property address is missing and must be reviewed.",
     ownerName.value ? `Owner seed: ${ownerName.value}.` : "Owner name was not confirmed by the current run.",
+    caseNumber.value ? `Case number seed: ${caseNumber.value}.` : null,
     "Miami-Dade public source availability was checked before any CRM or outreach action.",
     "This is not a skip-traced or scored dossier. It is a raw public-source shell for human review.",
-  ].join(" ");
+  ];
+  const narrative = narrativeParts.filter((part): part is string => part !== null).join(" ");
 
   const dossierWithoutQueue: Omit<RawDossier, "operatorQueue" | "evidenceQa"> = {
     id: `dossier-${slug(displayName)}-${runId}`,
@@ -263,12 +282,17 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     generatedAt: nowIso(),
     summary: {
       displayName,
+      estateName: estateName.value,
+      estateSearchKey: estateSearchKey.value,
+      caseNumber: caseNumber.value,
       priority: "review",
       nextBestAction: workflow.nextAction,
     },
     property: {
       address,
       ownerName,
+      estateName,
+      caseNumber,
       county,
       parcelId,
     },
