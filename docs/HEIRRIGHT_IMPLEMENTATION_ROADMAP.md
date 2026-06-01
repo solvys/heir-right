@@ -164,6 +164,8 @@ Zapier should not be the primary automation engine. The worker owns orchestratio
 
 ## Project Semi-Automation Setup
 
+Status: **Done** (2026-06-01, Linear `HEI-29` / `HEI-37`–`HEI-40`)
+
 Goal: make the HeirRight project the first semi-automated Solvys run-point workflow.
 
 Included setup:
@@ -311,15 +313,35 @@ Acceptance:
 
 ## Current Implementation Status
 
-Implemented in the workspace:
+Last roadmap sync: June 1, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-78`).
 
-- `@ple/types` includes `SourceFact`, `RawDossier`, `CrmAdapter`, `DocumentPacket`, and related review/audit types.
-- `@ple/worker` runs a local dry pipeline and writes `output/latest-run.json`.
+### Sprint completion (post-Friday)
+
+| Sprint | Linear | Status | Completed |
+| --- | --- | --- | --- |
+| R0 — Run-point semi-automation setup | `HEI-29`, `HEI-37`–`HEI-40` | Done | 2026-06-01 |
+| S5 — Workflow rules + tax/deed depth | `HEI-30`, `HEI-41`–`HEI-45` | Done | 2026-05-28 |
+| S6 — Probate + heirship research | `HEI-31`, `HEI-46`–`HEI-49`, `HEI-55` | Done | 2026-06-01 |
+| S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
+| S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Todo | — |
+| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Todo | — |
+| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Todo | — |
+| S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
+
+Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) blocks on S8–S9; `HEI-77` and `HEI-78` remain open for later milestones.
+
+### Implemented in the workspace
+
+- `@ple/types` includes `SourceFact`, `RawDossier`, `CrmAdapter`, `DocumentPacket`, probate/heirship models, completed-lead-report schema, and offer/profit types.
+- `@ple/worker` runs a local dry pipeline and writes `output/latest-run.json`; supports estate-only seeds via `--estate` and `--case-number`.
+- Workflow rule evaluation, tax/deed adapters, disqualification queue, and source-evidence QA (S5).
+- Estate-name search path, probate docket model, marriage/death indicators, family-tree hypothesis, and paid/manual source governance (S6).
+- Completed lead report renderer (markdown/HTML), offer/profit math, CRM field expansion, and human review gate (S7).
 - Miami-Dade Property Search and Official Records adapters perform live public app reachability checks and produce review flags.
-- `PodioAdapter` currently produces direct-API config requirements and dry-run payloads; Macro and Close adapters remain validation-gated.
-- Internal summary generator emits markdown and HTML draft outputs.
+- `PodioAdapter` produces dry-run payloads with expanded S6/S7 fields; Macro and Close adapters remain validation-gated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
+- `site-v2/` scaffold exists for the S10 website redesign track (not launched).
 
 ## Workflow PDF Planning Deltas
 
@@ -339,6 +361,8 @@ The workflow PDF adds the following product requirements beyond the first Friday
 ## Post-Friday Roadmap
 
 ### S5 - Workflow Rules + Tax/Deed Depth
+
+Status: **Done** (2026-05-28, Linear `HEI-30` / `HEI-41`–`HEI-45`)
 
 Goal: encode the real "running the play" qualification rules and lead-quality settings behind the dry-run system.
 
@@ -361,6 +385,8 @@ Tracks:
 
 ### S6 - Probate + Heirship Research
 
+Status: **Done** (2026-06-01, Linear `HEI-31` / `HEI-46`–`HEI-49`, `HEI-55`)
+
 Goal: turn the court/probate/family-tree workflow into an auditable research queue.
 
 Tracks:
@@ -381,6 +407,8 @@ Tracks:
    Inventory IDI, Intelius, Ancestry, ForeWarn, PI requests, voter records, incarceration records, code-enforcement calls, door knocks, and neighbor research as approved/manual/blocked source categories.
 
 ### S7 - Completed Lead Report + Offer Math
+
+Status: **Done** (2026-06-01, Linear `HEI-32` / `HEI-50`–`HEI-54`)
 
 Goal: generate the report format operators actually use before outreach or negotiation, including explainable quality reasons.
 
