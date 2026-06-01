@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Fintheon is the agentic operator shell for teams who run on Hermes — local-first actions on your machine, cloud sync when you need it."
+    />
+    <meta name="theme-color" content="#050810" />
+    <meta property="og:title" content="Fintheon | Agentic Operator Shell" />
+    <meta
+      property="og:description"
+      content="Plug into Local Hermes on your machine. Scale with Cloud Hermes. Ship operator workflows out of the box."
+    />
+    <meta property="og:type" content="website" />
+    <title>Fintheon | Agentic Operator Shell</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <header class="site-nav" data-site-nav>
+      <a class="brand" href="#top" aria-label="Fintheon home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img">
+            <path d="M24 4 42 12v14c0 10-6 17-18 22C12 43 6 36 6 26V12L24 4Z" />
+            <path class="brand-inner" d="M24 14v20M16 24h16" />
+          </svg>
+        </span>
+        <span class="brand-word">Fintheon</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="#hermes">Hermes</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <a class="nav-cta" href="/sign-up" data-auth-cta>Get started</a>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="Fintheon introduction">
+        <div class="hero-badge">
+          <span class="pulse"></span>
+          Built for operators who run on Hermes
+        </div>
+        <h1>
+          Your agentic layer.<br />
+          <em>Local first.</em> Cloud when you scale.
+        </h1>
+        <p class="hero-lede">
+          Fintheon is the operator shell that plugs into <strong>Local Hermes</strong> on your
+          machine for private, on-device agent actions — and switches to
+          <strong>Cloud Hermes</strong> when your team needs shared runtime and sync.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="/sign-up" data-auth-cta>
+            Start free — sign up
+          </a>
+          <a class="button button-secondary" href="#how-it-works">
+            See how it works
+          </a>
+        </div>
+        <div class="hero-terminal" aria-label="Local Hermes connection preview">
+          <div class="terminal-chrome">
+            <span></span><span></span><span></span>
+            <code>fintheon connect --local</code>
+          </div>
+          <pre class="terminal-body"><code><span class="t-dim">›</span> Scanning ~/.hermes/config.json
+<span class="t-ok">✓</span> Local Hermes detected on <span class="t-accent">127.0.0.1:8765</span>
+<span class="t-dim">›</span> Agentic layer online — Cloud Hermes standby
+<span class="t-dim">›</span> Ready. Open Fintheon to run workflows out of the box.</code></pre>
+        </div>
+      </section>
+
+      <section class="proof-strip" aria-label="Fintheon highlights">
+        <article>
+          <span class="proof-icon">01</span>
+          <div>
+            <h2>Out-of-the-box DMG</h2>
+            <p>Download, install, and connect to Local Hermes in minutes on macOS.</p>
+          </div>
+        </article>
+        <article>
+          <span class="proof-icon">02</span>
+          <div>
+            <h2>Google or email sign-up</h2>
+            <p>Create an account, get your workspace, and pull the latest release.</p>
+          </div>
+        </article>
+        <article>
+          <span class="proof-icon">03</span>
+          <div>
+            <h2>Auto-updates via GitHub</h2>
+            <p>Signed builds with Apple Developer ID and seamless in-app updates.</p>
+          </div>
+        </article>
+      </section>
+
+      <section id="how-it-works" class="steps-section" aria-label="Product funnel">
+        <div class="section-heading">
+          <span>The funnel</span>
+          <h2>From website to working app in four steps.</h2>
+        </div>
+        <ol class="steps-grid">
+          <li>
+            <span class="step-num">1</span>
+            <h3>Read & decide</h3>
+            <p>You're here. Learn how Fintheon connects to Hermes and what you get on day one.</p>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <h3>Sign up</h3>
+            <p>Create your account with Google OAuth or email. No credit card required to start.</p>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <h3>Download the DMG</h3>
+            <p>While your workspace provisions, grab the latest macOS build from your dashboard.</p>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <h3>Plug into Local Hermes</h3>
+            <p>Install, open Fintheon — it detects your Hermes port and runs agentic actions locally.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section id="hermes" class="hermes-section" aria-label="Local Hermes vs Cloud Hermes">
+        <div class="section-heading">
+          <span>Hermes runtime</span>
+          <h2>Two modes. One agentic layer.</h2>
+          <p class="section-sub">
+            Don't confuse them — <strong>Local Hermes</strong> runs on your machine.
+            <strong>Cloud Hermes</strong> is the hosted runtime for teams and sync.
+          </p>
+        </div>
+        <div class="hermes-cards">
+          <article class="hermes-card hermes-local">
+            <div class="hermes-label">Local Hermes</div>
+            <h3>Your machine. Your config. Your port.</h3>
+            <p>
+              You set up Hermes on your computer. Fintheon reads your Hermes config,
+              discovers the port automatically, and routes all local agentic actions through it.
+            </p>
+            <ul>
+              <li>Detects port from <code>~/.hermes/config.json</code></li>
+              <li>Health-check fallback across common ports</li>
+              <li>Private — data never leaves your machine for local runs</li>
+            </ul>
+          </article>
+          <article class="hermes-card hermes-cloud">
+            <div class="hermes-label">Cloud Hermes</div>
+            <h3>Shared runtime for teams.</h3>
+            <p>
+              When you need collaboration, scheduled runs, or a Hermes instance without local
+              setup, Cloud Hermes handles agentic actions in Fintheon's hosted layer.
+            </p>
+            <ul>
+              <li>Authenticated via your Fintheon account</li>
+              <li>Team workspaces and shared agent streams</li>
+              <li>Fallback when Local Hermes is unavailable</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="features" class="features-section" aria-label="Features">
+        <div class="section-heading">
+          <span>Features</span>
+          <h2>Everything you need on day one.</h2>
+        </div>
+        <div class="features-grid">
+          <article>
+            <h3>Operator shell</h3>
+            <p>Project-specific nav, bottom composer, and lightweight agent drawer — not a generic dashboard.</p>
+          </article>
+          <article>
+            <h3>Hermes auto-discovery</h3>
+            <p>On launch, Fintheon finds Local Hermes and connects without manual port entry.</p>
+          </article>
+          <article>
+            <h3>Signed macOS builds</h3>
+            <p>DMG distributed via GitHub Releases, notarized with your Apple Developer ID.</p>
+          </article>
+          <article>
+            <h3>In-app auto-updater</h3>
+            <p>electron-updater pulls new releases from GitHub — stay current without re-downloading.</p>
+          </article>
+          <article>
+            <h3>Google OAuth + email</h3>
+            <p>Sign up the way your team already works. One account unlocks web and desktop.</p>
+          </article>
+          <article>
+            <h3>Agentic layer routing</h3>
+            <p>Every local action goes through Local Hermes. Cloud actions use Cloud Hermes. Clear separation.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="cta-section" aria-label="Get started">
+        <div class="cta-panel">
+          <div>
+            <span>Ready?</span>
+            <h2>Sign up. Download. Connect to Hermes.</h2>
+            <p>
+              Create your account, grab the DMG while your workspace loads, install Fintheon,
+              and let it detect Local Hermes on your machine.
+            </p>
+          </div>
+          <div class="cta-actions">
+            <a class="button button-primary button-lg" href="/sign-up" data-auth-cta>
+              Create your account
+            </a>
+            <p class="cta-note">Requires Hermes configured locally for Local Hermes actions.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="faq-section" aria-label="Frequently asked questions">
+        <div class="section-heading">
+          <span>FAQ</span>
+          <h2>Common questions.</h2>
+        </div>
+        <div class="faq-list">
+          <details open>
+            <summary>Do I need Hermes installed before using Fintheon?</summary>
+            <p>
+              For Local Hermes actions, yes — you need Hermes configured on your machine.
+              Fintheon will detect the port automatically. Cloud Hermes works without local setup
+              for team and hosted workflows.
+            </p>
+          </details>
+          <details>
+            <summary>What's the difference between Local Hermes and Cloud Hermes?</summary>
+            <p>
+              Local Hermes runs on your computer and handles private, on-device agentic actions.
+              Cloud Hermes is Fintheon's hosted runtime for shared team workflows and sync.
+              The app routes each action to the correct mode — they are not interchangeable.
+            </p>
+          </details>
+          <details>
+            <summary>How do I get the macOS app?</summary>
+            <p>
+              After sign-up, your onboarding screen offers a DMG download from our latest GitHub
+              Release. Install it, open Fintheon, and it connects to Local Hermes automatically.
+            </p>
+          </details>
+          <details>
+            <summary>How do updates work?</summary>
+            <p>
+              Fintheon uses electron-updater with GitHub Releases. When a new signed build is
+              published, the app notifies you and installs updates in the background.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span class="brand-word">Fintheon</span>
+          <p>Agentic operator shell by Solvys. Local Hermes first. Cloud Hermes when you scale.</p>
+        </div>
+        <nav aria-label="Footer navigation">
+          <a href="#how-it-works">How it works</a>
+          <a href="#hermes">Hermes</a>
+          <a href="#features">Features</a>
+          <a href="/sign-up" data-auth-cta>Sign up</a>
+        </nav>
+        <small>
+          Local Hermes requires your own Hermes configuration. Cloud Hermes is provided by Fintheon.
+        </small>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

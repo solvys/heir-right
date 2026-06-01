@@ -1,0 +1,42 @@
+name: Fintheon Release
+
+on:
+  push:
+    tags:
+      - "fintheon-v*"
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: fintheon/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: fintheon
+        run: pnpm install
+
+      - name: Build Hermes package
+        working-directory: fintheon
+        run: pnpm --filter @fintheon/hermes build
+
+      - name: Build and publish desktop
+        working-directory: fintheon/apps/desktop
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+        run: pnpm dist -- --publish always

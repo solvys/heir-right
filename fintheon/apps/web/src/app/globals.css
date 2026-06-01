@@ -1,0 +1,233 @@
+:root {
+  color-scheme: dark;
+  --ft-bg: #050810;
+  --ft-surface: #0c1220;
+  --ft-border: rgba(56, 189, 248, 0.18);
+  --ft-text: #f0f4fc;
+  --ft-muted: rgba(240, 244, 252, 0.72);
+  --ft-accent: #38bdf8;
+  --ft-emerald: #34d399;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--ft-bg);
+  color: var(--ft-text);
+  font-family:
+    "Instrument Sans",
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+}
+
+.page-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--ft-border);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+}
+
+.page-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+}
+
+.auth-card,
+.onboarding-card {
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface);
+}
+
+.auth-card h1,
+.onboarding-card h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.75rem;
+  letter-spacing: -0.02em;
+}
+
+.auth-card p,
+.onboarding-card p {
+  margin: 0 0 1.5rem;
+  color: var(--ft-muted);
+  line-height: 1.6;
+}
+
+.clerk-root {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button-primary {
+  background: linear-gradient(135deg, var(--ft-accent), #0ea5e9);
+  color: var(--ft-bg);
+}
+
+.button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
+}
+
+.button-secondary {
+  background: transparent;
+  border: 1px solid var(--ft-border);
+  color: var(--ft-text);
+}
+
+.progress-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.progress-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--ft-accent), var(--ft-emerald));
+  animation: progress 2.5s ease-in-out infinite;
+}
+
+@keyframes progress {
+  0% {
+    width: 12%;
+  }
+  50% {
+    width: 78%;
+  }
+  100% {
+    width: 12%;
+  }
+}
+
+.download-panel {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  background: rgba(52, 211, 153, 0.06);
+}
+
+.download-panel h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.download-panel p {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+}
+
+.hermes-status {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid var(--ft-border);
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+  color: var(--ft-muted);
+}
+
+.hermes-status strong {
+  color: var(--ft-emerald);
+}
+
+.note {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--ft-muted);
+  line-height: 1.5;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1rem;
+  width: 100%;
+  max-width: 720px;
+}
+
+.dashboard-card {
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--ft-border);
+  background: var(--ft-surface);
+}
+
+.dashboard-card h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.dashboard-card p {
+  margin: 0 0 1rem;
+  color: var(--ft-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.badge-local {
+  background: rgba(52, 211, 153, 0.15);
+  color: var(--ft-emerald);
+}
+
+.badge-cloud {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--ft-accent);
+}

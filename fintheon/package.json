@@ -1,0 +1,19 @@
+{
+  "name": "fintheon",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Fintheon product funnel — marketing site, auth, desktop app, and Hermes integration",
+  "scripts": {
+    "dev": "pnpm --filter @fintheon/site dev",
+    "dev:web": "pnpm --filter @fintheon/web dev",
+    "dev:desktop": "pnpm --filter @fintheon/desktop dev",
+    "build": "pnpm -r build",
+    "build:site": "pnpm --filter @fintheon/site build",
+    "build:web": "pnpm --filter @fintheon/web build",
+    "build:desktop": "pnpm --filter @fintheon/desktop build",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

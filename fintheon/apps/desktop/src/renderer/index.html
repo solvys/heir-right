@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Fintheon</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app-header">
+        <span class="brand">Fintheon</span>
+        <span id="version" class="version"></span>
+      </header>
+      <main class="app-main">
+        <section class="status-card">
+          <div id="mode-badge" class="badge">Connecting…</div>
+          <h1 id="headline">Detecting Hermes…</h1>
+          <p id="status-copy">Scanning your Hermes config and common ports for Local Hermes.</p>
+          <pre id="connection-detail" class="connection-detail"></pre>
+        </section>
+        <section class="actions-card">
+          <h2>Agentic layer</h2>
+          <p>Local Hermes actions run on your machine. Cloud Hermes is used when local is unavailable.</p>
+          <button id="reconnect-btn" type="button">Re-scan for Local Hermes</button>
+          <button id="ping-btn" type="button" class="secondary">Ping Hermes</button>
+          <p id="action-result" class="action-result"></p>
+        </section>
+        <section id="update-banner" class="update-banner hidden">
+          Update downloaded — restart to install.
+        </section>
+      </main>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

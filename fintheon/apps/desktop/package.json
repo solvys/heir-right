@@ -1,0 +1,54 @@
+{
+  "name": "@fintheon/desktop",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Fintheon desktop app — Local Hermes detection, agentic layer, auto-updater",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "pack": "electron-builder --dir",
+    "dist": "electron-vite build && electron-builder",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json"
+  },
+  "dependencies": {
+    "@fintheon/hermes": "workspace:*",
+    "electron-updater": "^6.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "electron": "^34.2.0",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^3.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.1.0"
+  },
+  "build": {
+    "appId": "io.solvys.fintheon",
+    "productName": "Fintheon",
+    "directories": {
+      "output": "release"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": ["dmg", "zip"],
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist"
+    },
+    "dmg": {
+      "title": "Fintheon",
+      "artifactName": "Fintheon-${version}-${arch}.${ext}"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "solvys",
+        "repo": "heir-right",
+        "releaseType": "release"
+      }
+    ]
+  }
+}
