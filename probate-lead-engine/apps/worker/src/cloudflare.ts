@@ -28,11 +28,30 @@ function json(data: unknown, init: ResponseInit = {}): Response {
 }
 
 function seedFromUrl(url: URL, env: CloudflareEnv): IntakeSeed {
+  const estateName = url.searchParams.get("estate") || undefined;
+  const propertyAddress = url.searchParams.get("address") || undefined;
+  const ownerName = url.searchParams.get("owner") || undefined;
+  const caseNumber = url.searchParams.get("case-number") || undefined;
+  const parcelId = url.searchParams.get("folio") || undefined;
+  const county = url.searchParams.get("county") || env.COUNTY_LIST?.split(",")[0] || "miami-dade";
+
+  if (!estateName && !propertyAddress && !parcelId && !caseNumber) {
+    return {
+      propertyAddress: DEFAULT_ADDRESS,
+      ownerName: ownerName || DEFAULT_OWNER,
+      county,
+      parcelId,
+      source: "operator_cli",
+    };
+  }
+
   return {
-    propertyAddress: url.searchParams.get("address") || DEFAULT_ADDRESS,
-    ownerName: url.searchParams.get("owner") || DEFAULT_OWNER,
-    county: url.searchParams.get("county") || env.COUNTY_LIST?.split(",")[0] || "miami-dade",
-    parcelId: url.searchParams.get("folio") || undefined,
+    estateName,
+    propertyAddress,
+    ownerName,
+    caseNumber,
+    county,
+    parcelId,
     source: "operator_cli",
   };
 }

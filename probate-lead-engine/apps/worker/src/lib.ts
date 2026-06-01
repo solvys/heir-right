@@ -1,4 +1,4 @@
-import type { ReviewFlag, SourceFact, SourceKey, SourceRef, SourceSubject } from "@ple/types";
+import type { IntakeSeed, ReviewFlag, SourceFact, SourceKey, SourceRef, SourceSubject } from "@ple/types";
 
 export function nowIso(): string {
   return new Date().toISOString();
@@ -10,6 +10,25 @@ export function slug(input: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "")
     .slice(0, 80);
+}
+
+export function seedIdentity(seed: IntakeSeed): string {
+  return seed.estateName ?? seed.propertyAddress ?? seed.parcelId ?? seed.caseNumber ?? seed.ownerName ?? "unknown-seed";
+}
+
+export function normalizeEstateSearchKey(estateName: string): string {
+  return slug(estateName.replace(/^estate\s+of\s+/i, "").trim());
+}
+
+export function intakeSubject(seed: IntakeSeed): SourceSubject {
+  return {
+    ownerName: seed.ownerName,
+    estateName: seed.estateName,
+    propertyAddress: seed.propertyAddress,
+    parcelId: seed.parcelId,
+    caseNumber: seed.caseNumber,
+    county: seed.county,
+  };
 }
 
 export function sourceRef(source: SourceKey, rawId: string, fetchedAt: string): SourceRef {

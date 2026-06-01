@@ -88,6 +88,16 @@
       <ul id="deedTasks" class="task-list"></ul>
     </article>
 
+    <article class="card">
+      <div class="kicker">Probate And Court Work</div>
+      <ul id="probateTasks" class="task-list"></ul>
+    </article>
+
+    <article class="card">
+      <div class="kicker">Heirship Research</div>
+      <ul id="heirshipTasks" class="task-list"></ul>
+    </article>
+
     <article class="card wide">
       <div class="kicker">Lead Report</div>
       <iframe id="doc" class="doc-frame" sandbox="" title="Rendered lead report"></iframe>
@@ -162,6 +172,8 @@ async function loadRun() {
     status.innerHTML = `<span class="status-pill ${decision.className}">${decision.label}</span><h2>${dossier.summary.displayName}</h2>`;
     document.getElementById("nextAction").textContent = decision.next;
     renderFacts(document.getElementById("propertyFacts"), [
+      { label: "Estate", value: claimValue(dossier.property.estateName) },
+      { label: "Case number", value: claimValue(dossier.property.caseNumber) },
       { label: "Address", value: claimValue(dossier.property.address) },
       { label: "Owner", value: claimValue(dossier.property.ownerName) },
       { label: "County", value: claimValue(dossier.property.county, "Miami-Dade") },
@@ -171,6 +183,12 @@ async function loadRun() {
     renderTasks(document.getElementById("reviewList"), dossier.operatorQueue.items, "No review items are open.");
     renderTasks(document.getElementById("taxTasks"), dossier.taxHistory.reviewTasks, "No tax review tasks are open.");
     renderTasks(document.getElementById("deedTasks"), dossier.deedHistory.reviewTasks, "No deed or title review tasks are open.");
+    renderTasks(document.getElementById("probateTasks"), dossier.probateDocket.reviewTasks, "No probate or court review tasks are open.");
+    renderTasks(document.getElementById("heirshipTasks"), [
+      ...dossier.marriageDeathIndicators.reviewTasks,
+      ...dossier.familyTree.reviewTasks,
+      ...dossier.sourceGovernance.reviewTasks,
+    ], "No heirship research tasks are open.");
 
     document.getElementById("doc").srcdoc = dossier.documentPacket.formats.html;
     document.getElementById("internalDetails").textContent = JSON.stringify({

@@ -169,6 +169,7 @@ export type ReviewFlag =
   | "MISSING_RECENT_SALE_FACT"
   | "MISSING_ADVERSE_POSSESSION_FACT"
   | "MISSING_LEAD_QUALITY_SIGNAL"
+  | "MISSING_ESTATE_NAME_FACT"
   | "MISSING_TAX_HISTORY_FACT"
   | "MISSING_TAX_RECEIPT_FACT"
   | "MISSING_TAX_PAYER_FACT"
@@ -178,7 +179,14 @@ export type ReviewFlag =
   | "MISSING_CRM_CREDENTIALS"
   | "MISSING_DOCUMENT_TEMPLATE"
   | "HUMAN_REVIEW_REQUIRED"
-  | "NO_ENRICHMENT_RUN";
+  | "NO_ENRICHMENT_RUN"
+  | "MISSING_AFFIDAVIT_OF_HEIRS_FACT"
+  | "PROBATE_DOCUMENT_REQUEST_REQUIRED"
+  | "MISSING_MARRIAGE_DEATH_FACT"
+  | "MANUAL_DEATH_CERTIFICATE_REQUIRED"
+  | "PAID_SOURCE_APPROVAL_REQUIRED"
+  | "MANUAL_SOURCE_APPROVAL_REQUIRED"
+  | "STORAGE_APPROVAL_REQUIRED";
 
 export type FactType =
   | "source_status"
@@ -210,13 +218,34 @@ export type FactType =
   | "official_records_status"
   | "podio_payload"
   | "document_output"
-  | "intake_seed";
+  | "intake_seed"
+  | "estate_name"
+  | "estate_search_key"
+  | "case_number"
+  | "probate_docket_status"
+  | "probate_case_status"
+  | "civil_family_docket_ref"
+  | "affidavit_of_heirs_status"
+  | "probate_document_availability"
+  | "official_record_cross_link"
+  | "marriage_death_status"
+  | "marriage_license_signal"
+  | "date_of_birth"
+  | "date_of_death"
+  | "obituary_link"
+  | "memorial_search_placeholder"
+  | "death_certificate_status"
+  | "incarceration_status_signal"
+  | "family_tree_status"
+  | "family_tree_hypothesis"
+  | "source_governance_catalog";
 
 export interface SourceSubject {
   ownerName?: string;
   propertyAddress?: string;
   parcelId?: string;
   caseNumber?: string;
+  estateName?: string;
   county?: string;
 }
 
@@ -361,6 +390,127 @@ export interface DeedHistory {
   reviewTasks: SourceEvidenceReviewTask[];
 }
 
+export interface DocketReference {
+  court?: string;
+  division?: string;
+  docketNumber?: string;
+  caseType?: string;
+}
+
+export interface OfficialRecordCrossLink {
+  label: string;
+  url?: string;
+  orBookPage?: OrBookPageRef;
+  note?: string;
+}
+
+export interface ProbateDocket {
+  sourceStatus: DossierClaim<string>;
+  caseNumber: DossierClaim<string>;
+  caseStatus: DossierClaim<string>;
+  civilFamilyDocket: DossierClaim<DocketReference>;
+  affidavitOfHeirs: DossierClaim<string>;
+  documentAvailability: DossierClaim<string>;
+  officialRecordCrossLinks: DossierClaim<OfficialRecordCrossLink[]>;
+  reviewTasks: SourceEvidenceReviewTask[];
+  documentRequestTask: {
+    required: boolean;
+    reason: string;
+    sourceRefs: SourceRef[];
+    reviewFlags: ReviewFlag[];
+  };
+}
+
+export interface MemorialSearchPlaceholder {
+  provider: "findagrave" | "legacy" | "google";
+  query?: string;
+  url?: string;
+  note?: string;
+}
+
+export interface MarriageDeathIndicators {
+  sourceStatus: DossierClaim<string>;
+  marriageLicense: DossierClaim<string>;
+  dateOfBirth: DossierClaim<string>;
+  dateOfDeath: DossierClaim<string>;
+  obituaryLink: DossierClaim<string>;
+  memorialSearches: DossierClaim<MemorialSearchPlaceholder[]>;
+  deathCertificateStatus: DossierClaim<string>;
+  incarcerationStatus: DossierClaim<string>;
+  reviewTasks: SourceEvidenceReviewTask[];
+  deathCertificateTask: {
+    required: boolean;
+    reason: string;
+    sourceRefs: SourceRef[];
+    reviewFlags: ReviewFlag[];
+  };
+}
+
+export type FamilyRelationshipRole =
+  | "spouse"
+  | "child"
+  | "parent"
+  | "sibling"
+  | "grandparent"
+  | "aunt_uncle"
+  | "cousin"
+  | "niece_nephew";
+
+export interface FamilyTreeNode {
+  id: string;
+  role: FamilyRelationshipRole;
+  name?: string;
+  contactPlaceholder?: string;
+  confidence: number;
+  reviewStatus: "hypothesis" | "needs_review" | "reviewed";
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
+export interface FamilyTreeHypothesisData {
+  status: "hypothesis" | "needs_review" | "reviewed";
+  nodes: FamilyTreeNode[];
+  unresolvedQuestions: string[];
+}
+
+export interface FamilyTreeHypothesis {
+  sourceStatus: DossierClaim<string>;
+  hypothesis: DossierClaim<FamilyTreeHypothesisData>;
+  reviewTasks: SourceEvidenceReviewTask[];
+}
+
+export type SourceAccessClass = "public_automated" | "manual_approved" | "paid_approval_gated" | "blocked";
+
+export interface GovernedSourceEntry {
+  code: string;
+  label: string;
+  accessClass: SourceAccessClass;
+  automationAllowed: boolean;
+  storageApproved: boolean;
+  reason: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface ManualResearchTask {
+  code: string;
+  title: string;
+  description: string;
+  accessClass: SourceAccessClass;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface SourceGovernanceCatalog {
+  taxonomy: SourceAccessClass[];
+  governedSources: GovernedSourceEntry[];
+  manualTasks: ManualResearchTask[];
+  auditNotes: string[];
+}
+
+export interface SourceGovernance {
+  catalog: DossierClaim<SourceGovernanceCatalog>;
+  reviewTasks: SourceEvidenceReviewTask[];
+}
+
 export type OperatorQueueState = "ready_for_review" | "manual_review" | "blocked" | "disqualified";
 
 export interface OperatorQueueItem {
@@ -405,17 +555,26 @@ export interface RawDossier {
   generatedAt: string;
   summary: {
     displayName: string;
+    estateName: string | null;
+    estateSearchKey: string | null;
+    caseNumber: string | null;
     priority: "review" | "low" | "medium" | "high";
     nextBestAction: string;
   };
   property: {
     address: DossierClaim<string>;
     ownerName: DossierClaim<string>;
+    estateName: DossierClaim<string>;
+    caseNumber: DossierClaim<string>;
     county: DossierClaim<string>;
     parcelId: DossierClaim<string>;
   };
   taxHistory: TaxHistory;
   deedHistory: DeedHistory;
+  probateDocket: ProbateDocket;
+  marriageDeathIndicators: MarriageDeathIndicators;
+  familyTree: FamilyTreeHypothesis;
+  sourceGovernance: SourceGovernance;
   titleEvents: DossierEvent[];
   workflow: WorkflowRuleEvaluation;
   operatorQueue: OperatorQueue;
@@ -459,7 +618,9 @@ export interface DocumentPacket {
 
 export interface IntakeSeed {
   ownerName?: string;
-  propertyAddress: string;
+  estateName?: string;
+  propertyAddress?: string;
+  caseNumber?: string;
   county: string;
   parcelId?: string;
   source: "landing_page" | "operator_cli";

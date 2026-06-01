@@ -27,6 +27,8 @@ export async function generateInternalSummary(dossier: RawDossier): Promise<Docu
     "AI score: Not generated",
     "",
     "## Property",
+    `Estate: ${dossier.summary.estateName ?? "Needs review"}`,
+    `Case number: ${dossier.summary.caseNumber ?? "Needs review"}`,
     `Address: ${dossier.property.address.value ?? "Needs review"}`,
     `Owner: ${dossier.property.ownerName.value ?? "Needs review"}`,
     `County: ${dossier.property.county.value ?? "miami-dade"}`,
@@ -74,6 +76,71 @@ export async function generateInternalSummary(dossier: RawDossier): Promise<Docu
       dossier.deedHistory.reviewTasks.length
         ? dossier.deedHistory.reviewTasks.map((task) => `- ${task.title}: ${task.nextAction}`)
         : ["- No deed/title review tasks open."]
+    ),
+    "",
+    "## Probate / Court Research",
+    `Status: ${dossier.probateDocket.sourceStatus.value ?? "Needs review"}`,
+    `Case number: ${dossier.probateDocket.caseNumber.value ?? "Needs review"}`,
+    `Case status: ${dossier.probateDocket.caseStatus.value ?? "Needs review"}`,
+    `Civil/family docket: ${readableRecord(dossier.probateDocket.civilFamilyDocket.value)}`,
+    `Affidavit of heirs: ${dossier.probateDocket.affidavitOfHeirs.value ?? "Needs review"}`,
+    `Document availability: ${dossier.probateDocket.documentAvailability.value ?? "Needs review"}`,
+    `Official record cross-links: ${dossier.probateDocket.officialRecordCrossLinks.value?.map((link) => link.label).join(", ") ?? "Needs review"}`,
+    "",
+    "### Probate Review Tasks",
+    ...(
+      dossier.probateDocket.reviewTasks.length
+        ? dossier.probateDocket.reviewTasks.map((task) => `- ${task.title}: ${task.nextAction}`)
+        : ["- No probate review tasks open."]
+    ),
+    ...(dossier.probateDocket.documentRequestTask.required
+      ? ["", "### Probate Document Request", `- ${dossier.probateDocket.documentRequestTask.reason}`]
+      : []),
+    "",
+    "## Marriage + Death Indicators",
+    `Status: ${dossier.marriageDeathIndicators.sourceStatus.value ?? "Needs review"}`,
+    `Marriage license: ${dossier.marriageDeathIndicators.marriageLicense.value ?? "Needs review"}`,
+    `DOB: ${dossier.marriageDeathIndicators.dateOfBirth.value ?? "Needs review"}`,
+    `DOD: ${dossier.marriageDeathIndicators.dateOfDeath.value ?? "Needs review"}`,
+    `Obituary link: ${dossier.marriageDeathIndicators.obituaryLink.value ?? "Needs review"}`,
+    `Memorial searches: ${dossier.marriageDeathIndicators.memorialSearches.value?.map((item) => item.provider).join(", ") ?? "Needs review"}`,
+    `Death certificate: ${dossier.marriageDeathIndicators.deathCertificateStatus.value ?? "Manual capture required"}`,
+    `Incarceration signal: ${dossier.marriageDeathIndicators.incarcerationStatus.value ?? "Needs review"}`,
+    "",
+    "### Marriage/Death Review Tasks",
+    ...(
+      dossier.marriageDeathIndicators.reviewTasks.length
+        ? dossier.marriageDeathIndicators.reviewTasks.map((task) => `- ${task.title}: ${task.nextAction}`)
+        : ["- No marriage/death review tasks open."]
+    ),
+    "",
+    "## Family Tree Hypothesis",
+    `Status: ${dossier.familyTree.sourceStatus.value ?? "Needs review"}`,
+    `Relationship nodes: ${dossier.familyTree.hypothesis.value?.nodes.length ?? 0}`,
+    ...(
+      dossier.familyTree.hypothesis.value?.unresolvedQuestions.map((question) => `- Open question: ${question}`) ?? ["- No unresolved questions recorded."]
+    ),
+    "",
+    "### Family Tree Review Tasks",
+    ...(
+      dossier.familyTree.reviewTasks.length
+        ? dossier.familyTree.reviewTasks.map((task) => `- ${task.title}: ${task.nextAction}`)
+        : ["- No family tree review tasks open."]
+    ),
+    "",
+    "## Source Governance",
+    ...(
+      dossier.sourceGovernance.catalog.value?.auditNotes.map((note) => `- ${note}`) ?? ["- Source governance catalog missing."]
+    ),
+    "",
+    "### Approval-Gated Sources",
+    ...(
+      dossier.sourceGovernance.catalog.value?.governedSources.map((source) => `- ${source.label}: ${source.accessClass} (${source.reason})`) ?? ["- No governed sources listed."]
+    ),
+    "",
+    "### Manual Research Tasks",
+    ...(
+      dossier.sourceGovernance.catalog.value?.manualTasks.map((task) => `- ${task.title}: ${task.description}`) ?? ["- No manual tasks listed."]
     ),
     "",
     "## Operator Queue",

@@ -1,17 +1,12 @@
 import type { IntakeSeed, SourceFact } from "@ple/types";
-import { fact, nowIso, slug } from "../lib";
+import { fact, intakeSubject, nowIso, seedIdentity, slug } from "../lib";
 
 const OFFICIAL_RECORDS_URL = "https://onlineservices.miamidadeclerk.gov/officialrecords";
 
 export async function fetchDeedEvidenceFacts(runId: string, seed: IntakeSeed): Promise<SourceFact[]> {
   const fetchedAt = nowIso();
-  const rawId = `deed-history:${slug(seed.parcelId || seed.ownerName || seed.propertyAddress)}`;
-  const subject = {
-    ownerName: seed.ownerName,
-    propertyAddress: seed.propertyAddress,
-    parcelId: seed.parcelId,
-    county: seed.county,
-  };
+  const rawId = `deed-history:${slug(seedIdentity(seed))}`;
+  const subject = intakeSubject(seed);
 
   return [
     fact({
