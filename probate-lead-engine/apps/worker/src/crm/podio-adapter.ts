@@ -96,6 +96,25 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
             review_tasks: dossier.probateDocket.reviewTasks,
             document_request_task: dossier.probateDocket.documentRequestTask,
           },
+          marriage_death_indicators: {
+            status: dossier.marriageDeathIndicators.sourceStatus.value,
+            marriage_license: dossier.marriageDeathIndicators.marriageLicense.value,
+            date_of_birth: dossier.marriageDeathIndicators.dateOfBirth.value,
+            date_of_death: dossier.marriageDeathIndicators.dateOfDeath.value,
+            obituary_link: dossier.marriageDeathIndicators.obituaryLink.value,
+            memorial_searches: dossier.marriageDeathIndicators.memorialSearches.value,
+            death_certificate_status: dossier.marriageDeathIndicators.deathCertificateStatus.value,
+            incarceration_status: dossier.marriageDeathIndicators.incarcerationStatus.value,
+            review_tasks: dossier.marriageDeathIndicators.reviewTasks,
+            death_certificate_task: dossier.marriageDeathIndicators.deathCertificateTask,
+          },
+          family_tree: {
+            status: dossier.familyTree.sourceStatus.value,
+            hypothesis: dossier.familyTree.hypothesis.value,
+            review_tasks: dossier.familyTree.reviewTasks,
+          },
+          source_governance: dossier.sourceGovernance.catalog.value,
+          heirship_family_tree_status: dossier.familyTree.sourceStatus.value,
           workflow_status: dossier.workflow.status,
           workflow_rules: dossier.workflow.rules.map((rule) => ({
             code: rule.code,
@@ -137,6 +156,28 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
           title: task.title,
           description: task.nextAction,
         })),
+        ...(dossier.marriageDeathIndicators.deathCertificateTask.required
+          ? [{
+            title: "Capture death certificate status",
+            description: dossier.marriageDeathIndicators.deathCertificateTask.reason,
+          }]
+          : []),
+        ...dossier.marriageDeathIndicators.reviewTasks.map((task) => ({
+          title: task.title,
+          description: task.nextAction,
+        })),
+        ...dossier.familyTree.reviewTasks.map((task) => ({
+          title: task.title,
+          description: task.nextAction,
+        })),
+        ...dossier.sourceGovernance.reviewTasks.map((task) => ({
+          title: task.title,
+          description: task.nextAction,
+        })),
+        ...(dossier.sourceGovernance.catalog.value?.manualTasks.map((task) => ({
+          title: task.title,
+          description: task.description,
+        })) ?? []),
         {
           title: "Decide enrichment run",
           description: "Run skip trace/contact enrichment only after raw public-source facts are accepted.",

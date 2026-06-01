@@ -1,4 +1,4 @@
-import type { DossierClaim, DossierEvent, DocketReference, LatestDeedRecord, OfficialRecordCrossLink, OrBookPageRef, RawDossier, ReviewFlag, SourceEvidenceReviewTask, SourceFact, SourceKey, SourceRef, TaxAmountDue } from "@ple/types";
+import type { DossierClaim, DossierEvent, DocketReference, FamilyTreeHypothesisData, LatestDeedRecord, MemorialSearchPlaceholder, OfficialRecordCrossLink, OrBookPageRef, RawDossier, ReviewFlag, SourceEvidenceReviewTask, SourceFact, SourceGovernanceCatalog, SourceKey, SourceRef, TaxAmountDue } from "@ple/types";
 import { nowIso, sourceRef, slug } from "../lib";
 import { runSourceEvidenceQa } from "../qa/source-evidence";
 import { buildOperatorQueue } from "../queue/operator-queue";
@@ -319,6 +319,56 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
       reviewFlags: ["PROBATE_DOCUMENT_REQUEST_REQUIRED", "HUMAN_REVIEW_REQUIRED"] as ReviewFlag[],
     },
   };
+  const marriageDeathSourceStatus = claim<string>(facts, "marriage_death_status", "MISSING_MARRIAGE_DEATH_FACT");
+  const marriageLicense = claim<string>(facts, "marriage_license_signal", "MISSING_MARRIAGE_DEATH_FACT");
+  const dateOfBirth = claim<string>(facts, "date_of_birth", "MISSING_MARRIAGE_DEATH_FACT");
+  const dateOfDeath = claim<string>(facts, "date_of_death", "MISSING_MARRIAGE_DEATH_FACT");
+  const obituaryLink = claim<string>(facts, "obituary_link", "MISSING_MARRIAGE_DEATH_FACT");
+  const memorialSearches = claim<MemorialSearchPlaceholder[]>(facts, "memorial_search_placeholder", "MISSING_MARRIAGE_DEATH_FACT");
+  const deathCertificateStatus = claim<string>(facts, "death_certificate_status", "MISSING_MARRIAGE_DEATH_FACT");
+  const incarcerationStatus = claim<string>(facts, "incarceration_status_signal", "MISSING_MARRIAGE_DEATH_FACT");
+  const marriageDeathIndicators = {
+    sourceStatus: marriageDeathSourceStatus,
+    marriageLicense,
+    dateOfBirth,
+    dateOfDeath,
+    obituaryLink,
+    memorialSearches,
+    deathCertificateStatus,
+    incarcerationStatus,
+    reviewTasks: compactTasks([
+      reviewTask({ code: "MARRIAGE_LICENSE", title: "Check marriage-license signal", source: "clerk_of_courts", reason: "Marriage records are research facts, not spouse/heir determinations.", nextAction: "Search clerk records and record marriage-license signal or absent status.", claim: marriageLicense, fallbackFlags: ["MISSING_MARRIAGE_DEATH_FACT", "SOURCE_EVIDENCE_REQUIRED", "HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "DOB_DOD", title: "Capture DOB/DOD indicators", source: "clerk_of_courts", reason: "Birth and death dates must remain reviewable facts with source refs.", nextAction: "Record DOB/DOD from public sources or mark unknown with review flags.", claim: combineClaims([dateOfBirth, dateOfDeath]), fallbackFlags: ["MISSING_MARRIAGE_DEATH_FACT", "HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "OBITUARY_LINK", title: "Capture obituary links", source: "clerk_of_courts", reason: "Obituary links support research but do not prove heirship.", nextAction: "Attach obituary URLs or note that none were found.", claim: obituaryLink, fallbackFlags: ["MISSING_MARRIAGE_DEATH_FACT", "HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "MEMORIAL_SEARCH", title: "Review memorial search placeholders", source: "clerk_of_courts", reason: "Findagrave/Legacy/Google placeholders keep research auditable without automated scraping.", nextAction: "Record search results or absent status for each memorial provider.", claim: memorialSearches, fallbackFlags: ["HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "DEATH_CERTIFICATE", title: "Capture death certificate status", source: "clerk_of_courts", reason: "VitalChek and automated death-certificate ordering remain blocked.", nextAction: "Record whether a death certificate was requested, obtained, or still missing.", claim: deathCertificateStatus, fallbackFlags: ["MANUAL_DEATH_CERTIFICATE_REQUIRED", "HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "INCARCERATION", title: "Check incarceration status signal", source: "clerk_of_courts", reason: "Incarceration status is a placeholder research signal only.", nextAction: "Record incarceration signal or mark unknown with source evidence.", claim: incarcerationStatus, fallbackFlags: ["MISSING_MARRIAGE_DEATH_FACT", "HUMAN_REVIEW_REQUIRED"] }),
+    ]),
+    deathCertificateTask: {
+      required: deathCertificateStatus.value === null,
+      reason: "Death certificate status is not captured; keep manual vital-record steps as operator tasks.",
+      sourceRefs: deathCertificateStatus.sourceRefs,
+      reviewFlags: ["MANUAL_DEATH_CERTIFICATE_REQUIRED", "HUMAN_REVIEW_REQUIRED"] as ReviewFlag[],
+    },
+  };
+  const familyTreeSourceStatus = claim<string>(facts, "family_tree_status", "MISSING_PROBATE_FACT");
+  const familyTreeHypothesisClaim = claim<FamilyTreeHypothesisData>(facts, "family_tree_hypothesis", "MISSING_PROBATE_FACT");
+  const familyTree = {
+    sourceStatus: familyTreeSourceStatus,
+    hypothesis: familyTreeHypothesisClaim,
+    reviewTasks: compactTasks([
+      reviewTask({ code: "FAMILY_TREE_HYPOTHESIS", title: "Build family tree hypothesis", source: "intake", reason: "Family tree output is a hypothesis with evidence, not a legal heir determination.", nextAction: "Fill relationship nodes with names, confidence, and source refs or leave review-required.", claim: familyTreeHypothesisClaim, fallbackFlags: ["HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "FAMILY_TREE_CONTACTS", title: "Add contact placeholders", source: "intake", reason: "Contact placeholders must exist before enrichment or outreach.", nextAction: "Attach contact placeholders to relationship nodes without live outreach.", claim: familyTreeHypothesisClaim, fallbackFlags: ["HUMAN_REVIEW_REQUIRED", "NO_ENRICHMENT_RUN"] }),
+    ]),
+  };
+  const sourceGovernanceCatalog = claim<SourceGovernanceCatalog>(facts, "source_governance_catalog", "PAID_SOURCE_APPROVAL_REQUIRED");
+  const sourceGovernance = {
+    catalog: sourceGovernanceCatalog,
+    reviewTasks: compactTasks([
+      reviewTask({ code: "PAID_SOURCE_GOVERNANCE", title: "Confirm paid-source approval gates", source: "intake", reason: "IDI, Intelius, Ancestry, ForeWarn, and VitalChek cannot be automated by default.", nextAction: "Obtain client approval before any paid-source use or storage.", claim: sourceGovernanceCatalog, fallbackFlags: ["PAID_SOURCE_APPROVAL_REQUIRED", "STORAGE_APPROVAL_REQUIRED", "HUMAN_REVIEW_REQUIRED"] }),
+      reviewTask({ code: "MANUAL_SOURCE_GOVERNANCE", title: "Route manual research tasks", source: "intake", reason: "Door knocks, neighbor research, and code enforcement remain manual operator work.", nextAction: "Create manual tasks only after explicit approval.", claim: sourceGovernanceCatalog, fallbackFlags: ["MANUAL_SOURCE_APPROVAL_REQUIRED", "HUMAN_REVIEW_REQUIRED"] }),
+    ]),
+  };
   const workflow = evaluateWorkflowRules(facts);
   const auditFlags = Array.from(new Set(
     facts
@@ -352,6 +402,8 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     ownerName.value ? `Owner seed: ${ownerName.value}.` : "Owner name was not confirmed by the current run.",
     caseNumber.value ? `Case number seed: ${caseNumber.value}.` : null,
     "Probate/civil/family docket facts are record-only and do not assert legal conclusions.",
+    "Marriage, death, and family-tree indicators are hypothesis/research facts only.",
+    "Paid and manual sources remain approval-gated until client sign-off.",
     "Miami-Dade public source availability was checked before any CRM or outreach action.",
     "This is not a skip-traced or scored dossier. It is a raw public-source shell for human review.",
   ];
@@ -381,6 +433,9 @@ export function buildRawDossier(runId: string, facts: SourceFact[]): RawDossier 
     taxHistory,
     deedHistory,
     probateDocket,
+    marriageDeathIndicators,
+    familyTree,
+    sourceGovernance,
     titleEvents,
     workflow,
     narrative,

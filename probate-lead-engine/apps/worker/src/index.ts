@@ -1,8 +1,11 @@
 import type { IntakeSeed, RawDossier, SourceFact } from "@ple/types";
 import { fetchDeedEvidenceFacts } from "./adapters/deed-evidence";
+import { fetchFamilyTreeHypothesisFacts } from "./adapters/family-tree-hypothesis";
+import { fetchMarriageDeathIndicatorFacts } from "./adapters/marriage-death-indicators";
 import { fetchOfficialRecordFacts } from "./adapters/official-records";
 import { fetchProbateCourtFacts } from "./adapters/probate-court";
 import { fetchPropertyFacts } from "./adapters/property-appraiser";
+import { fetchSourceGovernanceFacts } from "./adapters/source-governance";
 import { fetchTaxHistoryFacts } from "./adapters/tax-history";
 import { PodioAdapter } from "./crm/podio-adapter";
 import { buildRawDossier } from "./dossier/build-raw-dossier";
@@ -129,14 +132,17 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   const runId = `run-${Date.now()}-${slug(identity)}`;
   const subject = intakeSubject(seed);
 
-  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts, probateFacts] = await Promise.all([
+  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts, probateFacts, marriageDeathFacts, familyTreeFacts, governanceFacts] = await Promise.all([
     fetchPropertyFacts(runId, seed),
     fetchOfficialRecordFacts(runId, seed),
     fetchTaxHistoryFacts(runId, seed),
     fetchDeedEvidenceFacts(runId, seed),
     fetchProbateCourtFacts(runId, seed),
+    fetchMarriageDeathIndicatorFacts(runId, seed),
+    fetchFamilyTreeHypothesisFacts(runId, seed),
+    fetchSourceGovernanceFacts(runId, seed),
   ]);
-  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts, ...probateFacts];
+  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts, ...probateFacts, ...marriageDeathFacts, ...familyTreeFacts, ...governanceFacts];
   const propertyCountyFact = fact({
     runId,
     source: "property_appraiser",

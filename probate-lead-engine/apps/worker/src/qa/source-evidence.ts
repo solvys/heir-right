@@ -69,6 +69,11 @@ export function runSourceEvidenceQa(dossier: Omit<RawDossier, "evidenceQa">): So
     checkClaim({ code: "AFFIDAVIT_OF_HEIRS", label: "Affidavit of heirs", claim: dossier.probateDocket.affidavitOfHeirs }),
     checkClaim({ code: "PROBATE_DOCUMENTS", label: "Probate document availability", claim: dossier.probateDocket.documentAvailability }),
     checkClaim({ code: "PROBATE_OR_CROSS_LINK", label: "Official record cross-links", claim: dossier.probateDocket.officialRecordCrossLinks }),
+    checkClaim({ code: "MARRIAGE_DEATH_STATUS", label: "Marriage/death research status", claim: dossier.marriageDeathIndicators.sourceStatus }),
+    checkClaim({ code: "DEATH_CERTIFICATE", label: "Death certificate status", claim: dossier.marriageDeathIndicators.deathCertificateStatus }),
+    checkClaim({ code: "FAMILY_TREE_STATUS", label: "Family tree status", claim: dossier.familyTree.sourceStatus }),
+    checkClaim({ code: "FAMILY_TREE_HYPOTHESIS", label: "Family tree hypothesis", claim: dossier.familyTree.hypothesis }),
+    checkClaim({ code: "SOURCE_GOVERNANCE", label: "Source governance catalog", claim: dossier.sourceGovernance.catalog }),
   ];
   const reviewFlags = unique(checks.flatMap((check) => check.reviewFlags));
   const status = rollup(checks);
