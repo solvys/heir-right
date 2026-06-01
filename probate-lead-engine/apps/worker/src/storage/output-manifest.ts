@@ -3,7 +3,9 @@ export type PipelineOutputName =
   | "latest-dossier.json"
   | "podio-dry-run.json"
   | "internal-summary.md"
-  | "internal-summary.html";
+  | "internal-summary.html"
+  | "completed-lead-report.md"
+  | "completed-lead-report.html";
 
 export interface PipelineOutput {
   path: string;

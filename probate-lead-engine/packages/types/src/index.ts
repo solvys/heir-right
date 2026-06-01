@@ -186,7 +186,11 @@ export type ReviewFlag =
   | "MANUAL_DEATH_CERTIFICATE_REQUIRED"
   | "PAID_SOURCE_APPROVAL_REQUIRED"
   | "MANUAL_SOURCE_APPROVAL_REQUIRED"
-  | "STORAGE_APPROVAL_REQUIRED";
+  | "STORAGE_APPROVAL_REQUIRED"
+  | "MISSING_OFFER_MATH_FACT"
+  | "UNDERWRITING_REVIEW_REQUIRED"
+  | "OUTREACH_BLOCKED"
+  | "REPORT_REVIEW_REQUIRED";
 
 export type FactType =
   | "source_status"
@@ -238,7 +242,11 @@ export type FactType =
   | "incarceration_status_signal"
   | "family_tree_status"
   | "family_tree_hypothesis"
-  | "source_governance_catalog";
+  | "source_governance_catalog"
+  | "offer_as_is_value"
+  | "offer_heir_count"
+  | "offer_buy_percentage"
+  | "offer_minimum_net_profit";
 
 export interface SourceSubject {
   ownerName?: string;
@@ -511,6 +519,109 @@ export interface SourceGovernance {
   reviewTasks: SourceEvidenceReviewTask[];
 }
 
+export type ReportReviewStatus = "internal_draft" | "pending_operator_review" | "reviewed" | "approved_internal_only";
+
+export type UnderwritingReviewStatus = "not_started" | "draft" | "pending_review" | "reviewed";
+
+export type DocumentReadinessStatus = "draft_only" | "pending_review" | "ready_internal";
+
+export type OutreachReadinessStatus = "blocked" | "pending_review" | "ready_for_draft_outreach";
+
+export type LeadBucket = "qualified" | "bonus_warm" | "generic_seed" | "disqualified" | "review_required";
+
+export interface ReportReviewGate {
+  reportStatus: ReportReviewStatus;
+  underwritingStatus: UnderwritingReviewStatus;
+  documentReadiness: DocumentReadinessStatus;
+  outreachReadiness: OutreachReadinessStatus;
+  externalUseBlocked: boolean;
+  reviewerPlaceholder: string;
+  approvalPlaceholder: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OfferProfitField {
+  label: string;
+  value: number | null;
+  currency: "USD";
+  confidence: number;
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+  note?: string;
+}
+
+export interface OfferProfitMath {
+  asIsValue: OfferProfitField;
+  taxesDue: OfferProfitField;
+  liens: OfferProfitField;
+  mortgages: OfferProfitField;
+  sellingCosts: OfferProfitField;
+  probateCosts: OfferProfitField;
+  partitionCosts: OfferProfitField;
+  postEquityValue: OfferProfitField;
+  heirCount: OfferProfitField;
+  equityPerHeir: OfferProfitField;
+  buyPercentage: OfferProfitField;
+  offerAmount: OfferProfitField;
+  profit: OfferProfitField;
+  minimumNetProfit: OfferProfitField;
+  computedAt: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface ResearchStepChecklistItem {
+  code: string;
+  label: string;
+  status: "complete" | "partial" | "missing" | "not_applicable";
+  note: string;
+  sourceRefs: SourceRef[];
+  reviewFlags: ReviewFlag[];
+}
+
+export interface ContactPlaceholderEntry {
+  role: string;
+  name?: string;
+  phones: string[];
+  emails: string[];
+  addresses: string[];
+  note: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface LeadQualityProfile {
+  model: string;
+  leadBucket: LeadBucket;
+  enabledSignals: string[];
+  missingSignals: string[];
+  reasonCodes: string[];
+  promotionEligible: boolean;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface CompletedLeadReport {
+  id: string;
+  dossierId: string;
+  generatedAt: string;
+  reviewGate: ReportReviewGate;
+  backstory: string;
+  researchChecklist: ResearchStepChecklistItem[];
+  propertySummary: string;
+  taxSummary: string;
+  deedSummary: string;
+  probateSummary: string;
+  familyTreeSummary: string;
+  contactPlaceholders: ContactPlaceholderEntry[];
+  missingData: string[];
+  sourceLinks: Array<{ label: string; url?: string; source: SourceKey }>;
+  reviewFlags: ReviewFlag[];
+  leadQualityProfile: LeadQualityProfile;
+  offerMath: OfferProfitMath;
+  formats: {
+    markdown: string;
+    html: string;
+  };
+}
+
 export type OperatorQueueState = "ready_for_review" | "manual_review" | "blocked" | "disqualified";
 
 export interface OperatorQueueItem {
@@ -588,6 +699,7 @@ export interface RawDossier {
     reviewFlags: ReviewFlag[];
   };
   documentPacket?: DocumentPacket;
+  completedLeadReport?: CompletedLeadReport;
   audit: {
     sourceRefs: SourceRef[];
     reviewFlags: ReviewFlag[];

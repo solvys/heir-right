@@ -75,6 +75,28 @@ export function runSourceEvidenceQa(dossier: Omit<RawDossier, "evidenceQa">): So
     checkClaim({ code: "FAMILY_TREE_HYPOTHESIS", label: "Family tree hypothesis", claim: dossier.familyTree.hypothesis }),
     checkClaim({ code: "SOURCE_GOVERNANCE", label: "Source governance catalog", claim: dossier.sourceGovernance.catalog }),
   ];
+  if (dossier.completedLeadReport) {
+    checks.push({
+      code: "OFFER_AS_IS_VALUE",
+      label: "As-is value",
+      status: dossier.completedLeadReport.offerMath.asIsValue.value !== null ? "passed" : "review_required",
+      explanation: dossier.completedLeadReport.offerMath.asIsValue.value !== null
+        ? "As-is value captured for underwriting."
+        : "As-is value remains a placeholder with visible review flags.",
+      sourceRefs: dossier.completedLeadReport.offerMath.asIsValue.sourceRefs,
+      reviewFlags: dossier.completedLeadReport.offerMath.asIsValue.reviewFlags,
+    });
+    checks.push({
+      code: "REPORT_REVIEW_GATE",
+      label: "Report review gate",
+      status: dossier.completedLeadReport.reviewGate.externalUseBlocked ? "review_required" : "failed",
+      explanation: dossier.completedLeadReport.reviewGate.externalUseBlocked
+        ? "Report is internal-only until operator review."
+        : "Report review gate failed to block external use.",
+      sourceRefs: [],
+      reviewFlags: dossier.completedLeadReport.reviewGate.reviewFlags,
+    });
+  }
   const reviewFlags = unique(checks.flatMap((check) => check.reviewFlags));
   const status = rollup(checks);
 

@@ -75,6 +75,18 @@ async function main(): Promise<void> {
   if (!result.dossier.documentPacket?.formats.markdown) failures.push("Internal summary markdown missing.");
   if (!result.dossier.documentPacket?.formats.html.includes("streamdown-doc")) failures.push("Streamdown HTML output missing.");
   if (result.dossier.documentPacket?.renderer !== "streamdown") failures.push("Document packet renderer is not Streamdown.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("Completed Lead Report")) failures.push("Completed lead report markdown missing.");
+  if (!result.dossier.completedLeadReport?.formats.html.includes("Internal draft")) failures.push("Completed lead report review banner missing.");
+  if (!result.dossier.completedLeadReport?.reviewGate.externalUseBlocked) failures.push("Completed lead report external-use gate missing.");
+  if (!result.dossier.completedLeadReport?.offerMath.reviewFlags.includes("UNDERWRITING_REVIEW_REQUIRED")) failures.push("Offer math underwriting review flag missing.");
+  if (!result.dossier.completedLeadReport?.researchChecklist.length) failures.push("Completed lead report research checklist missing.");
+  if (!result.dossier.completedLeadReport?.leadQualityProfile.leadBucket) failures.push("Lead quality profile bucket missing.");
+  if (!result.facts.some((item) => item.factType === "offer_buy_percentage")) failures.push("Offer buy percentage fact missing.");
+  if (!result.facts.some((item) => item.factType === "offer_minimum_net_profit")) failures.push("Offer minimum net profit fact missing.");
+  const podioOffer = (result.dossier.crm.payload as { appModel?: { fields?: { offer_math?: unknown; lead_bucket?: unknown; outreach_readiness?: unknown } } })?.appModel?.fields;
+  if (!podioOffer?.offer_math) failures.push("Podio offer_math payload missing.");
+  if (!podioOffer?.lead_bucket) failures.push("Podio lead_bucket payload missing.");
+  if (!podioOffer?.outreach_readiness) failures.push("Podio outreach_readiness payload missing.");
   if (!result.dossier.workflow.rules.length) failures.push("Workflow rules missing.");
   if (!result.dossier.workflow.leadQuality.enabledSignals.length) failures.push("Lead-quality settings missing.");
   if (!result.facts.some((item) => item.factType === "owner_type")) failures.push("Owner-type workflow fact missing.");

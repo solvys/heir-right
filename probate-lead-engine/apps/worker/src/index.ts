@@ -4,11 +4,13 @@ import { fetchFamilyTreeHypothesisFacts } from "./adapters/family-tree-hypothesi
 import { fetchMarriageDeathIndicatorFacts } from "./adapters/marriage-death-indicators";
 import { fetchOfficialRecordFacts } from "./adapters/official-records";
 import { fetchProbateCourtFacts } from "./adapters/probate-court";
+import { fetchOfferProfitInputFacts } from "./adapters/offer-profit-inputs";
 import { fetchPropertyFacts } from "./adapters/property-appraiser";
 import { fetchSourceGovernanceFacts } from "./adapters/source-governance";
 import { fetchTaxHistoryFacts } from "./adapters/tax-history";
 import { PodioAdapter } from "./crm/podio-adapter";
 import { buildRawDossier } from "./dossier/build-raw-dossier";
+import { generateCompletedLeadReport } from "./documents/completed-lead-report";
 import { generateInternalSummary } from "./documents/internal-summary";
 import { fact, intakeSubject, normalizeEstateSearchKey, nowIso, seedIdentity, slug } from "./lib";
 import { jsonOutput, PipelineOutput, textOutput } from "./storage/output-manifest";
@@ -132,7 +134,7 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   const runId = `run-${Date.now()}-${slug(identity)}`;
   const subject = intakeSubject(seed);
 
-  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts, probateFacts, marriageDeathFacts, familyTreeFacts, governanceFacts] = await Promise.all([
+  const [propertyFacts, officialRecordFacts, taxFacts, deedFacts, probateFacts, marriageDeathFacts, familyTreeFacts, governanceFacts, offerProfitFacts] = await Promise.all([
     fetchPropertyFacts(runId, seed),
     fetchOfficialRecordFacts(runId, seed),
     fetchTaxHistoryFacts(runId, seed),
@@ -141,8 +143,9 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
     fetchMarriageDeathIndicatorFacts(runId, seed),
     fetchFamilyTreeHypothesisFacts(runId, seed),
     fetchSourceGovernanceFacts(runId, seed),
+    fetchOfferProfitInputFacts(runId, seed),
   ]);
-  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts, ...probateFacts, ...marriageDeathFacts, ...familyTreeFacts, ...governanceFacts];
+  const facts = [...intakeFacts(runId, seed), ...propertyFacts, ...officialRecordFacts, ...taxFacts, ...deedFacts, ...probateFacts, ...marriageDeathFacts, ...familyTreeFacts, ...governanceFacts, ...offerProfitFacts];
   const propertyCountyFact = fact({
     runId,
     source: "property_appraiser",
@@ -158,6 +161,7 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
   facts.push(propertyCountyFact);
 
   const dossier = buildRawDossier(runId, facts);
+  dossier.completedLeadReport = await generateCompletedLeadReport(dossier);
   const podio = new PodioAdapter(options.env);
   const podioPayload = await podio.dryRun(dossier);
   dossier.crm.payload = podioPayload;
@@ -169,6 +173,8 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
     podio: jsonOutput("podio-dry-run.json", podioPayload),
     summaryMarkdown: textOutput("internal-summary.md", dossier.documentPacket.formats.markdown),
     summaryHtml: textOutput("internal-summary.html", dossier.documentPacket.formats.html, "text/html; charset=utf-8"),
+    completedReportMarkdown: textOutput("completed-lead-report.md", dossier.completedLeadReport.formats.markdown),
+    completedReportHtml: textOutput("completed-lead-report.html", dossier.completedLeadReport.formats.html, "text/html; charset=utf-8"),
   };
   const outputs = {
     latestRun: outputFiles.latestRun.path,
@@ -176,6 +182,8 @@ export async function runDryPipeline(seed: IntakeSeed = seedFromArgs(), options:
     podio: outputFiles.podio.path,
     summaryMarkdown: outputFiles.summaryMarkdown.path,
     summaryHtml: outputFiles.summaryHtml.path,
+    completedReportMarkdown: outputFiles.completedReportMarkdown.path,
+    completedReportHtml: outputFiles.completedReportHtml.path,
   };
 
   return { runId, facts, dossier, outputs, outputFiles };
