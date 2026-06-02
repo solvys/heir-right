@@ -144,8 +144,10 @@ Required corrections before complete:
 
 ### What tomorrow's agent should improve before new work
 
+- Create a fresh 2026-06-03 branch before touching code; do not continue implementation on `codex/heirright-2026-06-02-s8-s9-run-point`.
 - Start with S9 access/readback blockers, not new feature scope.
 - If Podio access is still blocked, prepare the exact evidence packet and test checklist for the first controlled validation run.
+- If S9 remains externally blocked after that packet, do not stop there; choose the next safe sprint/milestone lane from repo/Linear truth and complete/verify it with smoke gates.
 - If browser tooling is callable, perform a rendered artifact walkthrough and capture screenshots before touching S10/S11.
 
 ## Closeout State
