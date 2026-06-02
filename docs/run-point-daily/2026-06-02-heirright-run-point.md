@@ -2,7 +2,7 @@
 
 Branch: `codex/heirright-2026-06-02-s8-s9-run-point`  
 Pushed remote branch: `origin/codex/heirright-2026-06-02-s8-s9-run-point`  
-Pushed ref: branch tip on `origin/codex/heirright-2026-06-02-s8-s9-run-point` after closeout
+Pushed ref: `origin/codex/heirright-2026-06-02-s8-s9-run-point` @ `4d496a76a667661912ecf78fff42b4357d84223b`
 
 ## Previous-Day Touchups Reviewed
 
@@ -28,6 +28,7 @@ Pushed ref: branch tip on `origin/codex/heirright-2026-06-02-s8-s9-run-point` af
 - Ran all required smoke gates from `probate-lead-engine` and confirmed build, worker validation, dry-run pipeline, and artifact build all passed.
 - Audited the in-progress S8/S9 implementation against the HeirRight workflow checklist and the example lead-packet shape.
 - Patched the artifact dashboard copy so the main operator surface uses lead-workflow language instead of internal engineering terms such as raw dossier, dry-run, PRD loop, run, and selected.
+- Pushed the post-closeout artifact dashboard workspace polish so no local HeirRight UI work remains stranded in the checkout.
 - Confirmed the current dry-run output keeps outreach as draft/manual-only, keeps the no-auto-send guard enabled, and keeps Podio live sync disabled until access plus explicit approval exist.
 
 ## What Was Not Done
@@ -87,6 +88,13 @@ pnpm --filter @ple/artifact build
 ```
 
 Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/artifact build
+```
+
+Passed again after the post-closeout artifact dashboard workspace polish.
 
 ## /solvys-heir-audit
 
