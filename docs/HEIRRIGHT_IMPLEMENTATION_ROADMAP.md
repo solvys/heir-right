@@ -1,4 +1,4 @@
-# HeirRight S1-S11 Run-Point Roadmap
+# HeirRight S1-S15 Run-Point Roadmap
 
 Status: implementation-facing roadmap and run-point plan
 Friday delivery target: completed Friday, May 22, 2026
@@ -6,6 +6,7 @@ Post-Friday owner: Claude Cowork / Codex Automation, with TP/Sam at milestone ga
 Track cap: 5 child tracks max per execution batch
 Historical Linear project: HeirRight Friday Delivery preserves completed S1-S4 evidence
 Active Linear project: HeirRight Deal Engine Automation
+2.0 Beta rule: S12-S15 use whole sprints, exactly two tracks per sprint, and two sprints per repo branch.
 
 ## New Onboarding Inputs
 
@@ -313,7 +314,7 @@ Acceptance:
 
 ## Current Implementation Status
 
-Last roadmap sync: June 1, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-78`).
+Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-90`).
 
 ### Sprint completion (post-Friday)
 
@@ -327,8 +328,12 @@ Last roadmap sync: June 1, 2026. Linear project `HeirRight Deal Engine Automatio
 | S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
 | S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Todo | — |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
+| S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
+| S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
+| S14 — Daily lead production + qualification | `HEI-85`, `HEI-87`–`HEI-88` | Done; production seeds needed for volume proof | 2026-06-02 |
+| S15 — Google/Podio export + readback | `HEI-86`, `HEI-89`–`HEI-90` | Done; live credentials/readback needed for milestone proof | 2026-06-02 |
 
-Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) now blocks on S9 Podio access/readback validation; `HEI-77` and `HEI-78` remain open for later milestones.
+Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) still blocks on S9 Podio access/readback validation; `HEI-77` (30-Day Workflow Automation) is In Progress with S14/S15 evidence attached and remains blocked on live Podio/Google readback plus production volume seeds; `HEI-78` remains open for the 90-Day Deal Engine gate.
 
 ### Implemented in the workspace
 
@@ -338,6 +343,10 @@ Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) now blocks on S9 Podi
 - Estate-name search path, probate docket model, marriage/death indicators, family-tree hypothesis, and paid/manual source governance (S6).
 - Completed lead report renderer (markdown/HTML), offer/profit math, CRM field expansion, and human review gate (S7).
 - Outreach draft assets, compliance review state, manual follow-up tasks, outreach-ready blockers, no-auto-send guard, report/Podio/artifact wiring, and validation checks (S8).
+- Google OAuth beta access, protected artifact/worker runtime, account state, and allowed-domain/admin-email gating (S12).
+- Streamdown report rail, client report snapshot shape, report cover sheet, neutral frosted UI, and operator export-readiness copy (S13).
+- Daily county production ledger, dedupe/dead-letter accounting, raw/review/qualified count separation, and qualification blockers for source-health/no-enrichment/placeholder records (S14).
+- Google Workspace and Podio export/readback service paths, `/api/exports`, `/api/connections/status`, Export dropdown result/blocker rendering, and footer status indicators (S15).
 - Miami-Dade Property Search and Official Records adapters perform live public app reachability checks and produce review flags.
 - `PodioAdapter` produces dry-run payloads with expanded S6/S7/S8 fields plus S9 access, CSV, readback, and blocker prep; live sync remains disabled until Podio access and live-write approval are validated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
