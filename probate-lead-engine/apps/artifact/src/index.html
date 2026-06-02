@@ -82,7 +82,8 @@
       transition: grid-template-columns .32s var(--ease);
     }
 
-    .workspace.is-collapsed { grid-template-columns: 60px minmax(0, 1fr); }
+    .workspace.is-collapsed,
+    .workspace.is-auto-collapsed { grid-template-columns: 60px minmax(0, 1fr); }
 
     .sidebar {
       min-width: 0;
@@ -150,7 +151,8 @@
       flex: 0 0 auto;
     }
 
-    .workspace.is-collapsed .brand {
+    .workspace.is-collapsed .brand,
+    .workspace.is-auto-collapsed .brand {
       opacity: 0;
       transform: translateX(-8px);
       pointer-events: none;
@@ -158,7 +160,8 @@
       overflow: hidden;
     }
 
-    .workspace.is-collapsed .sidebar-top { justify-content: center; }
+    .workspace.is-collapsed .sidebar-top,
+    .workspace.is-auto-collapsed .sidebar-top { justify-content: center; }
 
     .nav-list {
       display: grid;
@@ -203,13 +206,15 @@
       transition: opacity .2s var(--ease);
     }
 
-    .workspace.is-collapsed .nav-item {
+    .workspace.is-collapsed .nav-item,
+    .workspace.is-auto-collapsed .nav-item {
       grid-template-columns: 34px;
       justify-content: center;
       padding-inline: 6px;
     }
 
-    .workspace.is-collapsed .nav-label {
+    .workspace.is-collapsed .nav-label,
+    .workspace.is-auto-collapsed .nav-label {
       opacity: 0;
       width: 0;
     }
@@ -273,8 +278,10 @@
     body[data-theme="dark"] .theme-toggle .sun-icon { color: var(--soft); }
     body[data-theme="dark"] .theme-toggle .moon-icon { color: var(--text); }
 
-    .workspace.is-collapsed .sidebar-footer { padding-inline: 6px; }
-    .workspace.is-collapsed .theme-row { justify-content: center; padding-inline: 0; }
+    .workspace.is-collapsed .sidebar-footer,
+    .workspace.is-auto-collapsed .sidebar-footer { padding-inline: 6px; }
+    .workspace.is-collapsed .theme-row,
+    .workspace.is-auto-collapsed .theme-row { justify-content: center; padding-inline: 0; }
 
     .user-strip {
       margin: 0;
@@ -311,9 +318,12 @@
 
     .user-name { font-weight: 700; font-size: 12px; }
     .user-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
-    .workspace.is-collapsed .user-strip { grid-template-columns: 32px; padding: 7px 6px; }
+    .workspace.is-collapsed .user-strip,
+    .workspace.is-auto-collapsed .user-strip { grid-template-columns: 32px; padding: 7px 6px; }
     .workspace.is-collapsed .user-name,
-    .workspace.is-collapsed .user-meta { display: none; }
+    .workspace.is-collapsed .user-meta,
+    .workspace.is-auto-collapsed .user-name,
+    .workspace.is-auto-collapsed .user-meta { display: none; }
 
     body[data-theme="dark"] .topbar,
     body[data-theme="dark"] .statusbar,
@@ -2322,6 +2332,18 @@ function syncFilterWidthToggle() {
   toggle.setAttribute("title", expanded ? "Reset filter width" : "Expand filters");
 }
 
+function syncSidebarState() {
+  const workspace = document.getElementById("workspace");
+  const toggle = document.getElementById("sidebarToggle");
+  if (!workspace || !toggle) return;
+  const autoCollapsed = window.matchMedia("(max-width: 1180px)").matches;
+  workspace.classList.toggle("is-auto-collapsed", autoCollapsed);
+  const collapsed = autoCollapsed || workspace.classList.contains("is-collapsed");
+  toggle.setAttribute("aria-label", autoCollapsed ? "Sidebar auto-collapsed" : collapsed ? "Expand sidebar" : "Collapse sidebar");
+  toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+  toggle.setAttribute("title", autoCollapsed ? "Sidebar auto-collapsed" : collapsed ? "Expand sidebar" : "Collapse sidebar");
+}
+
 function setRailOpen(open) {
   state.railOpen = open;
   const rail = document.getElementById("researchRail");
@@ -2892,11 +2914,9 @@ function openUtilityRail(kind) {
 function wireEvents() {
   document.getElementById("sidebarToggle").addEventListener("click", () => {
     const workspace = document.getElementById("workspace");
+    if (workspace.classList.contains("is-auto-collapsed")) return;
     workspace.classList.toggle("is-collapsed");
-    const collapsed = workspace.classList.contains("is-collapsed");
-    document.getElementById("sidebarToggle").setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
-    document.getElementById("sidebarToggle").setAttribute("aria-expanded", collapsed ? "false" : "true");
-    document.getElementById("sidebarToggle").setAttribute("title", collapsed ? "Expand sidebar" : "Collapse sidebar");
+    syncSidebarState();
   });
   document.getElementById("themeToggle").addEventListener("click", () => {
     applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
@@ -2949,10 +2969,12 @@ function wireEvents() {
     }
   });
   window.addEventListener("resize", () => {
+    syncSidebarState();
     applyFilterWidth();
     state.railWidth = clampRailWidth(state.railWidth);
     setRailOpen(state.railOpen);
   });
+  syncSidebarState();
   wireRailResize();
   wireFilterResize();
 }
