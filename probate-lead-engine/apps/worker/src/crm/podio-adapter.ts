@@ -17,6 +17,15 @@ export interface PodioDryRunPayload {
     reason: string;
     requiredConfig: string[];
   };
+  podioReadiness: {
+    classification: "blocked_missing_access" | "ready_for_controlled_validation";
+    requiredAccess: string[];
+    missingConfig: string[];
+    safeLiveWriteTestSteps: string[];
+    csvDryRunRequirements: string[];
+    readbackChecks: string[];
+    blockers: string[];
+  };
 }
 
 export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
@@ -43,6 +52,7 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
 
   async dryRun(dossier: RawDossier): Promise<PodioDryRunPayload> {
     const health = await this.healthcheck();
+    const missingConfig = this.describeRequiredConfig().filter((key) => !this.env[key]);
     return {
       provider: "podio",
       mode: "dry_run",
@@ -145,6 +155,23 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
           offer_math: dossier.completedLeadReport?.offerMath,
           report_review_gate: dossier.completedLeadReport?.reviewGate,
           outreach_readiness: dossier.completedLeadReport?.reviewGate.outreachReadiness ?? "blocked",
+          outreach_workflow: {
+            compliance_status: dossier.outreach.complianceStatus,
+            readiness: dossier.outreach.readiness,
+            no_auto_send_guard: dossier.outreach.noAutoSendGuard,
+            draft_assets: dossier.outreach.assets.map((asset) => ({
+              id: asset.id,
+              title: asset.title,
+              intended_use: asset.intendedUse,
+              language: asset.language,
+              channel: asset.channel,
+              status: asset.status,
+              automation_allowed: asset.automationAllowed,
+              external_use_allowed: asset.externalUseAllowed,
+              source_document: asset.sourceDocument,
+            })),
+            manual_follow_up_tasks: dossier.outreach.followUpTasks,
+          },
           completed_lead_report_id: dossier.completedLeadReport?.id,
           completed_lead_report_status: dossier.completedLeadReport?.reviewGate.reportStatus ?? "internal_draft",
           next_action: dossier.summary.nextBestAction,
@@ -223,11 +250,58 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
           title: "Decide enrichment run",
           description: "Run skip trace/contact enrichment only after raw public-source facts are accepted.",
         },
+        ...dossier.outreach.followUpTasks.map((task) => ({
+          title: task.title,
+          description: task.description,
+        })),
+        {
+          title: "Review outreach scripts and disclaimers",
+          description: dossier.outreach.readiness.nextAction,
+        },
       ],
       browserAutomationFallback: {
         recommended: !health.ok,
         reason: health.reason ?? "Podio API status unknown.",
         requiredConfig: ["BROWSERBASE_API_KEY", "PODIO_LOGIN_URL", "PODIO_WORKSPACE_NAME", "PODIO_APP_NAME"],
+      },
+      podioReadiness: {
+        classification: missingConfig.length ? "blocked_missing_access" : "ready_for_controlled_validation",
+        requiredAccess: [
+          "Podio workspace invite for HeirRight Acquisition Ops",
+          "Target app ID and app token for Lead Intelligence",
+          "Permission to create one controlled test item",
+          "Permission to create one task, one comment, and one report link on that test item",
+          "CSV export access for Podio and Google Sheets backup comparison",
+          "Explicit live-write approval before sync() is enabled",
+        ],
+        missingConfig,
+        safeLiveWriteTestSteps: [
+          "Create one clearly labeled test lead item from the dry-run payload.",
+          "Attach or link the completed lead report to the test item.",
+          "Create research, offer-review, and manual follow-up tasks only.",
+          "Add one source-note comment with review flags.",
+          "Read the item back and compare fields, tasks, comments, and links against the dry-run payload.",
+          "Delete or archive the test item only after readback evidence is captured.",
+        ],
+        csvDryRunRequirements: [
+          "Export qualified leads from Google Sheets.",
+          "Export bonus or warm leads from Podio.",
+          "Map estate name, property address, folio, probate status, family-tree status, offer math, outreach status, and owner queue.",
+          "Produce a dry-run import report without mutating either original system.",
+        ],
+        readbackChecks: [
+          "Lead item title keeps estate name or property as the visible identifier.",
+          "Review flags and source notes remain visible to the operator.",
+          "Completed lead report link or attachment persists.",
+          "Manual follow-up tasks remain draft/manual and do not send outreach.",
+          "No-auto-send guard is represented in status fields or notes.",
+        ],
+        blockers: [
+          ...(missingConfig.length ? [`Missing Podio API config: ${missingConfig.join(", ")}`] : []),
+          "Live sync is disabled until the target workspace/app is validated.",
+          "No outreach automation is approved.",
+          "CSV exports are required before migration confidence.",
+        ],
       },
     };
   }

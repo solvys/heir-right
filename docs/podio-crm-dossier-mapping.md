@@ -180,6 +180,17 @@ Default next actions:
 - offer math incomplete: create underwriting task;
 - script/doc not reviewed: keep outreach blocked.
 
+## S8/S9 Current State
+
+S8 is implemented locally as draft-only outreach workflow support:
+
+- scripts from the workflow template are stored as draft/reference assets;
+- every script, text, email, and offer-letter draft requires compliance/operator review;
+- follow-up cadence is represented as manual tasks only, including three call attempts, voicemail/text preparation, multi-contact review, and Joshua escalation;
+- the no-auto-send guard blocks calls, voicemails, texts, emails, letters, and offer use until future explicit approval.
+
+S9 remains blocked for live CRM validation. The dry-run payload now carries the readiness packet for Podio access, CSV dry-run mapping, safe live-write test steps, and readback checks, but `sync()` remains disabled until Joshua supplies the workspace/app access and approves a controlled test write.
+
 ## Failure Behavior
 
 - Missing provider credentials: block live sync and keep dry-run payload.

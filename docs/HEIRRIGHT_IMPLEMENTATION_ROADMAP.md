@@ -323,12 +323,12 @@ Last roadmap sync: June 1, 2026. Linear project `HeirRight Deal Engine Automatio
 | S5 — Workflow rules + tax/deed depth | `HEI-30`, `HEI-41`–`HEI-45` | Done | 2026-05-28 |
 | S6 — Probate + heirship research | `HEI-31`, `HEI-46`–`HEI-49`, `HEI-55` | Done | 2026-06-01 |
 | S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
-| S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Todo | — |
-| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Todo | — |
+| S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
+| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
 | S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Todo | — |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
 
-Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) blocks on S8–S9; `HEI-77` and `HEI-78` remain open for later milestones.
+Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) now blocks on S9 Podio access/readback validation; `HEI-77` and `HEI-78` remain open for later milestones.
 
 ### Implemented in the workspace
 
@@ -337,8 +337,9 @@ Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) blocks on S8–S9; `H
 - Workflow rule evaluation, tax/deed adapters, disqualification queue, and source-evidence QA (S5).
 - Estate-name search path, probate docket model, marriage/death indicators, family-tree hypothesis, and paid/manual source governance (S6).
 - Completed lead report renderer (markdown/HTML), offer/profit math, CRM field expansion, and human review gate (S7).
+- Outreach draft assets, compliance review state, manual follow-up tasks, outreach-ready blockers, no-auto-send guard, report/Podio/artifact wiring, and validation checks (S8).
 - Miami-Dade Property Search and Official Records adapters perform live public app reachability checks and produce review flags.
-- `PodioAdapter` produces dry-run payloads with expanded S6/S7 fields; Macro and Close adapters remain validation-gated.
+- `PodioAdapter` produces dry-run payloads with expanded S6/S7/S8 fields plus S9 access, CSV, readback, and blocker prep; live sync remains disabled until Podio access and live-write approval are validated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
 - `site-v2/` scaffold exists for the S10 website redesign track (not launched).
@@ -431,6 +432,8 @@ Tracks:
 
 ### S8 - Outreach Draft Library + Follow-Up Workflow
 
+Status: **Done** (2026-06-01, local validation; Linear `HEI-33` / `HEI-56`–`HEI-60`)
+
 Goal: preserve HeirRight's scripts and follow-up rhythm without creating unapproved live outreach automation.
 
 Tracks:
@@ -451,6 +454,8 @@ Tracks:
    Enforce no automated calls, texts, emails, or external document sends without explicit future approval.
 
 ### S9 - Podio Claude Cowork Automation + Sales Queue Validation
+
+Status: **Blocked / prep-only** until Podio account invite, app/workspace credentials, CSV exports, and explicit live-write approval are supplied.
 
 Goal: prove the Podio automation path without risking Joshua's existing data or team workflow.
 

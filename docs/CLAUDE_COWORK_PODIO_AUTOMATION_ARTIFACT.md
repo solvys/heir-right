@@ -81,6 +81,8 @@ Targets:
 
 ## Podio Validation Gates
 
+Current status: prep-only. The lead engine emits Podio dry-run payloads with outreach workflow fields, manual follow-up tasks, CSV dry-run requirements, safe test-write steps, and readback checks. Podio is not validated for live automation until client-approved credentials, workspace/app IDs, CSV exports, and explicit live-write approval are supplied.
+
 Podio remains the CRM only if it passes these gates:
 
 1. Auth works with client-approved credentials.

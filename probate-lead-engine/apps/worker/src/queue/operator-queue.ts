@@ -19,7 +19,7 @@ function item(input: OperatorQueueItem): OperatorQueueItem {
   };
 }
 
-export function buildOperatorQueue(dossier: Omit<RawDossier, "operatorQueue" | "evidenceQa">): OperatorQueue {
+export function buildOperatorQueue(dossier: Omit<RawDossier, "operatorQueue" | "evidenceQa" | "outreach">): OperatorQueue {
   const items: OperatorQueueItem[] = [];
   const auditFlags = dossier.audit.reviewFlags;
 

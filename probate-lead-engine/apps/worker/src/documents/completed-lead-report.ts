@@ -47,6 +47,12 @@ function formatPercent(field: OfferProfitField): string {
   return `${field.value}%`;
 }
 
+function humanStatus(value: string): string {
+  return value
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 function buildLeadBucket(dossier: RawDossier): LeadBucket {
   if (dossier.operatorQueue.state === "disqualified" || dossier.workflow.status === "stop") return "disqualified";
   if (dossier.operatorQueue.state === "manual_review" || dossier.workflow.status === "review_required") return "review_required";
@@ -342,6 +348,29 @@ function renderOfferTable(offerMath: CompletedLeadReport["offerMath"]): string[]
   ];
 }
 
+function renderOutreachSection(dossier: RawDossier): string[] {
+  const outreach = dossier.outreach;
+  return [
+    "## Outreach Drafts And Follow-Up",
+    `Outreach status: ${humanStatus(outreach.readiness.status)}`,
+    `Compliance review: ${humanStatus(outreach.complianceStatus)}`,
+    `No-auto-send guard: ${outreach.noAutoSendGuard.enabled ? "Enabled" : "Missing"}`,
+    "",
+    "Draft assets:",
+    ...outreach.assets.map((asset) => `- ${asset.title} (${asset.status}, ${asset.language}) — ${asset.intendedUse}`),
+    "",
+    "Readiness blockers:",
+    ...(outreach.readiness.blockers.length
+      ? outreach.readiness.blockers.map((blocker) => `- ${blocker}`)
+      : ["- No outreach blockers recorded."]),
+    "",
+    "Manual follow-up tasks:",
+    ...outreach.followUpTasks.map((task) => `- ${task.title} — ${task.description}`),
+    "",
+    "_These scripts are draft reference material only. Calls, texts, emails, letters, and offers remain manual and blocked until compliance/operator approval._",
+  ];
+}
+
 export async function generateCompletedLeadReport(dossier: RawDossier): Promise<CompletedLeadReport> {
   const offerMath = buildOfferProfitMath(dossier);
   const leadQualityProfile = buildLeadQualityProfile(dossier);
@@ -358,9 +387,9 @@ export async function generateCompletedLeadReport(dossier: RawDossier): Promise<
     "",
     "> **INTERNAL DRAFT** — Human review required. External outreach, offers, and compliance claims are blocked.",
     "",
-    `Report status: ${reviewGate.reportStatus}`,
-    `Underwriting status: ${reviewGate.underwritingStatus}`,
-    `Outreach readiness: ${reviewGate.outreachReadiness}`,
+    `Report status: ${humanStatus(reviewGate.reportStatus)}`,
+    `Underwriting status: ${humanStatus(reviewGate.underwritingStatus)}`,
+    `Outreach readiness: ${humanStatus(reviewGate.outreachReadiness)}`,
     `External use blocked: ${reviewGate.externalUseBlocked ? "yes" : "no"}`,
     "",
     "## Backstory",
@@ -387,8 +416,10 @@ export async function generateCompletedLeadReport(dossier: RawDossier): Promise<
     "## Contact Placeholders",
     ...contactPlaceholders.map((contact) => `- ${contact.role}${contact.name ? `: ${contact.name}` : ""} — ${contact.note}`),
     "",
+    ...renderOutreachSection(dossier),
+    "",
     "## Lead Quality Profile",
-    `Lead bucket: ${leadQualityProfile.leadBucket}`,
+    `Lead bucket: ${humanStatus(leadQualityProfile.leadBucket)}`,
     `Promotion eligible: ${leadQualityProfile.promotionEligible ? "yes" : "no"}`,
     `Enabled signals: ${leadQualityProfile.enabledSignals.join(", ") || "None"}`,
     `Missing signals: ${leadQualityProfile.missingSignals.join(", ") || "None recorded"}`,
@@ -520,6 +551,8 @@ ${renderedMarkdown}
       ...reviewGate.reviewFlags,
       ...leadQualityProfile.reviewFlags,
       ...offerMath.reviewFlags,
+      ...dossier.outreach.readiness.reviewFlags,
+      ...dossier.outreach.noAutoSendGuard.reviewFlags,
       "REPORT_REVIEW_REQUIRED",
       "OUTREACH_BLOCKED",
     ]),

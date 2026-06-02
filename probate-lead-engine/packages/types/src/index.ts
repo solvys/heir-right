@@ -190,7 +190,12 @@ export type ReviewFlag =
   | "MISSING_OFFER_MATH_FACT"
   | "UNDERWRITING_REVIEW_REQUIRED"
   | "OUTREACH_BLOCKED"
-  | "REPORT_REVIEW_REQUIRED";
+  | "REPORT_REVIEW_REQUIRED"
+  | "SCRIPT_REVIEW_REQUIRED"
+  | "COMPLIANCE_REVIEW_REQUIRED"
+  | "CONTACT_REVIEW_REQUIRED"
+  | "LIVE_OUTREACH_DISABLED"
+  | "NO_AUTO_SEND_GUARD";
 
 export type FactType =
   | "source_status"
@@ -540,6 +545,75 @@ export interface ReportReviewGate {
   reviewFlags: ReviewFlag[];
 }
 
+export type ComplianceReviewStatus = "draft" | "needs_compliance_review" | "approved_manual_use" | "retired" | "blocked";
+
+export type OutreachAssetKind =
+  | "unclassified_associate_call"
+  | "neighbor_call"
+  | "relative_call"
+  | "owner_call"
+  | "only_heir_call"
+  | "closing_call"
+  | "text_message"
+  | "email"
+  | "offer_letter";
+
+export type OutreachChannel = "call" | "voicemail" | "text" | "email" | "letter";
+
+export interface OutreachDraftAsset {
+  id: string;
+  kind: OutreachAssetKind;
+  title: string;
+  intendedUse: string;
+  language: "en" | "es" | "mixed";
+  channel: OutreachChannel;
+  status: ComplianceReviewStatus;
+  sourceDocument: string;
+  body: string;
+  reviewerPlaceholder: string;
+  requiredDisclaimerPlaceholder: string;
+  automationAllowed: boolean;
+  externalUseAllowed: boolean;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface FollowUpTaskTemplate {
+  id: string;
+  title: string;
+  channel: OutreachChannel;
+  cadence: string;
+  attemptNumber: number | null;
+  window: "morning" | "afternoon" | "multi_day" | "manager_review";
+  assignedRole: "operator" | "manager";
+  manualOnly: boolean;
+  description: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OutreachReadinessEvaluation {
+  status: OutreachReadinessStatus;
+  evaluatedAt: string;
+  blockers: string[];
+  nextAction: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface NoAutoSendGuard {
+  enabled: boolean;
+  blockedActions: OutreachChannel[];
+  reason: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OutreachWorkflow {
+  assets: OutreachDraftAsset[];
+  complianceStatus: ComplianceReviewStatus;
+  followUpTasks: FollowUpTaskTemplate[];
+  readiness: OutreachReadinessEvaluation;
+  noAutoSendGuard: NoAutoSendGuard;
+  notes: string[];
+}
+
 export interface OfferProfitField {
   label: string;
   value: number | null;
@@ -686,6 +760,7 @@ export interface RawDossier {
   marriageDeathIndicators: MarriageDeathIndicators;
   familyTree: FamilyTreeHypothesis;
   sourceGovernance: SourceGovernance;
+  outreach: OutreachWorkflow;
   titleEvents: DossierEvent[];
   workflow: WorkflowRuleEvaluation;
   operatorQueue: OperatorQueue;

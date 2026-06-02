@@ -87,6 +87,34 @@ async function main(): Promise<void> {
   if (!podioOffer?.offer_math) failures.push("Podio offer_math payload missing.");
   if (!podioOffer?.lead_bucket) failures.push("Podio lead_bucket payload missing.");
   if (!podioOffer?.outreach_readiness) failures.push("Podio outreach_readiness payload missing.");
+  if (!result.dossier.outreach?.assets.length) failures.push("S8 outreach draft assets missing.");
+  if (result.dossier.outreach.assets.length < 9) failures.push("S8 outreach script inventory incomplete.");
+  if (result.dossier.outreach.assets.some((asset) => asset.status !== "draft" && asset.status !== "needs_compliance_review")) failures.push("S8 outreach asset escaped draft/review status.");
+  if (result.dossier.outreach.assets.some((asset) => asset.automationAllowed || asset.externalUseAllowed)) failures.push("S8 outreach asset incorrectly allows automation or external use.");
+  if (result.dossier.outreach.complianceStatus !== "needs_compliance_review") failures.push("S8 compliance status should require review.");
+  if (!result.dossier.outreach.noAutoSendGuard.enabled) failures.push("S8 no-auto-send guard missing.");
+  for (const blocked of ["call", "voicemail", "text", "email", "letter"] as const) {
+    if (!result.dossier.outreach.noAutoSendGuard.blockedActions.includes(blocked)) failures.push(`S8 no-auto-send guard missing ${blocked}.`);
+  }
+  if (result.dossier.outreach.readiness.status !== "blocked") failures.push("S8 outreach readiness should be blocked before approvals.");
+  if (!result.dossier.outreach.readiness.reviewFlags.includes("COMPLIANCE_REVIEW_REQUIRED")) failures.push("S8 compliance review flag missing.");
+  if (!result.dossier.outreach.readiness.reviewFlags.includes("CONTACT_REVIEW_REQUIRED")) failures.push("S8 contact review flag missing.");
+  const followUps = result.dossier.outreach.followUpTasks;
+  if (followUps.filter((task) => task.channel === "call" && task.attemptNumber !== null).length < 3) failures.push("S8 three-call follow-up pattern missing.");
+  if (!followUps.some((task) => task.id === "voicemail-text-follow-up")) failures.push("S8 voicemail/text follow-up task missing.");
+  if (!followUps.some((task) => task.id === "multi-contact-review")) failures.push("S8 multi-contact review task missing.");
+  if (!followUps.some((task) => task.id === "joshua-escalation" && task.assignedRole === "manager")) failures.push("S8 Joshua escalation task missing.");
+  if (followUps.some((task) => !task.manualOnly)) failures.push("S8 follow-up task is not manual-only.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("Outreach Drafts And Follow-Up")) failures.push("Completed lead report outreach section missing.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("No-auto-send guard: Enabled")) failures.push("Completed lead report no-auto-send guard missing.");
+  const podioPayload = result.dossier.crm.payload as {
+    appModel?: { fields?: { outreach_workflow?: unknown } };
+    podioReadiness?: { blockers?: string[]; csvDryRunRequirements?: string[]; readbackChecks?: string[]; classification?: string };
+  };
+  if (!podioPayload.appModel?.fields?.outreach_workflow) failures.push("Podio outreach_workflow payload missing.");
+  if (!podioPayload.podioReadiness?.csvDryRunRequirements?.length) failures.push("S9 CSV dry-run prep missing.");
+  if (!podioPayload.podioReadiness?.readbackChecks?.length) failures.push("S9 Podio readback checks missing.");
+  if (!podioPayload.podioReadiness?.blockers?.some((item) => item.includes("Live sync is disabled"))) failures.push("S9 live-sync blocker missing.");
   if (!result.dossier.workflow.rules.length) failures.push("Workflow rules missing.");
   if (!result.dossier.workflow.leadQuality.enabledSignals.length) failures.push("Lead-quality settings missing.");
   if (!result.facts.some((item) => item.factType === "owner_type")) failures.push("Owner-type workflow fact missing.");
