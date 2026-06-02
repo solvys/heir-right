@@ -1,8 +1,8 @@
 # HeirRight Run Point - 2026-06-02
 
 Branch: `codex/heirright-2026-06-02-s8-s9-run-point`  
-Pushed remote branch: `pending push`  
-Pushed ref: `pending push`
+Pushed remote branch: `origin/codex/heirright-2026-06-02-s8-s9-run-point`  
+Pushed ref: `6593e55`
 
 ## Previous-Day Touchups Reviewed
 
