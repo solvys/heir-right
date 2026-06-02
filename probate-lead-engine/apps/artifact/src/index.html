@@ -6,361 +6,1871 @@
   <title>HeirRight Lead Review</title>
   <style>
     :root {
+      color-scheme: light;
+      --page: #f2f2f7;
+      --page-2: #ebedf2;
+      --glass: rgba(255, 255, 255, .70);
+      --glass-strong: rgba(255, 255, 255, .88);
+      --glass-soft: rgba(255, 255, 255, .52);
+      --line: rgba(16, 24, 40, .10);
+      --line-strong: rgba(16, 24, 40, .18);
+      --text: #1d1d1f;
+      --muted: #6e7681;
+      --soft: #8d95a1;
+      --disabled: #aeb5bf;
+      --accent: #3f3f46;
+      --accent-soft: rgba(118, 118, 128, .14);
+      --focus-ring: rgba(118, 118, 128, .36);
+      --ios-fill: rgba(118, 118, 128, .10);
+      --ios-fill-strong: rgba(118, 118, 128, .18);
+      --green: #23864f;
+      --green-soft: rgba(35, 134, 79, .12);
+      --amber: #b7791f;
+      --amber-soft: rgba(183, 121, 31, .14);
+      --red: #c24135;
+      --red-soft: rgba(194, 65, 53, .12);
+      --mono: "SFMono-Regular", "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+      --ease: cubic-bezier(.4, 0, .2, 1);
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+    }
+
+    body[data-theme="dark"] {
       color-scheme: dark;
-      --bg: #050402;
-      --surface: #0a0905;
-      --surface-2: #110f0a;
-      --surface-3: #151310;
-      --header: #080604;
-      --panel: #0a0905;
-      --panel-strong: #110f0a;
-      --line: rgba(199,159,74,.16);
-      --line-strong: rgba(199,159,74,.42);
-      --gold: #c79f4a;
-      --text: #f0ead6;
-      --muted: rgba(240,234,214,.58);
-      --disabled: rgba(240,234,214,.28);
-      --bad: #ff6b6b;
-      --warn: #f7c65f;
-      --good: #30d158;
-      --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      --page: #1c1c1e;
+      --page-2: #2c2c2e;
+      --glass: rgba(44, 44, 46, .76);
+      --glass-strong: rgba(58, 58, 60, .90);
+      --glass-soft: rgba(44, 44, 46, .56);
+      --line: rgba(235, 235, 245, .12);
+      --line-strong: rgba(235, 235, 245, .20);
+      --text: #f5f5f7;
+      --muted: #a1a1aa;
+      --soft: #71717a;
+      --disabled: #52525b;
+      --accent: #f5f5f7;
+      --accent-soft: rgba(235, 235, 245, .14);
+      --focus-ring: rgba(235, 235, 245, .32);
+      --ios-fill: rgba(235, 235, 245, .10);
+      --ios-fill-strong: rgba(235, 235, 245, .18);
+      --green: #30d158;
+      --green-soft: rgba(48, 209, 88, .14);
+      --amber: #ffd60a;
+      --amber-soft: rgba(255, 214, 10, .14);
+      --red: #ff6961;
+      --red-soft: rgba(255, 105, 97, .14);
     }
+
     * { box-sizing: border-box; }
-    html { background: var(--bg); }
-    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
-    main { max-width: none; min-height: 100vh; margin: 0; padding: 0; }
-    .ide-topbar { min-height: 72px; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 18px; align-items: center; padding: 10px 14px; background: var(--header); border-bottom: 1px solid var(--line); }
-    h1 { margin: 0; font-size: 16px; line-height: 1.15; letter-spacing: 0; font-weight: 800; }
-    h2 { margin: 0; font-size: 15px; line-height: 1.2; letter-spacing: 0; }
-    .sub { color: var(--muted); margin-top: 4px; max-width: 720px; font-size: 12px; line-height: 1.35; }
-    .hero-metrics { display: grid; grid-template-columns: repeat(2, minmax(132px, 210px)); gap: 10px; justify-content: start; }
-    .hero-kpi { min-width: 0; min-height: 50px; border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; background: var(--surface); }
-    .hero-kpi-label { display: block; color: var(--disabled); font-size: 10px; font-weight: 800; letter-spacing: .06em; line-height: 1.1; text-transform: uppercase; }
-    .hero-kpi-value { display: block; margin-top: 4px; color: var(--text); font-family: var(--mono); font-size: 24px; font-weight: 800; line-height: .95; }
-    .hero-kpi-note { display: block; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.2; }
-    .top-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .export-cta { background: transparent; color: var(--text); border: 1px solid var(--line-strong); border-radius: 4px; padding: 9px 10px; font-weight: 800; white-space: nowrap; }
-    .export-cta:hover { border-color: var(--gold); color: var(--gold); }
-    .top-metrics { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
-    .metric-chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font-family: var(--mono); font-size: 11px; line-height: 1; padding: 6px 7px; white-space: nowrap; }
-    .metric-chip strong { color: var(--text); font-weight: 600; }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; border: 1px solid currentColor; background: currentColor; flex: 0 0 auto; }
-    .metric-chip.ready, .status-dot.ready { color: var(--good); }
-    .metric-chip.review, .status-dot.review { color: var(--warn); }
-    .metric-chip.blocked, .status-dot.blocked { color: var(--bad); }
-    .metric-chip.ready strong { color: var(--good); }
-    .metric-chip.review strong { color: var(--warn); }
-    .metric-chip.blocked strong { color: var(--bad); }
-    .metric-label { color: var(--muted); }
-    .product-shell { display: grid; grid-template-columns: 260px minmax(0, 1fr) 330px; align-items: stretch; height: calc(100vh - 122px); min-height: 520px; border-bottom: 1px solid var(--line); overflow: hidden; }
-    .rail, .main-pane { min-width: 0; min-height: 0; height: 100%; background: var(--surface); }
-    .rail { display: grid; grid-template-rows: auto minmax(0, 1fr); overflow: hidden; }
-    .history-rail { border-right: 1px solid var(--line); }
-    .research-rail { border-left: 1px solid var(--line); }
-    .rail-section { padding: 13px 14px; border-bottom: 1px solid var(--line); }
-    .rail-scroll { min-height: 0; overflow: auto; }
-    .rail h2, .main-head h2 { margin-bottom: 6px; }
-    .rail-note, .main-sub, .check-copy, .detail-copy, .history-meta, .research-copy { color: var(--muted); line-height: 1.4; }
-    .case-title { display: block; color: var(--text); font-weight: 800; line-height: 1.25; }
-    .case-meta { display: block; margin-top: 5px; color: var(--muted); font-family: var(--mono); font-size: 11px; line-height: 1.35; }
-    .case-next { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.35; }
-    .kicker { color: var(--gold); text-transform: uppercase; font-size: 10px; font-weight: 800; letter-spacing: .08em; margin-bottom: 8px; }
-    .search-box { display: grid; gap: 7px; }
-    .search-input { width: 100%; background: var(--surface-2); color: var(--text); border: 1px solid var(--line); border-radius: 4px; padding: 9px 10px; font-family: var(--mono); font-size: 12px; }
-    .search-input::placeholder { color: var(--disabled); }
-    .filter-summary { margin-bottom: 10px; color: var(--muted); font-size: 12px; line-height: 1.4; }
-    .filter-groups { display: grid; gap: 12px; }
-    .filter-group { display: grid; gap: 6px; }
-    .filter-group-title { color: var(--disabled); font-size: 10px; font-weight: 800; letter-spacing: .06em; line-height: 1.2; text-transform: uppercase; }
-    .source-filter-list { display: grid; gap: 5px; }
-    .source-filter { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; background: transparent; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 8px; text-align: left; }
-    .source-filter:hover, .source-filter.is-active { color: var(--text); border-color: var(--line-strong); }
-    .source-filter.is-active .source-filter-title { color: var(--gold); }
-    .source-filter-title { display: block; font-weight: 800; line-height: 1.2; }
-    .source-filter-meta { display: block; margin-top: 3px; color: var(--disabled); font-size: 11px; line-height: 1.25; }
-    .source-filter-count { color: var(--muted); font-family: var(--mono); font-size: 10px; line-height: 1.2; white-space: nowrap; }
-    .source-filter.ready .source-filter-count { color: var(--good); }
-    .source-filter.review .source-filter-count { color: var(--warn); }
-    .source-filter.blocked .source-filter-count { color: var(--bad); }
-    .history-filter-tag { color: var(--gold); }
-    .history-empty { padding: 12px 14px; color: var(--muted); line-height: 1.4; border-bottom: 1px solid var(--line); }
-    .history-list { display: grid; list-style: none; margin: 0; padding: 0; }
-    .history-item { display: grid; gap: 4px; width: 100%; background: transparent; color: var(--text); border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 12px 14px; text-align: left; }
-    .history-item.is-selected { border: 1px solid var(--line-strong); }
-    .history-title { font-weight: 800; line-height: 1.2; }
-    .history-meta { font-family: var(--mono); font-size: 11px; }
-    .main-pane { display: grid; grid-template-rows: auto minmax(0, 1fr); }
-    .main-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 13px 16px; border-bottom: 1px solid var(--line); background: var(--surface); }
-    .export-banner { margin-top: 10px; max-width: 780px; border: 1px solid var(--line); border-radius: 6px; padding: 10px; color: var(--muted); line-height: 1.4; }
-    .export-banner[hidden] { display: none; }
-    .export-banner strong { display: block; color: var(--text); margin-bottom: 4px; }
-    .export-banner ul { display: grid; gap: 4px; margin: 8px 0 0; padding-left: 18px; }
-    .main-detail { min-height: 0; overflow: auto; display: grid; align-content: start; gap: 14px; padding: 16px; }
-    .detail-section { border: 1px solid var(--line); border-radius: 6px; padding: 14px; background: var(--surface); }
-    .detail-section h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.15; }
-    .detail-section-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; margin-bottom: 8px; }
-    .detail-section-head h3 { margin: 0; }
-    .refine-chip { align-self: start; background: transparent; color: var(--gold); border: 1px solid var(--line-strong); border-radius: 999px; padding: 5px 9px; font-family: var(--mono); font-size: 10px; font-weight: 800; line-height: 1; text-transform: uppercase; letter-spacing: .05em; }
-    .refine-chip:hover, .refine-chip.is-checked { color: var(--text); border-color: var(--gold); }
-    .refine-result { margin: 10px 0 12px; border: 1px solid var(--line); border-radius: 5px; padding: 10px; color: var(--muted); line-height: 1.4; }
-    .refine-result[hidden] { display: none; }
-    .refine-result strong { display: block; color: var(--text); margin-bottom: 4px; }
-    .refine-result ul { display: grid; gap: 4px; margin: 8px 0 0; padding-left: 18px; }
-    .detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; margin-top: 12px; }
-    .detail-cell { min-width: 0; padding: 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-    .detail-cell:nth-child(3n) { border-right: 0; }
-    .detail-cell:nth-last-child(-n+3) { border-bottom: 0; }
-    .detail-label { color: var(--disabled); display: block; font-size: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .06em; }
-    .detail-value { display: block; font-family: var(--mono); font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
-    .detail-list { display: grid; gap: 8px; list-style: none; padding: 0; margin: 12px 0 0; }
-    .detail-list li { border-top: 1px solid var(--line); padding-top: 8px; color: var(--muted); line-height: 1.4; }
-    .detail-list strong { color: var(--text); }
-    .research-list { min-height: 0; overflow: auto; }
-    .research-card { padding: 13px 14px; border-bottom: 1px solid var(--line); }
-    .research-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; margin-bottom: 8px; }
-    .research-title { display: block; font-weight: 800; line-height: 1.2; }
-    .research-items { display: grid; gap: 6px; list-style: none; padding: 0; margin: 8px 0 0; }
-    .research-items li { color: var(--muted); line-height: 1.35; }
-    .loop-board { min-height: 0; overflow: auto; border-right: 1px solid var(--line); }
-    .loop-step { width: 100%; min-height: 64px; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: center; background: transparent; color: var(--text); border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 10px 14px; text-align: left; transition: border-color .18s ease, color .18s ease; }
-    .loop-step:hover { border-bottom-color: var(--line-strong); }
-    .loop-step.is-selected { border: 1px solid var(--line-strong); border-left-width: 1px; color: var(--text); }
-    .loop-index { width: 24px; height: 24px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 50%; color: var(--gold); font-family: var(--mono); font-weight: 600; font-size: 11px; }
-    .loop-title { display: block; font-weight: 800; line-height: 1.2; }
-    .loop-copy { display: block; margin-top: 3px; }
-    .loop-metric { color: var(--text); font-family: var(--mono); font-size: 11px; font-weight: 500; overflow-wrap: anywhere; }
-    .loop-status { width: fit-content; border-radius: 3px; padding: 3px 6px; border: 1px solid var(--line); font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
-    .loop-status.ready, .check-state.ready, .stage-state.ready { color: var(--good); }
-    .loop-status.review, .check-state.review, .stage-state.review { color: var(--warn); }
-    .loop-status.blocked, .check-state.blocked, .stage-state.blocked { color: var(--bad); }
-    .loop-step .loop-copy, .loop-step .loop-metric, .loop-step .loop-status { display: none; }
-    .stage-detail { min-height: 0; overflow: auto; display: grid; align-content: start; gap: 14px; padding: 16px; background: var(--surface); }
-    .stage-detail-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: start; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
-    .stage-title { margin: 0 0 8px; font-size: 22px; line-height: 1.1; }
-    .stage-state { border: 1px solid var(--line); border-radius: 3px; padding: 4px 7px; font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
-    .stage-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
-    .stage-cell { min-width: 0; padding: 11px; border-right: 1px solid var(--line); }
-    .stage-cell:last-child { border-right: 0; }
-    .stage-label, .fact-label { color: var(--disabled); display: block; font-size: 10px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .06em; }
-    .stage-value, .fact-list strong { font-family: var(--mono); font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
-    .stage-command { border: 1px solid var(--line); border-radius: 6px; padding: 12px; color: var(--text); line-height: 1.45; }
-    .stage-evidence { display: grid; gap: 8px; padding: 0; margin: 0; list-style: none; }
-    .stage-evidence li { border-top: 1px solid var(--line); padding-top: 8px; color: var(--muted); line-height: 1.4; }
-    .loop-nav { display: grid; list-style: none; padding: 0; margin: 0; }
-    .nav-step { width: 100%; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 9px; align-items: center; background: transparent; color: var(--muted); border: 0; border-bottom: 1px solid var(--line); border-radius: 0; padding: 9px 14px; text-align: left; cursor: pointer; }
-    .nav-step:hover { color: var(--text); }
-    .nav-step.is-selected { color: var(--text); border: 1px solid var(--line-strong); }
-    .nav-step.is-selected .loop-nav-title { color: var(--gold); }
-    .loop-nav-title { display: block; font-weight: 800; line-height: 1.2; }
-    .loop-nav-meta { display: block; font-family: var(--mono); font-size: 10px; margin-top: 2px; }
-    .nav-source { color: var(--disabled); font-family: var(--mono); font-size: 10px; }
-    .rail-divider { height: 1px; background: var(--line); }
-    .check-list { display: grid; list-style: none; padding: 0; margin: 0; }
-    .check-list li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; border-top: 1px solid var(--line); padding: 10px 0; }
-    .check-list li:first-child { border-top: 0; padding-top: 0; }
-    .check-title { display: block; font-weight: 800; line-height: 1.25; }
-    .check-state { font-family: var(--mono); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; white-space: nowrap; }
-    .statusbar { min-height: 30px; display: flex; align-items: center; gap: 14px; padding: 7px 14px; border-bottom: 1px solid var(--line); color: var(--muted); font-family: var(--mono); font-size: 11px; background: var(--header); overflow-x: auto; }
-    .statusbar strong { color: var(--gold); font-weight: 500; }
-    .footer-status-lights { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; }
-    .footer-status-light { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); padding: 4px 7px; white-space: nowrap; }
-    .footer-status-light.ready { color: var(--good); }
-    .footer-status-light.review { color: var(--warn); }
-    .footer-status-light.blocked { color: var(--bad); }
-    .footer-status-light strong { color: currentColor; }
-    .detail-heading { display: flex; align-items: end; justify-content: space-between; gap: 14px; margin: 24px 24px 12px; }
-    .detail-heading h2 { margin: 0; font-size: 20px; }
-    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin: 0 24px 24px; }
-    .card { grid-column: span 6; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
-    .wide { grid-column: span 12; }
-    .lead-state { display: grid; gap: 12px; }
-    .status-pill { display: inline-flex; align-items: center; width: fit-content; border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; font-family: var(--mono); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
-    .status-pill.review { color: var(--warn); }
-    .status-pill.move-on { color: var(--bad); }
-    .status-pill.ready { color: var(--good); }
-    .next-action { font-size: 20px; font-weight: 800; line-height: 1.25; }
-    .fact-list, .task-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-    .fact-list li, .task-list li { border-top: 1px solid var(--line); padding-top: 10px; }
-    .task-title { display: block; font-weight: 800; margin-bottom: 4px; }
-    .task-next { color: var(--muted); line-height: 1.45; }
-    .empty { color: var(--muted); }
-    .doc-frame { width: 100%; min-height: 620px; border: 1px solid var(--line); border-radius: 6px; background: #fffaf0; display: block; }
-    button { background: var(--gold); color: #090806; border: 0; border-radius: 4px; padding: 9px 12px; font-weight: 800; cursor: pointer; }
-    #refresh { white-space: nowrap; }
-    details { grid-column: span 12; background: var(--panel-strong); border: 1px solid var(--line); border-radius: 6px; padding: 16px; }
-    summary { cursor: pointer; color: var(--gold); font-weight: 800; }
-    pre { white-space: pre-wrap; word-break: break-word; color: var(--muted); font-size: 12px; line-height: 1.5; }
-    .ok { color: var(--good); }
-    .bad { color: var(--bad); }
-    @media (max-width: 1180px) {
-      .ide-topbar { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; }
-      .hero-metrics { grid-template-columns: repeat(2, minmax(118px, 1fr)); }
-      .top-metrics { grid-column: auto; justify-content: flex-start; }
-      .product-shell { grid-template-columns: 230px minmax(0, 1fr) 285px; }
-      .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .detail-cell:nth-child(3n) { border-right: 1px solid var(--line); }
-      .detail-cell:nth-child(2n) { border-right: 0; }
-      .detail-cell:nth-last-child(-n+3) { border-bottom: 1px solid var(--line); }
-      .detail-cell:nth-last-child(-n+2) { border-bottom: 0; }
+    html { background: var(--page); }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--page);
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      overflow: hidden;
     }
-    @media (max-width: 760px) {
-      .ide-topbar { grid-template-columns: 1fr; }
-      .hero-metrics { grid-template-columns: 1fr; }
-      .top-actions { justify-content: flex-start; }
-      .top-metrics { grid-column: auto; }
-      .product-shell { grid-template-columns: 1fr; }
-      .rail { max-height: none; }
-      .history-rail, .research-rail { border: 0; border-bottom: 1px solid var(--line); }
-      .main-head, .detail-heading { display: block; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .detail-cell, .detail-cell:nth-child(2n), .detail-cell:nth-child(3n) { border-right: 0; border-bottom: 1px solid var(--line); }
-      .detail-cell:last-child { border-bottom: 0; }
-      .card { grid-column: span 12; }
-      .grid, .detail-heading { margin-left: 18px; margin-right: 18px; }
-      .check-list li { grid-template-columns: 1fr; }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    svg { display: block; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 212px minmax(0, 1fr);
+      height: 100vh;
+      transition: grid-template-columns .32s var(--ease);
+    }
+
+    .workspace.is-collapsed { grid-template-columns: 60px minmax(0, 1fr); }
+
+    .sidebar {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      border-right: 1px solid var(--line);
+      background: rgba(242,242,247,.74);
+      backdrop-filter: saturate(185%) blur(30px);
+      -webkit-backdrop-filter: saturate(185%) blur(30px);
+    }
+
+    body[data-theme="dark"] .sidebar {
+      background: rgba(28,28,30,.78);
+    }
+
+    .sidebar-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 64px;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      color: #51515a;
+      background: rgba(255,255,255,.32);
+      border: 1px solid transparent;
+      border-radius: 9px;
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+    }
+
+    .icon-button:hover {
+      color: #1d1d1f;
+      border-color: rgba(16,24,40,.08);
+      background: var(--ios-fill-strong);
+    }
+
+    .brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 720;
+      letter-spacing: 0;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity .2s var(--ease), transform .2s var(--ease);
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      color: #51515a;
+      background: var(--ios-fill);
+      border: 1px solid rgba(16,24,40,.06);
+      border-radius: 8px;
+      flex: 0 0 auto;
+    }
+
+    .workspace.is-collapsed .brand {
+      opacity: 0;
+      transform: translateX(-8px);
+      pointer-events: none;
+      width: 0;
+      overflow: hidden;
+    }
+
+    .workspace.is-collapsed .sidebar-top { justify-content: center; }
+
+    .nav-list {
+      display: grid;
+      align-content: start;
+      gap: 2px;
+      padding: 8px 6px;
+      overflow: auto;
+    }
+
+    .nav-item {
+      min-width: 0;
+      min-height: 40px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      align-items: center;
+      gap: 6px;
+      padding: 3px 6px;
+      color: #5f6368;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      text-align: left;
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease);
+    }
+
+    .nav-item:hover,
+    .nav-item.is-active {
+      color: #1d1d1f;
+      background: var(--ios-fill);
+      border-color: rgba(16,24,40,.05);
+    }
+
+    .nav-icon { display: grid; place-items: center; }
+    .nav-label {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 650;
+      opacity: 1;
+      transition: opacity .2s var(--ease);
+    }
+
+    .workspace.is-collapsed .nav-item {
+      grid-template-columns: 34px;
+      justify-content: center;
+      padding-inline: 6px;
+    }
+
+    .workspace.is-collapsed .nav-label {
+      opacity: 0;
+      width: 0;
+    }
+
+    .sidebar-footer {
+      display: grid;
+      gap: 6px;
+      padding: 0 6px 10px;
+    }
+
+    .theme-row {
+      display: flex;
+      justify-content: flex-end;
+      min-height: 34px;
+      padding: 0 4px 2px;
+    }
+
+    .theme-toggle {
+      position: relative;
+      width: 66px;
+      height: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      justify-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--ios-fill);
+      padding: 0 4px;
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease);
+    }
+
+    .theme-toggle::before {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(16,24,40,.08);
+      transition: transform .22s var(--ease-out), background .18s var(--ease), border-color .18s var(--ease);
+    }
+
+    .theme-toggle svg {
+      position: relative;
+      z-index: 1;
+    }
+
+    .theme-toggle .sun-icon { color: #3f3f46; }
+    .theme-toggle .moon-icon { color: var(--soft); }
+
+    body[data-theme="dark"] .theme-toggle::before {
+      transform: translateX(34px);
+      background: rgba(99,99,102,.92);
+      border-color: rgba(235,235,245,.16);
+    }
+
+    body[data-theme="dark"] .theme-toggle .sun-icon { color: var(--soft); }
+    body[data-theme="dark"] .theme-toggle .moon-icon { color: var(--text); }
+
+    .workspace.is-collapsed .sidebar-footer { padding-inline: 6px; }
+    .workspace.is-collapsed .theme-row { justify-content: center; padding-inline: 0; }
+
+    .user-strip {
+      margin: 0;
+      padding: 7px 6px;
+      display: grid;
+      grid-template-columns: 32px minmax(0, 1fr);
+      gap: 8px;
+      align-items: center;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #1f2937;
+      background: var(--ios-fill-strong);
+      font-weight: 760;
+      font-size: 12px;
+    }
+
+    .user-name,
+    .user-meta {
+      display: block;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-name { font-weight: 700; font-size: 12px; }
+    .user-meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    .workspace.is-collapsed .user-strip { grid-template-columns: 32px; padding: 7px 6px; }
+    .workspace.is-collapsed .user-name,
+    .workspace.is-collapsed .user-meta { display: none; }
+
+    body[data-theme="dark"] .topbar,
+    body[data-theme="dark"] .statusbar,
+    body[data-theme="dark"] .filters,
+    body[data-theme="dark"] .workbench-head,
+    body[data-theme="dark"] .detail,
+    body[data-theme="dark"] .research-rail {
+      background: var(--glass);
+    }
+
+    body[data-theme="dark"] .search-control,
+    body[data-theme="dark"] .btn,
+    body[data-theme="dark"] .icon-button,
+    body[data-theme="dark"] .brand-mark,
+    body[data-theme="dark"] .field select,
+    body[data-theme="dark"] .field input:not([type="checkbox"]),
+    body[data-theme="dark"] .filter-note,
+    body[data-theme="dark"] .metric,
+    body[data-theme="dark"] .glass-card,
+    body[data-theme="dark"] .rail-segment,
+    body[data-theme="dark"] .pager button,
+    body[data-theme="dark"] .connection-chip,
+    body[data-theme="dark"] .export-popover,
+    body[data-theme="dark"] .fact-grid,
+    body[data-theme="dark"] .doc-frame {
+      color: var(--text);
+      background: rgba(44,44,46,.78);
+      border-color: var(--line);
+    }
+
+    body[data-theme="dark"] .btn.primary {
+      color: #1c1c1e;
+      background: #f5f5f7;
+      border-color: rgba(245,245,247,.18);
+    }
+
+    body[data-theme="dark"] .btn.primary:hover { background: #e5e5ea; }
+    body[data-theme="dark"] .nav-item,
+    body[data-theme="dark"] .field label,
+    body[data-theme="dark"] .field-title,
+    body[data-theme="dark"] .connection-chip,
+    body[data-theme="dark"] .btn.quick { color: var(--muted); }
+
+    body[data-theme="dark"] .nav-item:hover,
+    body[data-theme="dark"] .nav-item.is-active,
+    body[data-theme="dark"] .btn.quick:hover,
+    body[data-theme="dark"] .primary-text,
+    body[data-theme="dark"] .detail-title,
+    body[data-theme="dark"] .card-title,
+    body[data-theme="dark"] .rail-title,
+    body[data-theme="dark"] .rail-card h3,
+    body[data-theme="dark"] .next-action strong {
+      color: var(--text);
+    }
+
+    body[data-theme="dark"] th { background: rgba(28,28,30,.92); }
+    body[data-theme="dark"] .table-wrap,
+    body[data-theme="dark"] .results-footer { background: rgba(28,28,30,.46); }
+
+    body[data-theme="dark"] tbody td {
+      background: rgba(44,44,46,.72);
+      border-color: var(--line);
+    }
+
+    body[data-theme="dark"] tbody tr:hover td { background: rgba(58,58,60,.86); }
+    body[data-theme="dark"] tbody tr.is-selected td {
+      background: rgba(99,99,102,.28);
+      border-color: var(--line-strong);
+    }
+
+    body[data-theme="dark"] .select-box {
+      color: #1c1c1e;
+      border-color: var(--line-strong);
+    }
+
+    body[data-theme="dark"] tr.is-selected .select-box {
+      color: #1c1c1e;
+      background: #f5f5f7;
+      border-color: #f5f5f7;
+    }
+
+    .app {
+      min-width: 0;
+      height: 100vh;
+      display: grid;
+      grid-template-rows: 64px minmax(0, 1fr) 34px;
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 30;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(240px, 440px) minmax(0, 1fr) minmax(320px, 640px);
+      gap: 12px;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(250,250,252,.74);
+      backdrop-filter: saturate(180%) blur(28px);
+      -webkit-backdrop-filter: saturate(180%) blur(28px);
+    }
+
+    .search-control {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-width: 0;
+      min-height: 42px;
+      padding: 0 12px;
+      background: rgba(255,255,255,.64);
+      border: 1px solid var(--line);
+      border-radius: 11px;
+    }
+
+    .search-control input {
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .search-control input::placeholder { color: var(--soft); }
+
+    .kbd {
+      display: inline-grid;
+      place-items: center;
+      min-width: 24px;
+      height: 23px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      background: rgba(248,250,252,.82);
+    }
+
+    .top-status {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: right;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .top-actions {
+      display: flex;
+      justify-content: flex-start;
+      gap: 8px;
+      min-width: 0;
+      max-width: 100%;
+      overflow: visible;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      min-width: 0;
+      flex: 1 1 auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .quick-actions::-webkit-scrollbar { display: none; }
+
+    .btn {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.62);
+      color: var(--text);
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 720;
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: rgba(255,255,255,.96);
+      border-color: var(--line-strong);
+    }
+
+    .btn.primary {
+      border-color: rgba(16,24,40,.18);
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn.primary:hover { background: #27272a; }
+    .btn.icon-only { width: 38px; padding: 0; }
+    .btn.quick {
+      min-height: 36px;
+      color: #374151;
+      background: rgba(255,255,255,.50);
+    }
+
+    .export-menu {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .export-toggle svg:last-child {
+      transition: transform .18s var(--ease);
+    }
+
+    .export-menu[data-open="true"] .export-toggle svg:last-child {
+      transform: rotate(180deg);
+    }
+
+    .export-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 20;
+      width: 260px;
+      padding: 6px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,.99);
+      backdrop-filter: saturate(180%) blur(32px);
+      -webkit-backdrop-filter: saturate(180%) blur(32px);
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity .18s var(--ease), transform .18s var(--ease);
+    }
+
+    .export-menu[data-open="true"] .export-popover {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .export-option {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 8px;
+      align-items: start;
+      padding: 9px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text);
+      background: transparent;
+      text-align: left;
+    }
+
+    .export-option:hover,
+    .export-option:focus-visible {
+      border-color: rgba(16,24,40,.08);
+      background: var(--ios-fill);
+      outline: 0;
+    }
+
+    .export-option-icon {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      color: #51515a;
+      background: var(--ios-fill);
+    }
+
+    .export-option strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 760;
+      line-height: 1.2;
+    }
+
+    .export-option span:last-child {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .content {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .filters {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.44);
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    .pane-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 760;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .pane-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 780;
+      letter-spacing: -.01em;
+    }
+
+    .pane-copy {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.42;
+    }
+
+    .filter-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px 12px 18px;
+    }
+
+    .field {
+      position: relative;
+      display: grid;
+      gap: 6px;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+    }
+
+    .filter-scroll > .field::after,
+    .filter-scroll > .switch-row::after {
+      content: "";
+      position: absolute;
+      left: 2px;
+      right: 2px;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16,24,40,.12) 14%, rgba(16,24,40,.12) 86%, transparent);
+    }
+
+    .field label,
+    .field-title {
+      color: #4b5563;
+      font-size: 12px;
+      font-weight: 720;
+    }
+
+    .field select,
+    .field input:not([type="checkbox"]) {
+      width: 100%;
+      min-height: 38px;
+      color: var(--text);
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      outline: 0;
+    }
+
+    .field select:focus,
+    .field input:focus {
+      border-color: var(--focus-ring);
+      background: rgba(255,255,255,.94);
+    }
+
+    .switch-row,
+    .check-row {
+      position: relative;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .switch-row {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+    }
+
+    .field .check-row + .check-row::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16,24,40,.08) 14%, rgba(16,24,40,.08) 86%, transparent);
+    }
+
+    .switch {
+      position: relative;
+      width: 38px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .switch input,
+    .check-row input { accent-color: var(--accent); }
+
+    .switch input[type="checkbox"],
+    .check-row input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      min-height: 0;
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    .filter-note {
+      margin-top: 14px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.52);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .workbench {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .workbench-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.38);
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--text);
+      font-size: clamp(24px, 2.4vw, 34px);
+      line-height: 1.08;
+      letter-spacing: -.035em;
+      font-weight: 820;
+    }
+
+    .lead-help {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .summary-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(82px, 1fr));
+      gap: 8px;
+      width: min(460px, 38vw);
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 8px 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+    }
+
+    .metric-label {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 720;
+      line-height: 1.15;
+    }
+
+    .metric-value {
+      display: block;
+      margin-top: 3px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 17px;
+      font-weight: 740;
+    }
+
+    .workbench-body {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(520px, .98fr) minmax(300px, .52fr);
+      overflow: hidden;
+    }
+
+    .results {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.22);
+    }
+
+    .results-toolbar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .results-count strong {
+      color: var(--text);
+      font-weight: 780;
+    }
+
+    .table-wrap {
+      min-height: 0;
+      overflow: auto;
+      padding: 6px 10px 10px;
+      background: rgba(242,242,247,.42);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 8px;
+      min-width: 740px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 10px 10px;
+      border-bottom: 0;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      color: var(--muted);
+      background: rgba(242,242,247,.90);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      font-size: 10px;
+      font-weight: 760;
+      letter-spacing: .02em;
+    }
+
+    tr {
+      transition: transform .18s var(--ease);
+    }
+
+    tbody tr { cursor: pointer; }
+
+    tbody td {
+      background: rgba(255,255,255,.72);
+      border-top: 1px solid rgba(16,24,40,.08);
+      border-bottom: 1px solid rgba(16,24,40,.08);
+      transition: background .18s var(--ease), border-color .18s var(--ease);
+    }
+
+    tbody td:first-child {
+      border-left: 1px solid rgba(16,24,40,.08);
+      border-radius: 12px 0 0 12px;
+    }
+
+    tbody td:last-child {
+      border-right: 1px solid rgba(16,24,40,.08);
+      border-radius: 0 12px 12px 0;
+    }
+
+    tbody tr:hover td {
+      background: rgba(255,255,255,.92);
+      border-color: rgba(16,24,40,.12);
+    }
+
+    tbody tr.is-selected td {
+      background: rgba(118,118,128,.13);
+      border-color: rgba(16,24,40,.14);
+    }
+
+    .select-box {
+      width: 18px;
+      height: 18px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      color: white;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    tr.is-selected .select-box {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .primary-text {
+      display: block;
+      color: var(--text);
+      font-weight: 760;
+      line-height: 1.25;
+    }
+
+    .secondary-text {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .score {
+      display: inline-flex;
+      min-width: 38px;
+      justify-content: center;
+      border-radius: 7px;
+      padding: 4px 7px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 760;
+      background: var(--amber-soft);
+      color: var(--amber);
+    }
+
+    .score.ready {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .score.blocked {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .next-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      color: var(--accent);
+      background: var(--ios-fill);
+      border: 1px solid rgba(16,24,40,.08);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-weight: 720;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .next-link:hover {
+      background: var(--ios-fill-strong);
+      border-color: rgba(16,24,40,.12);
+    }
+
+    .results-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 48px;
+      padding: 8px 12px;
+      border-top: 0;
+      color: var(--muted);
+      font-size: 12px;
+      background: rgba(242,242,247,.42);
+    }
+
+    .pager {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .pager button {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+    }
+
+    .pager button.is-active {
+      color: var(--accent);
+      border-color: var(--focus-ring);
+      background: var(--accent-soft);
+    }
+
+    .detail {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      background: rgba(255,255,255,.34);
+    }
+
+    .detail-head {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .detail-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.18;
+      letter-spacing: -.02em;
+      font-weight: 800;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 24px;
+      border-radius: 7px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 760;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .pill.ready { color: var(--green); background: var(--green-soft); }
+    .pill.review { color: var(--amber); background: var(--amber-soft); }
+    .pill.blocked { color: var(--red); background: var(--red-soft); }
+    .pill.neutral { color: var(--muted); background: rgba(15,23,42,.06); }
+
+    .detail-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 14px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .glass-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.58);
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    .detail-card { padding: 13px; }
+
+    .card-title {
+      margin: 0 0 8px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 780;
+    }
+
+    .next-action {
+      display: grid;
+      gap: 8px;
+      padding: 13px;
+      border-color: rgba(16,24,40,.16);
+      background: rgba(255,255,255,.70);
+    }
+
+    .next-action strong {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+    }
+
+    .copy {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .fact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: rgba(255,255,255,.38);
+    }
+
+    .fact {
+      min-width: 0;
+      padding: 9px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .fact:nth-child(2n) { border-right: 0; }
+    .fact:nth-last-child(-n+2) { border-bottom: 0; }
+
+    .fact label {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 760;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+
+    .fact span {
+      display: block;
+      margin-top: 4px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: var(--mono);
+      overflow-wrap: anywhere;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(15,23,42,.08);
+      margin: 9px 0 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--green);
+      transition: width .38s var(--ease-out);
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 9px;
+      background: rgba(255,255,255,.68);
+      color: #374151;
+      font-size: 12px;
+      font-weight: 680;
+      transition: border-color .18s var(--ease), background .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+    }
+
+    .chip:hover,
+    .chip.is-active {
+      color: var(--accent);
+      border-color: var(--focus-ring);
+      background: var(--accent-soft);
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .mini-list li {
+      display: grid;
+      gap: 3px;
+      padding-top: 8px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.38;
+    }
+
+    .mini-list li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .mini-list strong {
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .research-rail {
+      position: absolute;
+      grid-column: 1 / -1;
+      justify-self: end;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 12;
+      min-width: 0;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      flex: 0 0 auto;
+      border-left: 1px solid var(--line);
+      background: rgba(248,250,252,.74);
+      backdrop-filter: saturate(190%) blur(26px);
+      -webkit-backdrop-filter: saturate(190%) blur(26px);
+      transition: width .34s var(--ease-out), margin-right .34s var(--ease-out), transform .34s var(--ease-out), opacity .26s var(--ease);
+    }
+
+    .research-rail[data-open="false"] {
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .rail-resizer {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 12px;
+      transform: translateX(-50%);
+      cursor: col-resize;
+      touch-action: none;
+      z-index: 4;
+    }
+
+    .rail-resizer::after {
+      content: "";
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      width: 4px;
+      height: 46px;
+      border-left: 1px solid rgba(16,24,40,.22);
+      border-right: 1px solid rgba(16,24,40,.22);
+      opacity: .42;
+      transform: translate(-50%, -50%);
+      transition: opacity .18s var(--ease);
+    }
+
+    .rail-resizer:hover::after { opacity: .9; }
+
+    .rail-tabs {
+      min-height: 52px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .rail-segment {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.50);
+    }
+
+    .rail-tab {
+      min-width: 0;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 720;
+      padding: 0 6px;
+    }
+
+    .rail-tab[aria-pressed="true"] {
+      color: var(--accent);
+      background: rgba(255,255,255,.92);
+      border-color: rgba(16,24,40,.16);
+    }
+
+    .rail-scroll {
+      min-height: 0;
+      overflow: auto;
+      padding: 12px;
+      display: grid;
+      align-content: start;
+      gap: 12px;
+    }
+
+    .rail-title-card {
+      padding: 13px;
+      display: grid;
+      gap: 9px;
+    }
+
+    .rail-title-row {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .rail-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.16;
+      letter-spacing: -.02em;
+      font-weight: 800;
+    }
+
+    .rail-preview {
+      padding: 11px;
+      border-color: rgba(16,24,40,.16);
+      background: rgba(255,255,255,.62);
+      animation: railFade .28s var(--ease-out);
+    }
+
+    .rail-preview h3 {
+      margin: 3px 0 6px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .rail-preview time {
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .rail-card {
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .rail-card h3 {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .rail-item {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: start;
+      padding: 9px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .rail-item:first-child { border-top: 0; padding-top: 0; }
+
+    .rail-item-index {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(15,23,42,.06);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 720;
+    }
+
+    .rail-item-title {
+      display: block;
+      color: var(--text);
+      font-weight: 760;
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .rail-item-copy {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.36;
+    }
+
+    .doc-frame {
+      width: 100%;
+      height: 440px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+    }
+
+    .statusbar {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 16px;
+      padding: 0 12px;
+      border-top: 1px solid var(--line);
+      background: rgba(250,250,252,.78);
+      color: var(--muted);
+      font-family: var(--mono);
+      font-size: 11px;
+      backdrop-filter: saturate(180%) blur(18px);
+      -webkit-backdrop-filter: saturate(180%) blur(18px);
+    }
+
+    .footer-left,
+    .connection-statuses {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .footer-left span {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .connection-statuses {
+      justify-content: flex-end;
+      overflow: visible;
+    }
+
+    .connection-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 24px;
+      padding: 3px 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.58);
+      color: #4b5563;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 680;
+    }
+
+    .connection-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--soft);
+      flex: 0 0 auto;
+    }
+
+    .connection-chip.ready .connection-dot { background: var(--green); }
+    .connection-chip.review .connection-dot { background: var(--amber); }
+    .connection-chip.blocked .connection-dot { background: var(--red); }
+    .connection-chip.neutral .connection-dot { background: var(--soft); }
+
+    [hidden] { display: none !important; }
+    .column-hidden { display: none; }
+
+    @keyframes railFade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    @media (max-width: 1180px) {
+      .content { grid-template-columns: 230px minmax(0, 1fr); }
+      .research-rail {
+        top: 0;
+        bottom: 0;
+      }
+      .workbench-body { grid-template-columns: minmax(0, 1fr); }
+      .detail { display: none; }
+    }
+
+    @media (max-width: 820px) {
+      body { overflow: auto; }
+      .workspace,
+      .workspace.is-collapsed {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+      }
+      .sidebar { display: none; }
+      .app { height: auto; min-height: 100vh; grid-template-rows: auto auto auto; }
+      .topbar { grid-template-columns: 1fr; }
+      .top-status { text-align: left; }
+      .export-popover {
+        left: 0;
+        right: auto;
+        width: min(280px, calc(100vw - 28px));
+      }
+      .content { grid-template-columns: 1fr; overflow: visible; }
+      .filters { max-height: none; }
+      .workbench { overflow: visible; }
+      .workbench-body { overflow: visible; }
+      .results { min-height: 520px; }
+      .research-rail {
+        position: static;
+        width: 100% !important;
+        margin-right: 0 !important;
+        transform: none !important;
+        min-height: 620px;
+      }
+      .research-rail[data-open="false"] { display: none; }
+      .research-rail[data-open="true"] { display: flex; opacity: 1; }
+      .rail-resizer { display: none; }
+      table { min-width: 680px; }
+      .summary-metrics {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
   </style>
 </head>
 <body>
-<main>
-  <header class="ide-topbar">
-    <div id="heroMetrics" class="hero-metrics" aria-label="Lead KPIs"></div>
-    <div class="top-actions" aria-label="Lead export actions">
-      <button class="export-cta" type="button" data-export-action="podio" onclick="renderExportIntent('podio')">Export to Podio</button>
-      <button class="export-cta" type="button" data-export-action="workspace" onclick="renderExportIntent('workspace')" title="Creates Google Docs and Sheets export prep in one run">Export to Google Workspace</button>
-      <button id="refresh" type="button">Load Latest Lead</button>
+<main id="workspace" class="workspace">
+  <aside id="primarySidebar" class="sidebar" aria-label="Primary navigation">
+    <div class="sidebar-top">
+      <button id="sidebarToggle" class="icon-button" type="button" title="Collapse sidebar" aria-label="Collapse sidebar" aria-controls="primarySidebar" aria-expanded="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M9 5v14M6.8 9h.4M6.8 12h.4M6.8 15h.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <div class="brand">
+        <span>HeirRight</span>
+      </div>
     </div>
-  </header>
+    <nav class="nav-list" aria-label="HeirRight sections">
+      <button class="nav-item is-active" type="button" title="Leads"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.6-4.6M10.7 18a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Leads</span></button>
+      <button class="nav-item" type="button" title="Files"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10l2 2.5h5.5A2.5 2.5 0 0 1 20 9v8.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span class="nav-label">Files</span></button>
+      <button class="nav-item" type="button" title="Reports"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 19V9m7 10V5m7 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Reports</span></button>
+      <button class="nav-item" type="button" title="Exports"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 17v2h14v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nav-label">Exports</span></button>
+      <button class="nav-item" type="button" title="Settings"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="1.8"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.38a1.7 1.7 0 0 0-1 .23 1.7 1.7 0 0 0-.82 1.46V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-.82-1.46 1.7 1.7 0 0 0-1-.23 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.62 15a1.7 1.7 0 0 0-.23-1A1.7 1.7 0 0 0 2.93 13H3a2 2 0 1 1 0-4h-.07a1.7 1.7 0 0 0 1.46-.82 1.7 1.7 0 0 0 .23-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06A2 2 0 1 1 7.05 2.4l.06.06A1.7 1.7 0 0 0 9 2.8a1.7 1.7 0 0 0 1-.23A1.7 1.7 0 0 0 10.82 1.1V1a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 .82 1.46 1.7 1.7 0 0 0 1 .23 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.38 9c.09.32.09.68 0 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="nav-label">Settings</span></button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="theme-row">
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false" title="Switch to dark mode">
+          <svg class="sun-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4V2m0 20v-2M4 12H2m20 0h-2M5.6 5.6 4.2 4.2m15.6 15.6-1.4-1.4m0-12.8 1.4-1.4M4.2 19.8l1.4-1.4M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          <svg class="moon-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 14.4A7.7 7.7 0 0 1 9.6 4 8 8 0 1 0 20 14.4Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="user-strip">
+        <span class="avatar">JD</span>
+        <span>
+          <span class="user-name">Joshua Desk</span>
+          <span class="user-meta">Miami-Dade workflow</span>
+        </span>
+      </div>
+    </div>
+  </aside>
 
-  <section class="product-shell" aria-label="Lead workflow loop">
-    <aside class="rail history-rail" aria-label="Lead search and history">
-      <div class="rail-section">
-        <div class="kicker">Lead Search</div>
-        <label class="search-box">
-          <span class="rail-note">Search current lead history</span>
-          <input id="leadSearch" class="search-input" type="search" placeholder="Name, address, folio, case" aria-label="Search lead history">
-        </label>
-      </div>
-      <div class="rail-scroll">
-        <div class="rail-section">
-          <div class="kicker">Source Filters</div>
-          <div id="filterSummary" class="filter-summary">Load a lead to filter by evidence path.</div>
-          <div id="sourceFilters" class="filter-groups" aria-label="Lead source filters"></div>
+  <section class="app" aria-label="HeirRight lead workspace">
+    <header class="topbar">
+      <label class="search-control">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m21 21-4.6-4.6M10.7 18a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input id="globalSearch" type="search" placeholder="Search by estate, address, case, folio, or missing info" aria-label="Search leads">
+        <span class="kbd">/</span>
+      </label>
+      <div id="topStatus" class="top-status">Load the latest lead packet to begin.</div>
+      <div class="top-actions">
+        <div id="exportMenu" class="export-menu" data-open="false">
+          <button id="exportToggle" class="btn primary export-toggle" type="button" aria-haspopup="menu" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4-4 4M6 11v8h12v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Export
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div id="exportPopover" class="export-popover" role="menu" aria-label="Choose export route">
+            <button class="export-option" type="button" role="menuitem" data-export-route="google">
+              <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="1.7"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span><strong>Google Workspace</strong><span>Create the completed report package for Docs or Sheets review.</span></span>
+            </button>
+            <button class="export-option" type="button" role="menuitem" data-export-route="podio">
+              <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 6h14v12H5V6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 10h8M8 14h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <span><strong>Podio</strong><span>Prepare the completed report and lead fields for CRM handoff.</span></span>
+            </button>
+            <button class="export-option" type="button" role="menuitem" data-export-route="both">
+              <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M8 7h10v12H8V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1M11 11h4M11 15h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+              <span><strong>Google + Podio</strong><span>Stage one completed report package for both export routes.</span></span>
+            </button>
+          </div>
         </div>
-        <div class="rail-section">
-          <div class="kicker">Lead History</div>
+        <div class="quick-actions" aria-label="Quick actions">
+          <button id="quickReport" class="btn quick" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h4M9 13h6M9 17h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Report
+          </button>
+          <button id="saveSearch" class="btn quick" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4h12v16l-6-3-6 3V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            Save search
+          </button>
+          <button id="refresh" class="btn quick" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5M18.5 9A7 7 0 0 0 6.2 6.7L4 11m16 2-2.2 4.3A7 7 0 0 1 5.5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Load latest
+          </button>
         </div>
-        <ol id="leadHistory" class="history-list"></ol>
       </div>
-    </aside>
+    </header>
 
-    <section class="main-pane" aria-label="Lead detail workbench">
-      <div class="main-head">
-        <div>
-          <div class="kicker">Lead Detail</div>
-          <h2 id="mainTitle">Load the latest lead</h2>
-          <div id="mainSummary" class="main-sub">The full lead workup will render here.</div>
-          <div id="exportBanner" class="export-banner" hidden aria-live="polite"></div>
+    <section class="content">
+      <aside class="filters" aria-label="Lead filters">
+        <div class="pane-head">
+          <p class="eyebrow">Filters</p>
+          <h2 class="pane-title">Start here</h2>
+          <p class="pane-copy">Choose the county and the missing information you want to clean up first.</p>
         </div>
-        <div id="mainDecision" class="status-pill review">Waiting for lead</div>
-      </div>
-      <div id="mainContent" class="main-detail"></div>
+        <div class="filter-scroll">
+          <div class="field">
+            <label for="countyFilter">County</label>
+            <select id="countyFilter">
+              <option value="all">All counties</option>
+              <option value="miami-dade" selected>Miami-Dade County, FL</option>
+              <option value="broward">Broward County, FL</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="leadTypeFilter">Lead type</label>
+            <select id="leadTypeFilter">
+              <option value="all">All lead types</option>
+              <option value="probate">Probate or estate</option>
+              <option value="tax">Tax-friction lead</option>
+              <option value="title">Title or deed issue</option>
+              <option value="outreach">Outreach prep</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="statusFilter">Property status</label>
+            <select id="statusFilter">
+              <option value="all">All statuses</option>
+              <option value="review">Needs review</option>
+              <option value="blocked">Do not contact yet</option>
+              <option value="ready">Ready for operator review</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="evidenceFilter">Minimum evidence</label>
+            <select id="evidenceFilter">
+              <option value="0">Any evidence</option>
+              <option value="3" selected>At least 3 items</option>
+              <option value="6">At least 6 items</option>
+              <option value="10">At least 10 items</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="missingFilter">Missing info</label>
+            <select id="missingFilter">
+              <option value="all">Anything missing</option>
+              <option value="tax">Tax history</option>
+              <option value="heirs">Heirs or family tree</option>
+              <option value="probate">Probate status</option>
+              <option value="phones">Phone numbers</option>
+              <option value="podio">Podio export</option>
+            </select>
+          </div>
+          <label class="switch-row">
+            <span>Show only high-priority leads</span>
+            <input id="priorityOnly" type="checkbox">
+          </label>
+          <div class="field" style="margin-top: 16px;">
+            <span class="field-title">Column visibility</span>
+            <label class="check-row"><span>Property address</span><input type="checkbox" data-column-toggle="address" checked></label>
+            <label class="check-row"><span>Score</span><input type="checkbox" data-column-toggle="score" checked></label>
+            <label class="check-row"><span>Evidence</span><input type="checkbox" data-column-toggle="evidence" checked></label>
+            <label class="check-row"><span>Next step</span><input type="checkbox" data-column-toggle="next" checked></label>
+          </div>
+          <div class="filter-note" id="filterNote">The list updates as filters change. Clicking an estate or file opens the report rail on the right.</div>
+        </div>
+      </aside>
+
+      <section class="workbench" aria-label="Lead results and selected details">
+        <div class="workbench-head">
+          <div>
+            <h1>Find the estates most ready for outreach</h1>
+            <p class="lead-help">Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</p>
+          </div>
+          <div id="summaryMetrics" class="summary-metrics" aria-label="Lead summary metrics"></div>
+        </div>
+
+        <div class="workbench-body">
+          <section class="results" aria-label="Estate results">
+            <div class="results-toolbar">
+              <span id="resultsCount" class="results-count"><strong>0</strong> results</span>
+              <span id="selectionState">0 selected</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 42px;"><span class="select-box" aria-hidden="true"></span></th>
+                    <th>Estate / File</th>
+                    <th data-column="address">Property address</th>
+                    <th data-column="score">Score</th>
+                    <th data-column="evidence">Evidence</th>
+                    <th data-column="next">Next step</th>
+                  </tr>
+                </thead>
+                <tbody id="resultsBody"></tbody>
+              </table>
+            </div>
+            <div class="results-footer">
+              <div class="pager" aria-label="Pagination">
+                <button type="button" aria-label="Previous page">‹</button>
+                <button class="is-active" type="button" aria-label="Page 1">1</button>
+                <button type="button" aria-label="Page 2">2</button>
+                <button type="button" aria-label="Next page">›</button>
+              </div>
+              <span>10 per page</span>
+            </div>
+          </section>
+
+          <aside class="detail" aria-label="Selected estate details">
+            <div class="detail-head">
+              <div>
+                <p class="eyebrow">Selected</p>
+                <h2 id="detailTitle" class="detail-title">No file selected</h2>
+                <p id="detailSubtitle" class="pane-copy">Load a lead, then choose an estate or file.</p>
+              </div>
+              <span id="detailPill" class="pill neutral">Waiting</span>
+            </div>
+            <div class="detail-scroll">
+              <section class="glass-card next-action">
+                <span class="eyebrow">Next best action</span>
+                <strong id="nextBestAction">Load the latest lead packet.</strong>
+                <span id="nextActionCopy" class="copy">The app will show what to do first once source data is available.</span>
+                <button id="openRailFromDetail" class="btn primary" type="button">Open report rail</button>
+              </section>
+              <section class="glass-card detail-card">
+                <h3 class="card-title">Key details</h3>
+                <div id="factGrid" class="fact-grid"></div>
+              </section>
+              <section class="glass-card detail-card">
+                <h3 class="card-title">Evidence summary</h3>
+                <div class="progress-bar"><div id="evidenceFill" class="progress-fill"></div></div>
+                <p id="evidenceSummary" class="copy">No evidence loaded yet.</p>
+              </section>
+              <section class="glass-card detail-card">
+                <h3 class="card-title">Report gaps</h3>
+                <div id="detailChips" class="chip-list"></div>
+              </section>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <aside id="researchRail" class="research-rail" data-open="false" aria-label="HeirRight Research Rail">
+        <div id="railResizer" class="rail-resizer" role="separator" aria-orientation="vertical" aria-label="Resize report rail"></div>
+        <div class="rail-tabs">
+          <div class="rail-segment" role="tablist" aria-label="Report rail tabs">
+            <button class="rail-tab" type="button" data-rail-tab="flow" aria-pressed="true">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4v16m0-8h7a5 5 0 0 0 5-5V5m-5 7a5 5 0 0 1 5 5v2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Flow
+            </button>
+            <button class="rail-tab" type="button" data-rail-tab="timeline" aria-pressed="false">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Timeline
+            </button>
+            <button class="rail-tab" type="button" data-rail-tab="docs" aria-pressed="false">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v5h4M9 13h6M9 17h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Docs
+            </button>
+          </div>
+          <button id="closeRail" class="btn icon-only" type="button" aria-label="Close report rail" title="Close report rail">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div id="railContent" class="rail-scroll"></div>
+      </aside>
     </section>
 
-    <aside class="rail research-rail" aria-label="Research content rails">
-      <div class="rail-section">
-        <div class="kicker">Research Rails</div>
-        <h2>Open Research</h2>
-        <div class="rail-note">Property, title, probate, heirs, outreach, and Podio readiness.</div>
+    <footer class="statusbar" aria-label="System status">
+      <div class="footer-left">
+        <span id="statusRun">packet: [LOADING]</span>
+        <span id="statusSelected">selected: [NONE]</span>
+        <span id="statusRail">rail: [CLOSED]</span>
+        <span id="statusExport">export: [PREP ONLY]</span>
       </div>
-      <div id="researchRails" class="research-list"></div>
-    </aside>
-  </section>
-
-  <div class="statusbar" aria-label="Lead packet status">
-    <div id="footerStatusLights" class="footer-status-lights" aria-label="Status lights"></div>
-    <span id="statusRun">packet: [LOADING]</span>
-    <span id="statusSelected">view: [NONE]</span>
-    <span id="statusExport">export: [NONE]</span>
-  </div>
-
-  <div class="detail-heading">
-    <div>
-      <div class="kicker">Lead Detail</div>
-      <h2>Operator Packet</h2>
-    </div>
-    <div class="rail-note">Internal review only. External use stays blocked until the gates clear.</div>
-  </div>
-
-  <section class="grid detail-grid">
-    <article class="card wide lead-state">
-      <div class="kicker">Lead Decision</div>
-      <div id="status">No lead loaded.</div>
-      <div id="nextAction" class="next-action"></div>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Property</div>
-      <ul id="propertyFacts" class="fact-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">What Needs Review</div>
-      <ul id="reviewList" class="task-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Tax Work</div>
-      <ul id="taxTasks" class="task-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Deed And Title Work</div>
-      <ul id="deedTasks" class="task-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Probate And Court Work</div>
-      <ul id="probateTasks" class="task-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Heirship Research</div>
-      <ul id="heirshipTasks" class="task-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Offer And Underwriting</div>
-      <ul id="offerFacts" class="fact-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Outreach Work</div>
-      <ul id="outreachFacts" class="fact-list"></ul>
-    </article>
-
-    <article class="card">
-      <div class="kicker">Manual Follow-Up</div>
-      <ul id="followUpTasks" class="task-list"></ul>
-    </article>
-
-    <article class="card wide">
-      <div class="kicker">Outreach Blockers</div>
-      <ul id="outreachBlockers" class="task-list"></ul>
-    </article>
-
-    <article class="card wide">
-      <div class="kicker">Completed Lead Report</div>
-      <iframe id="doc" class="doc-frame" sandbox="" title="Rendered completed lead report"></iframe>
-    </article>
-
-    <details>
-      <summary>Internal diagnostics</summary>
-      <pre id="internalDetails"></pre>
-    </details>
+      <div class="connection-statuses" aria-label="Connection status">
+        <span id="podioStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Podio</span>
+        <span id="googleStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Google</span>
+        <span id="webSearchStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Web Search</span>
+      </div>
+    </footer>
   </section>
 </main>
+
 <script>
+const state = {
+  data: null,
+  dossier: null,
+  rows: [],
+  filteredRows: [],
+  selectedId: null,
+  railOpen: false,
+  railTab: "flow",
+  railWidth: 388,
+  railPreview: null,
+  exportRoute: null,
+  filled: new Set()
+};
+
+const railWidthKey = "heirright:research-rail-width";
+const filledKey = "heirright:filled-report-gaps";
+const themeKey = "heirright:theme";
+const columnMap = {
+  address: '[data-column="address"]',
+  score: '[data-column="score"]',
+  evidence: '[data-column="evidence"]',
+  next: '[data-column="next"]'
+};
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -370,1197 +1880,807 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
-function decisionCopy(dossier) {
-  if (dossier.workflow.status === "stop") {
-    return {
-      label: "Move on unless Joshua overrides",
-      className: "move-on",
-      next: dossier.summary.nextBestAction
-    };
-  }
-  if (dossier.operatorQueue.state === "manual_review" || dossier.workflow.status === "review_required") {
-    return {
-      label: "Needs review before outreach",
-      className: "review",
-      next: dossier.summary.nextBestAction
-    };
-  }
-  return {
-    label: "Ready for operator review",
-    className: "ready",
-    next: "Review the completed lead packet before taking any external action."
-  };
-}
-
 function claimValue(claim, fallback = "Needs review") {
   if (!claim || claim.value === null || claim.value === undefined || claim.value === "") return fallback;
-  if (typeof claim.value === "object") return Object.values(claim.value).filter(Boolean).join(" / ") || fallback;
-  return String(claim.value);
-}
-
-function renderFacts(element, rows) {
-  element.innerHTML = rows.map((row) => `
-    <li>
-      <span class="fact-label">${escapeHtml(row.label)}</span>
-      <strong>${escapeHtml(row.value)}</strong>
-    </li>
-  `).join("");
-}
-
-function renderTasks(element, tasks, emptyText) {
-  if (!tasks.length) {
-    element.innerHTML = `<li class="empty">${emptyText}</li>`;
-    return;
+  if (typeof claim.value === "object") {
+    return Object.values(claim.value).filter(Boolean).join(" / ") || fallback;
   }
-  element.innerHTML = tasks.map((task) => `
-      <li>
-        <span class="task-title">${escapeHtml(task.title || task.label || task.code)}</span>
-      <span class="task-next">${escapeHtml(task.nextAction || task.description || task.reason || "Review this item before moving forward.")}</span>
-      </li>
-  `).join("");
-}
-
-function formatMoney(value, currency = "USD") {
-  if (value === null || value === undefined) return "Needs review";
-  return `${currency} ${Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+  return String(claim.value);
 }
 
 function displayStatus(value, fallback = "Needs review") {
   if (!value) return fallback;
-  return String(value)
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  return String(value).replace(/_/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function loopTone(value) {
-  const normalized = String(value ?? "").toLowerCase();
-  if (normalized.includes("blocked") || normalized.includes("missing") || normalized.includes("disabled") || normalized.includes("stop")) return "blocked";
-  if (normalized.includes("ready") || normalized.includes("complete") || normalized.includes("captured") || normalized.includes("built") || normalized.includes("checked")) return "ready";
-  return "review";
-}
-
-let currentStages = [];
-let activeSourceFilterKey = "all";
-let currentSourceFilters = [];
-let currentRunData = null;
-let currentDossier = null;
-
-const recordLabelByFlag = {
-  MISSING_PROPERTY_FACT: "property details",
-  MISSING_TITLE_FACT: "title record",
-  MISSING_DEED_FACT: "latest deed",
-  MISSING_OR_BOOK_PAGE_FACT: "OR book/page or instrument number",
-  MISSING_RECENT_SALE_FACT: "last sale date",
-  MISSING_ADVERSE_POSSESSION_FACT: "adverse-possession signal",
-  MISSING_MAILING_ADDRESS_FACT: "mailing address",
-  MISSING_TAX_HISTORY_FACT: "tax history",
-  MISSING_TAX_FACT: "tax amount due",
-  MISSING_TAX_RECEIPT_FACT: "tax receipt",
-  MANUAL_TAX_RECEIPT_DOWNLOAD_REQUIRED: "manual tax receipt download",
-  MISSING_TAX_PAYER_FACT: "tax payer identity",
-  REASSESSMENT_REVIEW_REQUIRED: "reassessment signal",
-  MISSING_PROBATE_FACT: "probate case record",
-  MISSING_AFFIDAVIT_OF_HEIRS_FACT: "affidavit of heirs",
-  PROBATE_DOCUMENT_REQUEST_REQUIRED: "probate document request",
-  MISSING_MARRIAGE_DEATH_FACT: "marriage/death record",
-  MANUAL_DEATH_CERTIFICATE_REQUIRED: "death certificate status",
-  MISSING_OFFER_MATH_FACT: "offer math input",
-  UNDERWRITING_REVIEW_REQUIRED: "underwriting input",
-  MISSING_LEAD_QUALITY_SIGNAL: "lead-quality signal",
-  SOURCE_EVIDENCE_REQUIRED: "source evidence",
-  PAID_SOURCE_APPROVAL_REQUIRED: "paid-source approval",
-  MANUAL_SOURCE_APPROVAL_REQUIRED: "manual-source approval"
-};
-
-const refineChecks = {
-  decision: {
-    label: "Lead decision",
-    filterKey: "lead_quality",
-    sources: ["Property Appraiser", "Official Records", "Tax Collector", "Probate/Court"],
-    flags: ["MISSING_LEAD_QUALITY_SIGNAL", "SOURCE_EVIDENCE_REQUIRED", "MISSING_RECENT_SALE_FACT", "MISSING_PROPERTY_FACT", "MISSING_TAX_HISTORY_FACT", "MISSING_PROBATE_FACT"],
-    terms: ["lead quality", "source evidence", "recent sale", "owner qualification", "generic pull"]
-  },
-  property: {
-    label: "Property and ownership",
-    filterKey: "property_appraiser",
-    sources: ["Miami-Dade Property Appraiser", "Official Records", "Tax Collector"],
-    flags: ["MISSING_PROPERTY_FACT", "MISSING_MAILING_ADDRESS_FACT", "MISSING_TITLE_FACT", "MISSING_DEED_FACT", "MISSING_OR_BOOK_PAGE_FACT", "MISSING_RECENT_SALE_FACT", "MISSING_ADVERSE_POSSESSION_FACT", "MISSING_TAX_HISTORY_FACT", "MISSING_TAX_FACT", "MISSING_TAX_RECEIPT_FACT", "MISSING_TAX_PAYER_FACT", "REASSESSMENT_REVIEW_REQUIRED"],
-    terms: ["property", "mailing address", "deed", "OR book", "recent sale", "adverse", "tax", "receipt", "payer", "reassessment"]
-  },
-  research: {
-    label: "Research work",
-    filterKey: "tax_receipts",
-    sources: ["Tax Collector", "Official Records", "Probate/Court", "Clerk records", "public obituary sources"],
-    flags: ["MISSING_TAX_RECEIPT_FACT", "MISSING_TAX_PAYER_FACT", "MISSING_OR_BOOK_PAGE_FACT", "MISSING_PROBATE_FACT", "MISSING_AFFIDAVIT_OF_HEIRS_FACT", "PROBATE_DOCUMENT_REQUEST_REQUIRED", "MISSING_MARRIAGE_DEATH_FACT", "MANUAL_DEATH_CERTIFICATE_REQUIRED", "PAID_SOURCE_APPROVAL_REQUIRED", "MANUAL_SOURCE_APPROVAL_REQUIRED"],
-    terms: ["tax receipt", "payer", "probate", "affidavit", "marriage", "death", "obituary", "family tree", "paid-source", "manual"]
-  },
-  report: {
-    label: "Report and offer",
-    filterKey: "lead_quality",
-    sources: ["Property Appraiser", "Tax Collector", "Official Records", "Probate/Court"],
-    flags: ["MISSING_OFFER_MATH_FACT", "UNDERWRITING_REVIEW_REQUIRED", "MISSING_TAX_FACT", "MISSING_DEED_FACT", "MISSING_PROBATE_FACT", "MISSING_LEAD_QUALITY_SIGNAL"],
-    terms: ["offer", "underwriting", "profit", "taxes due", "lien", "mortgage", "heir count", "lead bucket"]
-  },
-  outreach: {
-    label: "Outreach and follow-up",
-    filterKey: "outreach_gate",
-    sources: ["completed report", "contact records", "script review", "compliance review"],
-    flags: ["PAID_SOURCE_APPROVAL_REQUIRED", "MANUAL_SOURCE_APPROVAL_REQUIRED", "MISSING_OFFER_MATH_FACT", "UNDERWRITING_REVIEW_REQUIRED", "SOURCE_EVIDENCE_REQUIRED"],
-    terms: ["outreach", "script", "contact", "compliance", "call", "text", "email", "offer letter", "no auto"]
-  },
-  podio: {
-    label: "Podio readiness",
-    filterKey: "outreach_gate",
-    sources: ["Podio access", "CSV export", "safe live-write test", "readback checks"],
-    flags: ["SOURCE_EVIDENCE_REQUIRED", "PAID_SOURCE_APPROVAL_REQUIRED", "MANUAL_SOURCE_APPROVAL_REQUIRED"],
-    terms: ["podio", "crm", "csv", "readback", "live-write", "missing config", "access blocker"]
-  },
-  loop: {
-    label: "Workflow loop",
-    filterKey: "all",
-    sources: ["Property Appraiser", "Official Records", "Tax Collector", "Probate/Court", "manual approval queue"],
-    flags: ["MISSING_PROPERTY_FACT", "MISSING_TITLE_FACT", "MISSING_TAX_HISTORY_FACT", "MISSING_PROBATE_FACT", "MISSING_MARRIAGE_DEATH_FACT", "MISSING_OFFER_MATH_FACT", "PAID_SOURCE_APPROVAL_REQUIRED", "MANUAL_SOURCE_APPROVAL_REQUIRED"],
-    terms: ["property", "official records", "tax", "probate", "heir", "offer", "outreach", "podio"]
-  }
-};
-
-function taskCount(dossier) {
-  return [
-    dossier.operatorQueue.items,
-    dossier.taxHistory.reviewTasks,
-    dossier.deedHistory.reviewTasks,
-    dossier.probateDocket.reviewTasks,
-    dossier.marriageDeathIndicators.reviewTasks,
-    dossier.familyTree.reviewTasks,
-    dossier.sourceGovernance.reviewTasks,
-  ].reduce((total, tasks) => total + (tasks?.length ?? 0), 0);
+function formatMoney(value, currency = "USD") {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return "Needs review";
+  return `${currency} ${Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 }
 
 function allReviewTasks(dossier) {
+  if (!dossier) return [];
   return [
-    ...(dossier.operatorQueue.items ?? []),
-    ...(dossier.taxHistory.reviewTasks ?? []),
-    ...(dossier.deedHistory.reviewTasks ?? []),
-    ...(dossier.probateDocket.reviewTasks ?? []),
-    ...(dossier.marriageDeathIndicators.reviewTasks ?? []),
-    ...(dossier.familyTree.reviewTasks ?? []),
-    ...(dossier.sourceGovernance.reviewTasks ?? []),
+    ...(dossier.operatorQueue?.items ?? []),
+    ...(dossier.taxHistory?.reviewTasks ?? []),
+    ...(dossier.deedHistory?.reviewTasks ?? []),
+    ...(dossier.probateDocket?.reviewTasks ?? []),
+    ...(dossier.marriageDeathIndicators?.reviewTasks ?? []),
+    ...(dossier.familyTree?.reviewTasks ?? []),
+    ...(dossier.sourceGovernance?.reviewTasks ?? [])
   ];
 }
 
-function sourceCorpus(data, dossier) {
-  const facts = (data.facts ?? []).map((fact) => `${fact.source ?? ""} ${fact.type ?? ""} ${JSON.stringify(fact.value ?? "")}`);
-  const ruleText = (dossier.workflow.rules ?? []).map((rule) => `${rule.label ?? ""} ${rule.explanation ?? ""} ${(rule.reasonCodes ?? []).join(" ")} ${(rule.reviewFlags ?? []).join(" ")}`);
-  const taskText = allReviewTasks(dossier).map((task) => `${task.title ?? task.label ?? task.code ?? ""} ${task.description ?? ""} ${task.nextAction ?? ""} ${task.reason ?? ""}`);
-  return [
-    dossier.summary.displayName,
-    dossier.summary.nextBestAction,
-    JSON.stringify(dossier.property ?? {}),
-    JSON.stringify(dossier.taxHistory ?? {}),
-    JSON.stringify(dossier.deedHistory ?? {}),
-    JSON.stringify(dossier.probateDocket ?? {}),
-    JSON.stringify(dossier.marriageDeathIndicators ?? {}),
-    JSON.stringify(dossier.familyTree ?? {}),
-    JSON.stringify(dossier.sourceGovernance ?? {}),
-    JSON.stringify(dossier.completedLeadReport?.leadQualityProfile ?? {}),
-    JSON.stringify(dossier.completedLeadReport?.reviewGate ?? {}),
-    JSON.stringify(dossier.outreach?.readiness ?? {}),
-    JSON.stringify(dossier.crm.payload?.podioReadiness ?? {}),
-    ...facts,
-    ...ruleText,
-    ...taskText,
-    ...(dossier.audit.reviewFlags ?? []),
-  ].join(" ").toLowerCase();
+function taskCount(dossier) {
+  return allReviewTasks(dossier).length;
 }
 
-function sourceIssueCount(data, dossier, terms) {
-  const normalizedTerms = terms.map((term) => term.toLowerCase());
-  const rows = [
-    ...allReviewTasks(dossier).map((task) => `${task.title ?? task.label ?? task.code ?? ""} ${task.description ?? ""} ${task.nextAction ?? ""} ${task.reason ?? ""}`),
-    ...(dossier.workflow.rules ?? []).map((rule) => `${rule.label ?? ""} ${rule.explanation ?? ""} ${(rule.reasonCodes ?? []).join(" ")} ${(rule.reviewFlags ?? []).join(" ")}`),
-    ...(dossier.audit.reviewFlags ?? []),
-    ...(data.facts ?? []).map((fact) => `${fact.source ?? ""} ${fact.type ?? ""} ${JSON.stringify(fact.value ?? "")}`)
-  ];
-  return rows.filter((row) => {
-    const haystack = row.toLowerCase();
-    return normalizedTerms.some((term) => haystack.includes(term));
-  }).length;
-}
-
-function factCount(data, source) {
-  return (data.facts ?? []).filter((fact) => fact.source === source).length;
-}
-
-function sourceFilterItem(data, dossier, item) {
-  const issueCount = sourceIssueCount(data, dossier, item.terms);
+function decisionCopy(dossier) {
+  if (!dossier) {
+    return { label: "Waiting", tone: "neutral", next: "Load the latest lead packet." };
+  }
+  if (dossier.workflow?.status === "stop") {
+    return {
+      label: "Do not contact yet",
+      tone: "blocked",
+      next: dossier.summary?.nextBestAction ?? "Move on unless Joshua overrides this lead."
+    };
+  }
+  if (dossier.operatorQueue?.state === "manual_review" || dossier.workflow?.status === "review_required") {
+    return {
+      label: "Needs review",
+      tone: "review",
+      next: dossier.summary?.nextBestAction ?? "Review the missing items before outreach."
+    };
+  }
   return {
-    ...item,
-    countLabel: item.countLabel ?? (issueCount > 0 ? `${issueCount} hits` : "check"),
-    tone: item.tone ?? (issueCount > 0 ? "review" : "ready"),
+    label: "Ready for review",
+    tone: "ready",
+    next: "Review the completed lead packet before outreach."
   };
 }
 
-function makeSourceFilterGroups(data, dossier) {
-  const propertyFacts = factCount(data, "property_appraiser");
-  const officialFacts = factCount(data, "official_records");
-  const taxFacts = factCount(data, "tax_collector");
-  const probateFacts = factCount(data, "probate_court");
-  const clerkFacts = factCount(data, "clerk_of_courts");
-  const allCount = data.facts?.length ?? 0;
-  const paidManualCount = (dossier.sourceGovernance.reviewTasks ?? []).length;
+function rowTone(row) {
+  if (row.status === "blocked") return "blocked";
+  if (row.score >= 80 && row.missing.length <= 2) return "ready";
+  return "review";
+}
 
-  const groups = [
+function buildMissingSections(dossier) {
+  const sections = [
     {
-      title: "Lead Gates",
-      items: [
-        { key: "all", label: "All source paths", meta: "Show every current lead and source path.", terms: ["lead", "source"], countLabel: `${allCount} facts`, tone: "ready" },
-        { key: "owner_rules", label: "Individual owner rule", meta: "Keep only leads where the owner path can move forward.", terms: ["owner qualification", "individual owner", "owner type", "company owner"], countLabel: displayStatus(dossier.workflow.rules?.find((rule) => rule.code === "OWNER_TYPE")?.status, "review"), tone: loopTone(dossier.workflow.rules?.find((rule) => rule.code === "OWNER_TYPE")?.status) },
-        { key: "company_stop", label: "Company owner stop", meta: "Move on when the property is company-owned unless Joshua overrides.", terms: ["company owner", "entity-owner", "owner type", "move on"], countLabel: "move on", tone: "blocked" },
-        { key: "recent_sale", label: "Recent sale stop", meta: "Check whether a sale in the last 5 years should stop the lead.", terms: ["recent sale", "last sale", "sold within", "5 years"], countLabel: "5 year", tone: "blocked" },
-        { key: "lead_quality", label: "Lead-quality signals", meta: "Generic pulls stay seeds until multiple signals line up.", terms: ["lead quality", "generic pull", "quality signal", "promotion"], countLabel: "review", tone: "review" },
+      id: "tax",
+      label: "Add tax history",
+      short: "Tax history",
+      type: "tax",
+      source: "Tax Collector",
+      copy: "Capture unpaid years, amount due, receipt status, and who paid the taxes.",
+      tasks: dossier.taxHistory?.reviewTasks ?? []
+    },
+    {
+      id: "heirs",
+      label: "Confirm heirs",
+      short: "Heirs",
+      type: "heirs",
+      source: "Probate and family records",
+      copy: "Confirm heirs, family-tree questions, marriage/death facts, and contact confidence.",
+      tasks: [
+        ...(dossier.probateDocket?.reviewTasks ?? []).filter((task) => /heir|affidavit/i.test(`${task.title} ${task.reason}`)),
+        ...(dossier.marriageDeathIndicators?.reviewTasks ?? []),
+        ...(dossier.familyTree?.reviewTasks ?? [])
       ]
     },
     {
-      title: "County Records",
-      items: [
-        { key: "property_appraiser", label: "Property appraiser", meta: "Address, owner, folio, county, and property search status.", terms: ["property_appraiser", "property search", "address", "folio", "owner"], countLabel: `${propertyFacts} facts`, tone: propertyFacts > 0 ? "ready" : "review" },
-        { key: "mailing_address", label: "Mailing address", meta: "Mailing address match, mismatch, or missing evidence.", terms: ["mailing address", "mailing-address", "MISSING_MAILING_ADDRESS_FACT"], countLabel: "match", tone: "review" },
-        { key: "official_records", label: "Official records", meta: "County clerk, title signal, and recorded instruments.", terms: ["official_records", "official records", "clerk", "title signal"], countLabel: `${officialFacts} facts`, tone: officialFacts > 0 ? "ready" : "review" },
-        { key: "or_book_page", label: "OR book/page", meta: "Book/page or instrument number for deeds and probate links.", terms: ["or book", "book/page", "instrument number", "MISSING_OR_BOOK_PAGE_FACT"], countLabel: "needed", tone: "review" },
-        { key: "tax_history", label: "Taxes: 2+ years", meta: "Unpaid years, amount due, and tax-certificate friction.", terms: ["tax history", "unpaid", "2 years", "amount due", "tax_collector"], countLabel: `${taxFacts} facts`, tone: taxFacts > 0 ? "review" : "review" },
-        { key: "tax_receipts", label: "Receipts and payer", meta: "Receipt download and who paid taxes when payer differs.", terms: ["receipt", "payer", "tax payer", "MANUAL_TAX_RECEIPT_DOWNLOAD_REQUIRED"], countLabel: "manual", tone: "review" },
-        { key: "title_friction", label: "Liens and foreclosure", meta: "Mortgage, lien, Lis Pendens, foreclosure, and ownership activity.", terms: ["mortgage", "lien", "lis pendens", "foreclosure", "ownership activity"], countLabel: "review", tone: "review" },
-        { key: "adverse_possession", label: "Adverse possession", meta: "Review any adverse-possession claim or missing signal.", terms: ["adverse possession", "MISSING_ADVERSE_POSSESSION_FACT"], countLabel: "review", tone: "review" },
-      ]
+      id: "probate",
+      label: "Check probate status",
+      short: "Probate",
+      type: "probate",
+      source: "Clerk and probate docket",
+      copy: "Confirm case number, docket status, affidavit availability, and document request needs.",
+      tasks: dossier.probateDocket?.reviewTasks ?? []
     },
     {
-      title: "Probate And Heirs",
-      items: [
-        { key: "estate_search", label: "Estate name search", meta: "Estate/person name and case number as first-class lead inputs.", terms: ["estate", "case number", "estate name"], countLabel: "seed", tone: "review" },
-        { key: "probate_docket", label: "Probate docket", meta: "Probate status, case number, documents, and docket trail.", terms: ["probate", "docket", "case status", "probate_court"], countLabel: `${probateFacts} facts`, tone: probateFacts > 0 ? "review" : "review" },
-        { key: "civil_family", label: "Civil and family records", meta: "Civil/family docket references and court divisions.", terms: ["civil", "family", "docket", "court"], countLabel: "court", tone: "review" },
-        { key: "affidavit_heirs", label: "Affidavit of heirs", meta: "Affidavit availability and document request tasks.", terms: ["affidavit", "heirs", "PROBATE_DOCUMENT_REQUEST_REQUIRED"], countLabel: "needed", tone: "review" },
-        { key: "marriage_death", label: "Marriage and death", meta: "Marriage license, DOB/DOD, death certificate, and clerk checks.", terms: ["marriage", "death", "dob", "dod", "death certificate", "clerk_of_courts"], countLabel: `${clerkFacts} facts`, tone: clerkFacts > 0 ? "review" : "review" },
-        { key: "obituary_memorial", label: "Obituary and memorial", meta: "Obituary, Findagrave, Legacy, and public memorial checks.", terms: ["obituary", "findagrave", "legacy", "memorial"], countLabel: "manual", tone: "review" },
-        { key: "family_tree", label: "Family tree", meta: "Spouse, children, siblings, parents, and relationship confidence.", terms: ["family tree", "spouse", "child", "sibling", "relationship"], countLabel: "hypothesis", tone: "review" },
-      ]
+      id: "phones",
+      label: "Add phone numbers",
+      short: "Phone numbers",
+      type: "phones",
+      source: "Skip trace or approved paid sources",
+      copy: "Add verified phone numbers only after paid-source approval and operator review.",
+      tasks: dossier.sourceGovernance?.reviewTasks ?? []
     },
     {
-      title: "Manual Or Approval",
-      items: [
-        { key: "paid_sources", label: "Paid people sources", meta: "IDI, Intelius, Ancestry, ForeWarn, VitalChek, and PI stay approval-gated.", terms: ["idi", "intelius", "ancestry", "forewarn", "vitalchek", "private investigator", "paid"], countLabel: paidManualCount ? `${paidManualCount} gates` : "approval", tone: "blocked" },
-        { key: "manual_field", label: "Field and neighbor work", meta: "Door knocks and neighbor research are manual only after approval.", terms: ["door knock", "neighbor", "field visit", "manual"], countLabel: "manual", tone: "blocked" },
-        { key: "code_enforcement", label: "Code enforcement", meta: "Municipal/code calls stay operator tasks, not automated facts.", terms: ["code enforcement", "municipal"], countLabel: "manual", tone: "blocked" },
-        { key: "document_request", label: "Document requests", meta: "Court, probate, and vital records requested manually when blocked.", terms: ["document request", "manual document", "vital records", "death certificate"], countLabel: "manual", tone: "blocked" },
-        { key: "outreach_gate", label: "Outreach approval", meta: "Calls, texts, emails, and offer letters stay draft/manual until approved.", terms: ["outreach", "script", "call", "text", "email", "offer letter", "no auto"], countLabel: "blocked", tone: "blocked" },
-      ]
+      id: "podio",
+      label: "Prepare Podio export",
+      short: "Podio export",
+      type: "podio",
+      source: "CRM prep",
+      copy: "Prepare the CRM package, missing config list, test-write steps, and readback checks.",
+      tasks: (dossier.crm?.payload?.podioReadiness?.blockers ?? []).map((blocker) => ({ title: "Podio access", nextAction: blocker }))
     }
   ];
-
-  return groups.map((group) => ({
-    ...group,
-    items: group.items.map((item) => sourceFilterItem(data, dossier, item))
-  }));
+  return sections.filter((section) => {
+    if (state.filled.has(section.id)) return false;
+    if (section.id === "podio") return true;
+    return section.tasks.length > 0;
+  });
 }
 
-function updateFilterSummary(filter) {
-  const summary = document.getElementById("filterSummary");
-  if (!summary || !filter) return;
-  if (filter.key === "all") {
-    summary.textContent = "Showing every lead path from the current source packet.";
-    return;
+function buildRows(data, dossier) {
+  const decision = decisionCopy(dossier);
+  const missing = buildMissingSections(dossier);
+  const facts = data.facts?.length ?? 0;
+  const baseScore = Math.max(28, Math.min(94, facts * 3 + Math.max(0, 72 - taskCount(dossier) * 4)));
+  const address = claimValue(dossier.property?.address, data.seed?.propertyAddress ?? "Address needs review");
+  const estate = claimValue(dossier.property?.estateName, dossier.summary?.displayName ?? "Current estate");
+  const owner = claimValue(dossier.property?.ownerName, data.seed?.ownerName ?? "Owner needs review");
+  const caseNumber = claimValue(dossier.property?.caseNumber, dossier.summary?.caseNumber ?? "Case needs review");
+  const county = claimValue(dossier.property?.county, data.seed?.county ?? "miami-dade");
+  const parcel = claimValue(dossier.property?.parcelId, "Folio needs review");
+  const rows = [
+    {
+      id: "estate",
+      kind: "Estate",
+      title: estate,
+      file: caseNumber,
+      address,
+      county,
+      parcel,
+      owner,
+      score: baseScore,
+      evidence: Math.min(facts, 9),
+      evidenceTotal: 9,
+      status: decision.tone,
+      next: missing[0]?.label ?? decision.next,
+      missing,
+      search: `${estate} ${owner} ${address} ${caseNumber} ${county} ${parcel} ${decision.label} ${missing.map((item) => item.label).join(" ")}`,
+      leadType: "probate"
+    },
+    {
+      id: "lead-report",
+      kind: "File",
+      title: "Completed lead report",
+      file: "Internal report",
+      address,
+      county,
+      parcel,
+      owner,
+      score: Math.max(30, baseScore - 8),
+      evidence: Math.min(facts, 8),
+      evidenceTotal: 9,
+      status: dossier.completedLeadReport?.reviewGate?.externalUseBlocked ? "blocked" : "review",
+      next: "Fill missing report sections",
+      missing,
+      search: `completed lead report internal draft offer math ${address} ${missing.map((item) => item.label).join(" ")}`,
+      leadType: "probate"
+    },
+    {
+      id: "property-title",
+      kind: "File",
+      title: "Property and title review",
+      file: "County records",
+      address,
+      county,
+      parcel,
+      owner,
+      score: Math.max(30, baseScore - (dossier.deedHistory?.reviewTasks?.length ?? 0) * 5),
+      evidence: Math.min((data.facts ?? []).filter((fact) => ["property_appraiser", "official_records", "tax_collector"].includes(fact.source)).length, 9),
+      evidenceTotal: 9,
+      status: (dossier.deedHistory?.reviewTasks?.length ?? 0) || (dossier.taxHistory?.reviewTasks?.length ?? 0) ? "review" : "ready",
+      next: (dossier.taxHistory?.reviewTasks?.length ?? 0) ? "Add tax history" : "Check title records",
+      missing: missing.filter((item) => ["tax", "probate"].includes(item.type)),
+      search: `property title deed tax address folio ${address} ${parcel}`,
+      leadType: "title"
+    },
+    {
+      id: "outreach-prep",
+      kind: "File",
+      title: "Outreach prep",
+      file: "Manual follow-up",
+      address,
+      county,
+      parcel,
+      owner,
+      score: Math.max(24, baseScore - 22),
+      evidence: Math.min(dossier.outreach?.assets?.length ?? 0, 9),
+      evidenceTotal: 9,
+      status: "blocked",
+      next: "Add phone numbers",
+      missing: missing.filter((item) => ["phones", "podio", "heirs"].includes(item.type)),
+      search: `outreach phones calls texts emails podio manual follow up ${address}`,
+      leadType: "outreach"
+    }
+  ];
+  return rows.map((row) => ({ ...row, tone: rowTone(row) }));
+}
+
+function selectedRow() {
+  return state.rows.find((row) => row.id === state.selectedId) ?? state.rows[0] ?? null;
+}
+
+function applyTheme(theme, persist = true) {
+  const nextTheme = theme === "dark" ? "dark" : "light";
+  document.body.dataset.theme = nextTheme;
+  document.documentElement.style.colorScheme = nextTheme;
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    const isDark = nextTheme === "dark";
+    toggle.setAttribute("aria-pressed", isDark ? "true" : "false");
+    toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    toggle.setAttribute("title", isDark ? "Switch to light mode" : "Switch to dark mode");
   }
-  const guard = filter.tone === "blocked" ? " Approval or stop gate stays visible; nothing is sent or enriched from here." : "";
-  summary.textContent = `${filter.label}: ${filter.meta}${guard}`;
+  if (persist) localStorage.setItem(themeKey, nextTheme);
 }
 
-function activateSourceFilter(key) {
-  activeSourceFilterKey = key || "all";
-  const container = document.getElementById("sourceFilters");
-  if (container) {
-    container.querySelectorAll("[data-source-filter]").forEach((filterButton) => {
-      const isActive = filterButton.dataset.sourceFilter === activeSourceFilterKey;
-      filterButton.classList.toggle("is-active", isActive);
-      filterButton.setAttribute("aria-pressed", isActive ? "true" : "false");
+function loadSavedState() {
+  const storedTheme = localStorage.getItem(themeKey);
+  applyTheme(storedTheme === "dark" ? "dark" : "light", false);
+  const storedWidth = Number(localStorage.getItem(railWidthKey));
+  if (Number.isFinite(storedWidth)) state.railWidth = clampRailWidth(storedWidth);
+  try {
+    const storedFilled = JSON.parse(localStorage.getItem(filledKey) ?? "[]");
+    if (Array.isArray(storedFilled)) state.filled = new Set(storedFilled.map(String));
+  } catch {
+    state.filled = new Set();
+  }
+}
+
+function persistFilled() {
+  localStorage.setItem(filledKey, JSON.stringify([...state.filled]));
+}
+
+function clampRailWidth(value) {
+  const max = Math.max(320, Math.floor(window.innerWidth * .55));
+  return Math.min(max, Math.max(320, Math.round(value)));
+}
+
+function setRailOpen(open) {
+  state.railOpen = open;
+  const rail = document.getElementById("researchRail");
+  const width = `min(${state.railWidth}px, 55vw, calc(100vw - 64px))`;
+  rail.dataset.open = open ? "true" : "false";
+  rail.style.width = width;
+  rail.style.marginRight = open ? "0" : `calc(-1 * ${width})`;
+  rail.style.transform = open ? "translateX(0)" : "translateX(100%)";
+  document.getElementById("statusRail").textContent = `rail: [${open ? "OPEN" : "CLOSED"}]`;
+  if (open && window.matchMedia("(max-width: 820px)").matches) {
+    requestAnimationFrame(() => {
+      rail.scrollIntoView({
+        block: "start",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+      });
     });
   }
-  updateFilterSummary(currentSourceFilters.find((filter) => filter.key === activeSourceFilterKey));
-  applyLeadHistoryFilters();
 }
 
-function refreshHistoryFilterLabels() {
-  const active = currentSourceFilters.find((filter) => filter.key === activeSourceFilterKey);
-  document.querySelectorAll("[data-history-filter-line]").forEach((line) => {
-    line.textContent = active && active.key !== "all" ? `Filtered by ${active.label}` : "Ready for source drill-down";
+function setRailTab(tab) {
+  state.railTab = tab;
+  document.querySelectorAll("[data-rail-tab]").forEach((button) => {
+    button.setAttribute("aria-pressed", button.dataset.railTab === tab ? "true" : "false");
   });
+  renderRail();
 }
 
-function applyLeadHistoryFilters() {
-  const search = document.getElementById("leadSearch");
-  const query = search?.value.trim().toLowerCase() ?? "";
-  const active = currentSourceFilters.find((filter) => filter.key === activeSourceFilterKey);
-  let visibleRows = 0;
-
-  document.querySelectorAll("[data-history-row]").forEach((row) => {
-    const searchMatch = query.length === 0 || row.dataset.search.includes(query);
-    const sourceMatch = !active || active.key === "all" || row.dataset.sources.split(" ").includes(active.key);
-    const shouldShow = searchMatch && sourceMatch;
-    row.hidden = !shouldShow;
-    if (shouldShow) visibleRows += 1;
-  });
-
-  const empty = document.getElementById("historyEmpty");
-  if (empty) empty.hidden = visibleRows > 0;
-  refreshHistoryFilterLabels();
+function openRailPreview(sectionId) {
+  const row = selectedRow();
+  if (!row) return;
+  const section = row.missing.find((item) => item.id === sectionId) ?? buildMissingSections(state.dossier).find((item) => item.id === sectionId);
+  if (!section) return;
+  state.railPreview = {
+    title: section.label,
+    markdown: `${section.copy}\n\nNext: ${section.tasks[0]?.nextAction || "Review the source record and add the missing note to the report."}`,
+    updatedAt: Date.now()
+  };
+  setRailOpen(true);
+  setRailTab(section.id === "podio" ? "docs" : "flow");
+  document.getElementById("statusSelected").textContent = `selected: [${section.short.toUpperCase()}]`;
 }
 
-function sourceKeysForLead(data, dossier) {
-  const corpus = sourceCorpus(data, dossier);
-  return currentSourceFilters
-    .filter((filter) => filter.key === "all" || filter.terms.some((term) => corpus.includes(term.toLowerCase())))
-    .map((filter) => filter.key);
-}
-
-function renderSourceFilters(data, dossier) {
-  const groups = makeSourceFilterGroups(data, dossier);
-  currentSourceFilters = groups.flatMap((group) => group.items);
-  if (!currentSourceFilters.some((filter) => filter.key === activeSourceFilterKey)) {
-    activeSourceFilterKey = "all";
+function fillSection(sectionId) {
+  state.filled.add(sectionId);
+  persistFilled();
+  if (state.data && state.dossier) {
+    state.rows = buildRows(state.data, state.dossier);
+    if (!state.rows.some((row) => row.id === state.selectedId)) state.selectedId = state.rows[0]?.id ?? null;
   }
-  const container = document.getElementById("sourceFilters");
-  container.innerHTML = groups.map((group) => `
-    <section class="filter-group">
-      <div class="filter-group-title">${escapeHtml(group.title)}</div>
-      <div class="source-filter-list">
-        ${group.items.map((item) => `
-          <button class="source-filter ${item.tone} ${item.key === activeSourceFilterKey ? "is-active" : ""}" type="button" data-source-filter="${escapeHtml(item.key)}" aria-pressed="${item.key === activeSourceFilterKey ? "true" : "false"}">
+  state.railPreview = {
+    title: "Section marked ready",
+    markdown: "This fills the missing section in the current review view. A production version would save the source note back to the lead record.",
+    updatedAt: Date.now()
+  };
+  renderAll();
+}
+
+function statusPill(tone, label) {
+  return `<span class="pill ${escapeHtml(tone)}">${escapeHtml(label)}</span>`;
+}
+
+function renderSummary() {
+  const facts = state.data?.facts?.length ?? 0;
+  const openTasks = taskCount(state.dossier);
+  const missing = buildMissingSections(state.dossier ?? {}).length;
+  document.getElementById("summaryMetrics").innerHTML = [
+    { label: "Estate files", value: state.rows.length || 0 },
+    { label: "Evidence items", value: facts },
+    { label: "Missing sections", value: missing },
+    { label: "Open reviews", value: openTasks }
+  ].map((item) => `
+    <section class="metric">
+      <span class="metric-label">${escapeHtml(item.label)}</span>
+      <strong class="metric-value">${escapeHtml(item.value)}</strong>
+    </section>
+  `).join("");
+}
+
+function rowMatchesFilters(row) {
+  const query = document.getElementById("globalSearch").value.trim().toLowerCase();
+  const county = document.getElementById("countyFilter").value;
+  const leadType = document.getElementById("leadTypeFilter").value;
+  const status = document.getElementById("statusFilter").value;
+  const evidence = Number(document.getElementById("evidenceFilter").value);
+  const missing = document.getElementById("missingFilter").value;
+  const priorityOnly = document.getElementById("priorityOnly").checked;
+  if (query && !row.search.toLowerCase().includes(query)) return false;
+  if (county !== "all" && !String(row.county).toLowerCase().includes(county)) return false;
+  if (leadType !== "all" && row.leadType !== leadType && !row.search.toLowerCase().includes(leadType)) return false;
+  if (status !== "all" && row.status !== status && row.tone !== status) return false;
+  if (row.evidence < evidence) return false;
+  if (missing !== "all" && !row.missing.some((item) => item.type === missing)) return false;
+  if (priorityOnly && row.score < 75) return false;
+  return true;
+}
+
+function applyFilters() {
+  state.filteredRows = state.rows.filter(rowMatchesFilters);
+  if (!state.filteredRows.some((row) => row.id === state.selectedId)) {
+    state.selectedId = state.filteredRows[0]?.id ?? state.rows[0]?.id ?? null;
+  }
+  renderResults();
+  renderDetail();
+  renderRail();
+}
+
+function renderResults() {
+  const rows = state.filteredRows;
+  document.getElementById("resultsCount").innerHTML = `<strong>${rows.length}</strong> result${rows.length === 1 ? "" : "s"}`;
+  document.getElementById("selectionState").textContent = state.selectedId ? "1 selected" : "0 selected";
+  const body = document.getElementById("resultsBody");
+  if (!rows.length) {
+    body.innerHTML = `<tr><td colspan="6"><span class="primary-text">No estate files match these filters.</span><span class="secondary-text">Try showing all missing info or lowering minimum evidence.</span></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map((row) => `
+    <tr data-row-id="${escapeHtml(row.id)}" class="${row.id === state.selectedId ? "is-selected" : ""}">
+      <td><span class="select-box">${row.id === state.selectedId ? "✓" : ""}</span></td>
+      <td>
+        <span class="primary-text">${escapeHtml(row.title)}</span>
+        <span class="secondary-text">${escapeHtml(row.kind)} · ${escapeHtml(row.file)}</span>
+      </td>
+      <td data-column="address">
+        <span class="primary-text">${escapeHtml(row.address)}</span>
+        <span class="secondary-text">${escapeHtml(row.county)}</span>
+      </td>
+      <td data-column="score"><span class="score ${escapeHtml(row.tone)}">${escapeHtml(row.score)}</span></td>
+      <td data-column="evidence"><span class="primary-text">${escapeHtml(row.evidence)} of ${escapeHtml(row.evidenceTotal)}</span><span class="secondary-text">sections attached</span></td>
+      <td data-column="next"><button class="next-link" type="button" data-open-next="${escapeHtml(row.id)}">${escapeHtml(row.next)}</button></td>
+    </tr>
+  `).join("");
+
+  body.querySelectorAll("[data-row-id]").forEach((rowEl) => {
+    rowEl.addEventListener("click", () => {
+      state.selectedId = rowEl.dataset.rowId;
+      setRailOpen(true);
+      renderAll();
+    });
+  });
+  body.querySelectorAll("[data-open-next]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.selectedId = button.dataset.openNext;
+      const row = selectedRow();
+      openRailPreview(row?.missing[0]?.id ?? "tax");
+      renderAll();
+    });
+  });
+  applyColumnVisibility();
+}
+
+function renderDetail() {
+  const row = selectedRow();
+  const dossier = state.dossier;
+  if (!row || !dossier) return;
+  const decision = decisionCopy(dossier);
+  document.getElementById("detailTitle").textContent = row.title;
+  document.getElementById("detailSubtitle").textContent = `${row.kind} · ${row.file}`;
+  document.getElementById("detailPill").className = `pill ${row.tone}`;
+  document.getElementById("detailPill").textContent = row.tone === "blocked" ? "Do not contact" : row.tone === "ready" ? "Ready" : "Review";
+  document.getElementById("nextBestAction").textContent = row.next || decision.next;
+  document.getElementById("nextActionCopy").textContent = "Use the report rail to review the section, then mark it ready when the source note is filled in.";
+  document.getElementById("factGrid").innerHTML = [
+    ["Owner", row.owner],
+    ["County", row.county],
+    ["Folio", row.parcel],
+    ["Case", row.file],
+    ["Workflow", displayStatus(dossier.workflow?.status)],
+    ["Outreach", displayStatus(dossier.outreach?.readiness?.status, "Blocked")]
+  ].map(([label, value]) => `
+    <div class="fact">
+      <label>${escapeHtml(label)}</label>
+      <span>${escapeHtml(value)}</span>
+    </div>
+  `).join("");
+  const evidencePct = Math.round((row.evidence / row.evidenceTotal) * 100);
+  document.getElementById("evidenceFill").style.width = `${Math.min(100, evidencePct)}%`;
+  document.getElementById("evidenceSummary").textContent = `${row.evidence} of ${row.evidenceTotal} report sections have evidence attached.`;
+  document.getElementById("detailChips").innerHTML = row.missing.length
+    ? row.missing.map((item) => `<button class="chip" type="button" data-chip="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>`).join("")
+    : `<span class="copy">No missing sections for this view.</span>`;
+  document.querySelectorAll("[data-chip]").forEach((chip) => {
+    chip.addEventListener("click", () => openRailPreview(chip.dataset.chip));
+  });
+  document.getElementById("statusSelected").textContent = `selected: [${row.title.toUpperCase().slice(0, 28)}]`;
+}
+
+function renderRail() {
+  const row = selectedRow();
+  const dossier = state.dossier;
+  const content = document.getElementById("railContent");
+  if (!row || !dossier) {
+    content.innerHTML = `<section class="glass-card rail-title-card"><h2 class="rail-title">Lead report</h2><p class="copy">Load the latest lead packet to see report gaps.</p></section>`;
+    setRailOpen(state.railOpen);
+    return;
+  }
+  const previewHtml = state.railPreview ? `
+    <section class="glass-card rail-preview">
+      <time>${new Date(state.railPreview.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</time>
+      <h3>${escapeHtml(state.railPreview.title)}</h3>
+      <p class="copy">${escapeHtml(state.railPreview.markdown)}</p>
+    </section>
+  ` : "";
+  const titleCard = `
+    <section class="glass-card rail-title-card">
+      <div class="rail-title-row">
+        <div>
+          <p class="eyebrow">Lead report</p>
+          <h2 class="rail-title">${escapeHtml(row.title)}</h2>
+          <p class="copy">${escapeHtml(row.address)}</p>
+        </div>
+        ${statusPill(row.tone, row.tone === "blocked" ? "Blocked" : row.tone === "ready" ? "Ready" : "Review")}
+      </div>
+      <div class="chip-list">
+        ${buildMissingSections(dossier).map((item) => `<button class="chip" type="button" data-rail-chip="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>`).join("") || `<span class="copy">All current suggestion chips are filled for this view.</span>`}
+      </div>
+    </section>
+  `;
+  content.innerHTML = titleCard + previewHtml + railTabHtml(row, dossier);
+  content.querySelectorAll("[data-rail-chip]").forEach((chip) => {
+    chip.addEventListener("click", () => openRailPreview(chip.dataset.railChip));
+  });
+  content.querySelectorAll("[data-fill-section]").forEach((button) => {
+    button.addEventListener("click", () => fillSection(button.dataset.fillSection));
+  });
+  setRailOpen(state.railOpen);
+}
+
+function railTabHtml(row, dossier) {
+  if (state.railTab === "timeline") return railTimelineHtml(row, dossier);
+  if (state.railTab === "docs") return railDocsHtml(row, dossier);
+  return railFlowHtml(row, dossier);
+}
+
+function railFlowHtml(row, dossier) {
+  const sections = row.missing.length ? row.missing : buildMissingSections(dossier);
+  return `
+    <section class="glass-card rail-card">
+      <h3>What to fill in next</h3>
+      <p class="copy">Review the open file, choose a missing section, then mark that section ready once the source note is filled in.</p>
+      <div>
+        ${sections.map((section, index) => `
+          <article class="rail-item">
+            <span class="rail-item-index">${String(index + 1).padStart(2, "0")}</span>
             <span>
-              <span class="source-filter-title">${escapeHtml(item.label)}</span>
-              <span class="source-filter-meta">${escapeHtml(item.meta)}</span>
+              <span class="rail-item-title">${escapeHtml(section.label)}</span>
+              <span class="rail-item-copy">${escapeHtml(section.copy)}</span>
             </span>
-            <span class="source-filter-count">${escapeHtml(item.countLabel)}</span>
-          </button>
+            <button class="btn" type="button" data-fill-section="${escapeHtml(section.id)}">Fill</button>
+          </article>
+        `).join("") || `<p class="copy">No flow gaps remain for this file.</p>`}
+      </div>
+    </section>
+    <section class="glass-card rail-card">
+      <h3>Current stop rules</h3>
+      <ul class="mini-list">
+        <li><strong>Company owner</strong><span>Move on unless Joshua overrides the lead.</span></li>
+        <li><strong>Sold inside five years</strong><span>Review before spending time on outreach.</span></li>
+        <li><strong>Paid source needed</strong><span>IDI, Intelius, Ancestry, ForeWarn, VitalChek, and PI work stay approval-gated.</span></li>
+      </ul>
+    </section>
+  `;
+}
+
+function railTimelineHtml(row, dossier) {
+  const stages = [
+    ["Seed captured", `Owner and property seed: ${row.owner}`],
+    ["County records checked", `${row.evidence} evidence sections attached so far.`],
+    ["Report gaps visible", `${row.missing.length} missing section${row.missing.length === 1 ? "" : "s"} still need review.`],
+    ["Operator review", decisionCopy(dossier).next],
+    ["Export prep", "Podio and Google Workspace stay prep-only until access and approval are clear."]
+  ];
+  return `
+    <section class="glass-card rail-card">
+      <h3>Review timeline</h3>
+      <div>
+        ${stages.map(([title, copy], index) => `
+          <article class="rail-item">
+            <span class="rail-item-index">${String(index + 1).padStart(2, "0")}</span>
+            <span>
+              <span class="rail-item-title">${escapeHtml(title)}</span>
+              <span class="rail-item-copy">${escapeHtml(copy)}</span>
+            </span>
+            ${index < 2 ? statusPill("ready", "Done") : statusPill(index === 4 ? "blocked" : "review", index === 4 ? "Gate" : "Next")}
+          </article>
         `).join("")}
       </div>
     </section>
-  `).join("");
-
-  container.querySelectorAll("[data-source-filter]").forEach((button) => {
-    button.addEventListener("click", () => {
-      activateSourceFilter(button.dataset.sourceFilter);
-    });
-  });
-
-  updateFilterSummary(currentSourceFilters.find((filter) => filter.key === activeSourceFilterKey));
-}
-
-function uniqueItems(values) {
-  return [...new Set(values.filter(Boolean))];
-}
-
-function taskText(task) {
-  return `${task.title ?? task.label ?? task.code ?? ""} ${task.description ?? ""} ${task.nextAction ?? ""} ${task.reason ?? ""}`.toLowerCase();
-}
-
-function missedRecordsFor(sectionKey, data, dossier) {
-  const check = refineChecks[sectionKey] ?? refineChecks.loop;
-  const reviewFlags = dossier.audit.reviewFlags ?? [];
-  const flagMatches = reviewFlags
-    .filter((flag) => check.flags.includes(flag))
-    .map((flag) => recordLabelByFlag[flag] ?? displayStatus(flag));
-  const taskMatches = allReviewTasks(dossier)
-    .filter((task) => check.terms.some((term) => taskText(task).includes(term.toLowerCase())))
-    .map((task) => task.title || task.label || task.code);
-  const sourceFacts = (data.facts ?? [])
-    .filter((fact) => check.terms.some((term) => `${fact.source ?? ""} ${fact.type ?? ""} ${JSON.stringify(fact.value ?? "")}`.toLowerCase().includes(term.toLowerCase())))
-    .length;
-  return {
-    records: uniqueItems([...flagMatches, ...taskMatches]).slice(0, 7),
-    sourceFacts
-  };
-}
-
-function sectionHeaderHtml(kicker, title, refineKey) {
-  return `
-    <div class="detail-section-head">
-      <div>
-        <div class="kicker">${escapeHtml(kicker)}</div>
-        <h3>${escapeHtml(title)}</h3>
-      </div>
-      <button class="refine-chip" type="button" data-refine-section="${escapeHtml(refineKey)}">Refine</button>
-    </div>
-    <div class="refine-result" data-refine-result="${escapeHtml(refineKey)}" hidden aria-live="polite"></div>
   `;
 }
 
-function renderRefineResult(sectionKey) {
-  if (!currentRunData || !currentDossier) return;
-  const check = refineChecks[sectionKey] ?? refineChecks.loop;
-  const result = document.querySelector(`[data-refine-result="${sectionKey}"]`);
-  if (!result) return;
-  const { records, sourceFacts } = missedRecordsFor(sectionKey, currentRunData, currentDossier);
-  const recordCopy = records.length
-    ? `Found ${records.length} record gaps to verify before this section can move forward.`
-    : "No missed public-record gaps were found in this section of the current source packet.";
-  const approvalCopy = check.filterKey === "outreach_gate" || sectionKey === "podio"
-    ? " This check does not approve outreach, paid sources, or live CRM writes."
-    : "";
-  result.innerHTML = `
-    <strong>${escapeHtml(check.label)} refine check</strong>
-    <span>Checked the current online-source packet across ${escapeHtml(check.sources.join(", "))}. ${escapeHtml(recordCopy)} ${escapeHtml(sourceFacts)} matching source facts are already attached.${escapeHtml(approvalCopy)}</span>
-    ${records.length ? `<ul>${records.map((record) => `<li>${escapeHtml(record)}</li>`).join("")}</ul>` : ""}
-  `;
-  result.hidden = false;
-}
-
-function attachRefineActions() {
-  document.querySelectorAll("[data-refine-section]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const sectionKey = button.dataset.refineSection;
-      const check = refineChecks[sectionKey] ?? refineChecks.loop;
-      button.classList.add("is-checked");
-      activateSourceFilter(check.filterKey);
-      renderRefineResult(sectionKey);
-      document.getElementById("statusSelected").textContent = `refine: ${check.label}`;
-    });
-  });
-}
-
-function exportBannerHtml(title, copy, items) {
-  return `
-    <strong>${escapeHtml(title)}</strong>
-    <span>${escapeHtml(copy)}</span>
-    <ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-  `;
-}
-
-function podioExportIntent(data, dossier) {
-  const payload = dossier.crm.payload ?? {};
-  const readiness = payload.podioReadiness ?? {};
-  const blockers = readiness.blockers ?? [];
-  const missingConfig = readiness.missingConfig ?? [];
-  return {
-    status: blockers.length || missingConfig.length ? "Podio export blocked by access" : "Podio export ready for controlled test",
-    copy: blockers.length || missingConfig.length
-      ? "The Podio package is prepared from this lead, but no live Podio write ran because access and readback approval are still missing."
-      : "The Podio package is ready for one controlled test item after explicit live-write approval.",
-    items: [
-      `Podio lead item fields: ${Object.keys(payload.appModel?.fields ?? {}).length}`,
-      `Manual tasks prepared: ${payload.tasks?.length ?? 0}`,
-      `Missing Podio config: ${missingConfig.length ? missingConfig.join(", ") : "none recorded"}`,
-      `Readback checks required: ${readiness.readbackChecks?.length ?? 0}`,
-      "No live Podio item, task, comment, or file was created from this button."
-    ]
-  };
-}
-
-function workspaceExportIntent(data, dossier) {
+function railDocsHtml(row, dossier) {
   const report = dossier.completedLeadReport;
-  const reviewTasks = allReviewTasks(dossier);
-  const followUps = dossier.outreach?.followUpTasks ?? [];
-  return {
-    status: "Google Workspace export staged",
-    copy: "One operator run is prepared for both Google Docs and Google Sheets. No live Workspace file was created until a Workspace account and write approval are connected.",
-    items: [
-      `Google Doc: completed lead report (${displayStatus(report?.reviewGate.reportStatus, "Internal draft")})`,
-      `Google Sheets lead row: ${claimValue(dossier.property.address, dossier.summary.displayName)}`,
-      `Google Sheets review rows: ${reviewTasks.length} open review items`,
-      `Google Sheets source rows: ${data.facts?.length ?? 0} source facts`,
-      `Google Sheets follow-up rows: ${followUps.length} manual outreach tasks`,
-      "Docs and Sheets are staged together from this single lead run."
-    ]
-  };
-}
-
-function renderExportIntent(kind) {
-  const banner = document.getElementById("exportBanner");
-  const status = document.getElementById("statusExport");
-  if (!currentRunData || !currentDossier) {
-    banner.hidden = false;
-    banner.innerHTML = exportBannerHtml("Load a lead first", "Load the latest lead before starting an export.", ["No export action ran."]);
-    status.textContent = "export: waiting for lead";
-    return;
-  }
-
-  const intent = kind === "podio"
-    ? podioExportIntent(currentRunData, currentDossier)
-    : workspaceExportIntent(currentRunData, currentDossier);
-  banner.hidden = false;
-  banner.innerHTML = exportBannerHtml(intent.status, intent.copy, intent.items);
-  status.textContent = `export: ${intent.status}`;
-}
-
-function attachExportActions() {
-  document.querySelectorAll("[data-export-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      renderExportIntent(button.dataset.exportAction);
-    });
-  });
-}
-
-function makeLoopStages(data, dossier) {
-  const report = dossier.completedLeadReport;
-  const outreach = dossier.outreach;
-  const podio = dossier.crm.payload?.podioReadiness;
-  const factsCount = data.facts?.length ?? 0;
-  const openTasks = taskCount(dossier);
-  const outreachBlockers = outreach?.readiness.blockers.length ?? 0;
-  const podioBlockers = podio?.blockers.length ?? 0;
-  const followUps = outreach?.followUpTasks.length ?? 0;
-  const sourceTone = openTasks > 0 ? "review" : "ready";
-
-  return [
-    {
-      key: "seed",
-      nav: "Seed",
-      title: "Seed Captured",
-      status: "Captured",
-      tone: "ready",
-      source: "intake.seed",
-      copy: "Estate, address, folio, and case inputs enter here. Missing seed fields stay visible instead of being guessed.",
-      metric: claimValue(dossier.property.address, data.seed?.address ?? "Address needs review"),
-      next: "Confirm missing estate, case, and folio fields before promoting the lead.",
-      evidence: [
-        `Owner seed: ${claimValue(dossier.property.ownerName, "Needs owner review")}`,
-        `County: ${claimValue(dossier.property.county, "Miami-Dade")}`,
-        `Folio: ${claimValue(dossier.property.parcelId, "Needs review")}`
-      ]
-    },
-    {
-      key: "sources",
-      nav: "Sources",
-      title: "Public Sources Checked",
-      status: sourceTone === "ready" ? "Checked" : "Review",
-      tone: sourceTone,
-      source: "county review",
-      copy: "Property, tax, deed, probate, court, and family-tree evidence are collected in one lead packet.",
-      metric: `${factsCount} evidence items`,
-      next: openTasks > 0 ? "Clear source-evidence review tasks before outreach, offers, or CRM writes." : "Source packet is ready for operator review.",
-      evidence: [
-        `${dossier.taxHistory.reviewTasks.length} tax tasks`,
-        `${dossier.deedHistory.reviewTasks.length} deed/title tasks`,
-        `${dossier.probateDocket.reviewTasks.length} probate/court tasks`
-      ]
-    },
-    {
-      key: "dossier",
-      nav: "Dossier",
-      title: "Lead Packet Built",
-      status: openTasks > 0 ? "Review" : "Built",
-      tone: openTasks > 0 ? "review" : "ready",
-      source: "operator.queue",
-      copy: "The operator queue keeps evidence gaps, stop rules, approval gates, and manual research tasks attached to the lead.",
-      metric: `${openTasks} open review tasks`,
-      next: "Work the open queue from stop rules through paid/manual-source approvals.",
-      evidence: [
-        `Queue state: ${displayStatus(dossier.operatorQueue.state)}`,
-        `Review flags: ${dossier.audit.reviewFlags.length}`,
-        `Workflow: ${displayStatus(dossier.workflow.status)}`
-      ]
-    },
-    {
-      key: "report",
-      nav: "Report",
-      title: "Report And Offer Math",
-      status: displayStatus(report?.reviewGate.reportStatus, "Internal draft"),
-      tone: loopTone(report?.reviewGate.reportStatus),
-      source: "report.offer",
-      copy: "The completed lead report and offer math remain internal until underwriting and source evidence are reviewed.",
-      metric: displayStatus(report?.leadQualityProfile.leadBucket, "Review required"),
-      next: "Confirm as-is value, taxes, liens, mortgage, heir count, and minimum profit before any offer leaves draft.",
-      evidence: [
-        `External use: ${report?.reviewGate.externalUseBlocked ? "blocked" : "review"}`,
-        `Underwriting: ${displayStatus(report?.reviewGate.underwritingStatus, "Draft")}`,
-        `Minimum profit: ${formatMoney(report?.offerMath.minimumNetProfit.value, report?.offerMath.minimumNetProfit.currency)}`
-      ]
-    },
-    {
-      key: "outreach",
-      nav: "Outreach",
-      title: "Draft Outreach Library",
-      status: displayStatus(outreach?.readiness.status, "Blocked"),
-      tone: "blocked",
-      source: "outreach.drafts",
-      copy: "Scripts, texts, emails, and offer letters are reference drafts with manual follow-up tasks only.",
-      metric: `${outreach?.assets.length ?? 0} drafts, ${followUps} manual tasks`,
-      next: "Keep every call, text, email, and offer letter manual and blocked until script/compliance approval clears.",
-      evidence: [
-        `Compliance: ${displayStatus(outreach?.complianceStatus, "Needs compliance review")}`,
-        `No auto-send: ${outreach?.noAutoSendGuard.enabled ? "enabled" : "missing"}`,
-        `Readiness blockers: ${outreachBlockers}`
-      ]
-    },
-    {
-      key: "podio",
-      nav: "Podio",
-      title: "Podio Prep",
-      status: displayStatus(podio?.classification, "Blocked"),
-      tone: podioBlockers > 0 ? "blocked" : "review",
-      source: "crm.podio",
-      copy: "The CRM path is represented through prepared field maps, CSV prep, safe test-write steps, and readback checks.",
-      metric: `${podioBlockers} access blockers`,
-      next: "Get Podio invite, app token, CSV exports, live-write approval, and readback proof before S9 can move.",
-      evidence: [
-        `Missing config: ${podio?.missingConfig.length ?? 0}`,
-        `Safe-write steps: ${podio?.safeLiveWriteTestSteps.length ?? 0}`,
-        `Readback checks: ${podio?.readbackChecks.length ?? 0}`
-      ]
-    },
-    {
-      key: "review",
-      nav: "Review",
-      title: "Human Review Loop",
-      status: dossier.operatorQueue.state === "manual_review" ? "Manual Review" : displayStatus(dossier.operatorQueue.state),
-      tone: dossier.operatorQueue.state === "manual_review" || outreachBlockers > 0 ? "review" : "ready",
-      source: "human.loop",
-      copy: "Joshua or an operator clears gates, chooses the next manual task, and feeds corrections back into the next run.",
-      metric: dossier.summary.nextBestAction,
-      next: dossier.summary.nextBestAction,
-      evidence: [
-        `Priority: ${displayStatus(dossier.summary.priority)}`,
-        `Manual follow-up tasks: ${followUps}`,
-        `Open outreach blockers: ${outreachBlockers}`
-      ]
-    }
-  ];
-}
-
-function renderTopMetrics(data, dossier, decision) {
-  const openTasks = taskCount(dossier);
-  document.getElementById("heroMetrics").innerHTML = [
-    {
-      label: "Evidence Items",
-      value: data.facts?.length ?? 0,
-      note: "attached to this lead"
-    },
-    {
-      label: "Open Reviews",
-      value: openTasks,
-      note: openTasks > 0 ? "before outreach or offer" : "ready for final review"
-    }
-  ].map((item) => `
-    <section class="hero-kpi">
-      <span class="hero-kpi-label">${escapeHtml(item.label)}</span>
-      <strong class="hero-kpi-value">${escapeHtml(item.value)}</strong>
-      <span class="hero-kpi-note">${escapeHtml(item.note)}</span>
+  const podio = dossier.crm?.payload?.podioReadiness;
+  const exportMeta = state.exportRoute ? exportRouteMeta(state.exportRoute) : null;
+  return `
+    <section class="glass-card rail-card">
+      <h3>Report preview</h3>
+      <p class="copy">This completed report is the source of truth for Google Workspace, Podio, or both.</p>
+      <iframe class="doc-frame" sandbox="" title="Rendered lead report" srcdoc="${escapeHtml(report?.formats?.html ?? dossier.documentPacket?.formats?.html ?? "<p>Report unavailable.</p>")}"></iframe>
     </section>
-  `).join("");
-
-  document.getElementById("footerStatusLights").innerHTML = [
-    { label: "state", value: displayStatus(dossier.workflow.status), tone: loopTone(dossier.workflow.status) },
-    { label: "outreach", value: displayStatus(dossier.outreach?.readiness.status, "Blocked"), tone: loopTone(dossier.outreach?.readiness.status ?? "blocked") },
-    { label: "crm", value: displayStatus(dossier.crm.payload?.podioReadiness?.classification, "Blocked"), tone: loopTone(dossier.crm.payload?.podioReadiness?.classification ?? "blocked") },
-    { label: "external", value: dossier.completedLeadReport?.reviewGate.externalUseBlocked ? "Blocked" : "Review", tone: dossier.completedLeadReport?.reviewGate.externalUseBlocked ? "blocked" : "review" }
-  ].map((item) => `
-    <span class="footer-status-light ${item.tone}" title="${escapeHtml(item.label)} status: ${escapeHtml(item.value)}">
-      <span class="status-dot ${item.tone}" aria-hidden="true"></span>
-      <span class="metric-label">${escapeHtml(item.label)}:</span>
-      <strong>${escapeHtml(item.value)}</strong>
-    </span>
-  `).join("");
-}
-
-function detailGridHtml(rows) {
-  return `
-    <div class="detail-grid">
-      ${rows.map((row) => `
-        <div class="detail-cell">
-          <span class="detail-label">${escapeHtml(row.label)}</span>
-          <span class="detail-value">${escapeHtml(row.value)}</span>
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
-
-function detailListHtml(items, emptyText) {
-  if (!items.length) {
-    return `<ul class="detail-list"><li>${escapeHtml(emptyText)}</li></ul>`;
-  }
-  return `
-    <ul class="detail-list">
-      ${items.map((item) => `
-        <li><strong>${escapeHtml(item.title || item.label || item.code || "Review item")}</strong><br>${escapeHtml(item.nextAction || item.description || item.reason || item.copy || "Review before moving forward.")}</li>
-      `).join("")}
-    </ul>
-  `;
-}
-
-function researchCardHtml(card) {
-  return `
-    <section class="research-card">
-      <div class="research-head">
-        <span>
-          <span class="research-title">${escapeHtml(card.title)}</span>
-          <span class="research-copy">${escapeHtml(card.copy)}</span>
-        </span>
-        <span class="check-state ${card.tone}">${escapeHtml(card.status)}</span>
-      </div>
-      <ul class="research-items">
-        ${card.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+    <section class="glass-card rail-card">
+      <h3>Export readiness</h3>
+      <ul class="mini-list">
+        <li><strong>Selected route</strong><span>${escapeHtml(exportMeta?.label ?? "Choose an export route from the header.")}</span></li>
+        <li><strong>Podio status</strong><span>${escapeHtml(displayStatus(dossier.crm?.status, "Prep only"))}</span></li>
+        <li><strong>Missing config</strong><span>${escapeHtml((podio?.missingConfig ?? []).join(", ") || "None recorded")}</span></li>
+        <li><strong>Readback checks</strong><span>${escapeHtml(podio?.readbackChecks?.length ?? 0)} required</span></li>
+        <li><strong>External use</strong><span>${report?.reviewGate?.externalUseBlocked ? "Blocked until review clears." : "Needs review before sending."}</span></li>
       </ul>
     </section>
   `;
 }
 
-function renderLeadHistory(data, dossier, decision) {
-  const [leadTitle, ...leadRest] = dossier.summary.displayName.split(" - ");
-  const leadMeta = leadRest.join(" - ") || claimValue(dossier.property.address, "Address needs review");
-  const runShort = data.runId.replace(/^run-/, "").slice(0, 24);
-  const leadSources = sourceKeysForLead(data, dossier);
-  const publicRunSources = currentSourceFilters
-    .filter((filter) => ["all", "property_appraiser", "mailing_address", "official_records", "or_book_page", "tax_history", "tax_receipts", "title_friction", "adverse_possession", "probate_docket", "civil_family", "affidavit_heirs", "marriage_death", "obituary_memorial", "family_tree", "lead_quality"].includes(filter.key))
-    .map((filter) => filter.key);
-  const rows = [
-    {
-      title: leadTitle,
-      meta: leadMeta,
-      state: decision.label,
-      sources: leadSources,
-      searchText: `${leadTitle} ${leadMeta} ${decision.label} ${leadSources.join(" ")}`
-    },
-    {
-      title: "Latest validation run",
-      meta: runShort,
-      state: `${data.facts?.length ?? 0} facts captured`,
-      sources: publicRunSources,
-      searchText: `${data.runId} facts captured ${publicRunSources.join(" ")}`
-    }
-  ];
-
-  const list = document.getElementById("leadHistory");
-  list.innerHTML = rows.map((row, index) => `
-    <li data-history-row data-search="${escapeHtml(row.searchText.toLowerCase())}" data-sources="${escapeHtml(row.sources.join(" "))}">
-      <button class="history-item ${index === 0 ? "is-selected" : ""}" type="button">
-        <span class="history-title">${escapeHtml(row.title)}</span>
-        <span class="history-meta">${escapeHtml(row.meta)}</span>
-        <span class="history-meta">${escapeHtml(row.state)}</span>
-        <span class="history-meta history-filter-tag" data-history-filter-line>Ready for source drill-down</span>
-      </button>
-    </li>
-  `).join("") + `<li id="historyEmpty" class="history-empty" hidden>No lead history matches this search and source filter.</li>`;
-
-  const search = document.getElementById("leadSearch");
-  search.oninput = applyLeadHistoryFilters;
-  applyLeadHistoryFilters();
+function applyColumnVisibility() {
+  document.querySelectorAll("[data-column-toggle]").forEach((toggle) => {
+    const key = toggle.dataset.columnToggle;
+    document.querySelectorAll(columnMap[key]).forEach((cell) => {
+      cell.classList.toggle("column-hidden", !toggle.checked);
+    });
+  });
 }
 
-function renderMainDetail(data, dossier, decision, stages) {
-  const report = dossier.completedLeadReport;
-  const offer = report?.offerMath;
-  const outreach = dossier.outreach;
-  const podio = dossier.crm.payload?.podioReadiness;
-  const reviewTasks = [
-    ...dossier.operatorQueue.items,
-    ...dossier.taxHistory.reviewTasks,
-    ...dossier.deedHistory.reviewTasks,
-    ...dossier.probateDocket.reviewTasks,
-    ...dossier.marriageDeathIndicators.reviewTasks,
-    ...dossier.familyTree.reviewTasks,
-    ...dossier.sourceGovernance.reviewTasks,
-  ];
-
-  document.getElementById("mainTitle").textContent = dossier.summary.displayName;
-  document.getElementById("mainSummary").textContent = dossier.summary.nextBestAction;
-  document.getElementById("mainDecision").className = `status-pill ${decision.className}`;
-  document.getElementById("mainDecision").textContent = decision.label;
-
-  document.getElementById("mainContent").innerHTML = `
-    <section class="detail-section">
-      ${sectionHeaderHtml("Lead Decision", decision.label, "decision")}
-      <div class="detail-copy">${escapeHtml(decision.next)}</div>
-      ${detailGridHtml([
-        { label: "Run ID", value: data.runId },
-        { label: "Workflow", value: displayStatus(dossier.workflow.status) },
-        { label: "Queue", value: displayStatus(dossier.operatorQueue.state) },
-        { label: "Source facts", value: data.facts?.length ?? 0 },
-        { label: "Open review tasks", value: reviewTasks.length },
-        { label: "External use", value: report?.reviewGate.externalUseBlocked ? "Blocked" : "Needs review" },
-      ])}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Property And Ownership", "Property, owner, folio, tax, and title state", "property")}
-      ${detailGridHtml([
-        { label: "Address", value: claimValue(dossier.property.address) },
-        { label: "Owner", value: claimValue(dossier.property.ownerName) },
-        { label: "Estate", value: claimValue(dossier.property.estateName) },
-        { label: "County", value: claimValue(dossier.property.county, "Miami-Dade") },
-        { label: "Folio", value: claimValue(dossier.property.parcelId) },
-        { label: "Case number", value: claimValue(dossier.property.caseNumber) },
-        { label: "Tax status", value: displayStatus(dossier.taxHistory.status) },
-        { label: "Deed/title status", value: displayStatus(dossier.deedHistory.status) },
-        { label: "Evidence QA", value: displayStatus(dossier.evidenceQa.status) },
-      ])}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Research Work", "Open review tasks", "research")}
-      <div class="detail-copy">These remain manual operator checks before any outreach, offer, or live CRM write.</div>
-      ${detailListHtml(reviewTasks, "No review tasks are open.")}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Completed Lead Report And Offer Math", "Internal report state", "report")}
-      ${detailGridHtml([
-        { label: "Report status", value: displayStatus(report?.reviewGate.reportStatus, "Internal draft") },
-        { label: "Lead bucket", value: displayStatus(report?.leadQualityProfile.leadBucket, "Review required") },
-        { label: "Outreach readiness", value: displayStatus(report?.reviewGate.outreachReadiness, "Blocked") },
-        { label: "As-is value", value: formatMoney(offer?.asIsValue.value, offer?.asIsValue.currency) },
-        { label: "Taxes due", value: formatMoney(offer?.taxesDue.value, offer?.taxesDue.currency) },
-        { label: "Heir count", value: offer?.heirCount.value ?? "Needs review" },
-        { label: "Offer amount", value: formatMoney(offer?.offerAmount.value, offer?.offerAmount.currency) },
-        { label: "Minimum net profit", value: formatMoney(offer?.minimumNetProfit.value, offer?.minimumNetProfit.currency) },
-        { label: "Underwriting", value: displayStatus(report?.reviewGate.underwritingStatus, "Draft") },
-      ])}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Outreach And Follow-Up", "Draft-only outreach workflow", "outreach")}
-      ${detailGridHtml([
-        { label: "Readiness", value: displayStatus(outreach?.readiness.status, "Blocked") },
-        { label: "Compliance", value: displayStatus(outreach?.complianceStatus, "Needs review") },
-        { label: "Draft assets", value: outreach?.assets.length ?? 0 },
-        { label: "Manual follow-up tasks", value: outreach?.followUpTasks.length ?? 0 },
-        { label: "No auto-send", value: outreach?.noAutoSendGuard.enabled ? "Enabled" : "Missing" },
-        { label: "Blockers", value: outreach?.readiness.blockers.length ?? 0 },
-      ])}
-      ${detailListHtml(outreach?.followUpTasks ?? [], "No manual follow-up tasks are open.")}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Podio Readiness", "Access and controlled-test requirements", "podio")}
-      ${detailGridHtml([
-        { label: "CRM status", value: displayStatus(dossier.crm.status, "Prep only") },
-        { label: "Podio gate", value: displayStatus(podio?.classification, "Blocked") },
-        { label: "Missing config", value: podio?.missingConfig.length ?? 0 },
-        { label: "Safe live-write steps", value: podio?.safeLiveWriteTestSteps.length ?? 0 },
-        { label: "Readback checks", value: podio?.readbackChecks.length ?? 0 },
-        { label: "Access blockers", value: podio?.blockers.length ?? 0 },
-      ])}
-      ${detailListHtml((podio?.blockers ?? []).map((blocker) => ({ title: "Podio blocker", description: blocker })), "No Podio blockers are open.")}
-    </section>
-
-    <section class="detail-section">
-      ${sectionHeaderHtml("Workflow Loop Status", "End-to-end operating loop", "loop")}
-      ${detailListHtml(stages.map((stage) => ({
-        title: `${stage.title} - ${stage.status}`,
-        description: `${stage.metric}. ${stage.next}`
-      })), "No workflow stages are available.")}
-    </section>
-  `;
+function renderAll() {
+  renderSummary();
+  applyFilters();
 }
 
-function renderResearchRails(data, dossier) {
-  const outreach = dossier.outreach;
-  const podio = dossier.crm.payload?.podioReadiness;
-  const report = dossier.completedLeadReport;
-  const rails = [
-    {
-      title: "Property And Title",
-      status: dossier.deedHistory.reviewTasks.length || dossier.taxHistory.reviewTasks.length ? "Review" : "Ready",
-      tone: dossier.deedHistory.reviewTasks.length || dossier.taxHistory.reviewTasks.length ? "review" : "ready",
-      copy: "County property, tax, deed, and title checks.",
-      items: [
-        `Address: ${claimValue(dossier.property.address)}`,
-        `Tax tasks: ${dossier.taxHistory.reviewTasks.length}`,
-        `Deed/title tasks: ${dossier.deedHistory.reviewTasks.length}`,
-        `Evidence QA: ${displayStatus(dossier.evidenceQa.status)}`
-      ]
-    },
-    {
-      title: "Probate And Heirs",
-      status: dossier.probateDocket.reviewTasks.length ? "Review" : "Ready",
-      tone: dossier.probateDocket.reviewTasks.length ? "review" : "ready",
-      copy: "Probate, civil/family, marriage/death, and family-tree checks.",
-      items: [
-        `Probate tasks: ${dossier.probateDocket.reviewTasks.length}`,
-        `Marriage/death tasks: ${dossier.marriageDeathIndicators.reviewTasks.length}`,
-        `Family-tree tasks: ${dossier.familyTree.reviewTasks.length}`,
-        `Paid/manual source tasks: ${dossier.sourceGovernance.reviewTasks.length}`
-      ]
-    },
-    {
-      title: "Report And Offer",
-      status: displayStatus(report?.reviewGate.reportStatus, "Draft"),
-      tone: loopTone(report?.reviewGate.reportStatus ?? "review"),
-      copy: "Completed report and offer math remain internal.",
-      items: [
-        `Lead bucket: ${displayStatus(report?.leadQualityProfile.leadBucket, "Review required")}`,
-        `Minimum net profit: ${formatMoney(report?.offerMath.minimumNetProfit.value, report?.offerMath.minimumNetProfit.currency)}`,
-        `External use: ${report?.reviewGate.externalUseBlocked ? "blocked" : "review"}`
-      ]
-    },
-    {
-      title: "Outreach",
-      status: displayStatus(outreach?.readiness.status, "Blocked"),
-      tone: "blocked",
-      copy: "Scripts, calls, texts, emails, and offer letters are draft/manual-only.",
-      items: [
-        `Draft assets: ${outreach?.assets.length ?? 0}`,
-        `Manual follow-up tasks: ${outreach?.followUpTasks.length ?? 0}`,
-        `No auto-send: ${outreach?.noAutoSendGuard.enabled ? "enabled" : "missing"}`,
-        `Blockers: ${outreach?.readiness.blockers.length ?? 0}`
-      ]
-    },
-    {
-      title: "Podio",
-      status: displayStatus(podio?.classification, "Blocked"),
-      tone: "blocked",
-      copy: "Podio stays prep-only until access and readback are approved.",
-      items: [
-        `Missing config: ${(podio?.missingConfig ?? []).join(", ") || "None"}`,
-        `Safe write steps: ${podio?.safeLiveWriteTestSteps.length ?? 0}`,
-        `Readback checks: ${podio?.readbackChecks.length ?? 0}`,
-        `Access blockers: ${podio?.blockers.length ?? 0}`
-      ]
-    }
-  ];
-
-  document.getElementById("researchRails").innerHTML = rails.map(researchCardHtml).join("");
+function setConnectionChip(id, tone, label) {
+  const chip = document.getElementById(id);
+  chip.className = `connection-chip ${tone}`;
+  chip.title = label;
+  chip.setAttribute("aria-label", `${chip.textContent.trim()}: ${label}`);
 }
 
-function renderStageDetail(stage, index) {
-  const detail = document.getElementById("loopDetail");
-  if (!stage) {
-    detail.innerHTML = `<div class="empty">Select a stage to inspect the current lead state.</div>`;
+function updateConnectionStatuses() {
+  const dossier = state.dossier;
+  if (!dossier) {
+    setConnectionChip("podioStatus", "neutral", "Podio status unknown until a lead packet is loaded.");
+    setConnectionChip("googleStatus", "neutral", "Google status unknown until a lead packet is loaded.");
+    setConnectionChip("webSearchStatus", "neutral", "Web Search status unknown until a lead packet is loaded.");
     return;
   }
-
-  detail.innerHTML = `
-    <div class="stage-detail-head">
-      <div>
-        <div class="kicker">Selected Stage</div>
-        <h2 class="stage-title">${escapeHtml(stage.title)}</h2>
-        <div class="stage-copy">${escapeHtml(stage.copy)}</div>
-      </div>
-      <span class="stage-state ${stage.tone}">${escapeHtml(stage.status)}</span>
-    </div>
-    <div class="stage-grid">
-      <div class="stage-cell">
-        <span class="stage-label">Step</span>
-        <span class="stage-value">${String(index + 1).padStart(2, "0")}.${escapeHtml(stage.key)}</span>
-      </div>
-      <div class="stage-cell">
-        <span class="stage-label">Focus</span>
-        <span class="stage-value">${escapeHtml(stage.source)}</span>
-      </div>
-      <div class="stage-cell">
-        <span class="stage-label">Metric</span>
-        <span class="stage-value">${escapeHtml(stage.metric)}</span>
-      </div>
-    </div>
-    <div>
-      <div class="kicker">Next Operator Action</div>
-      <div class="stage-command">${escapeHtml(stage.next)}</div>
-    </div>
-    <div>
-      <div class="kicker">Evidence Peek</div>
-      <ul class="stage-evidence">
-        ${stage.evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-      </ul>
-    </div>
-  `;
-  document.getElementById("statusSelected").textContent = `view: ${stage.title}`;
-}
-
-function renderLoopChecks(element, items) {
-  element.innerHTML = items.map((item) => `
-    <li>
-      <span>
-        <span class="check-title">${escapeHtml(item.title)}</span>
-        <span class="check-copy">${escapeHtml(item.copy)}</span>
-      </span>
-      <span class="check-state ${item.tone}">${escapeHtml(item.status)}</span>
-    </li>
-  `).join("");
-}
-
-function renderPrdChecks(dossier, data) {
-  const outreach = dossier.outreach;
-  const report = dossier.completedLeadReport;
-  const noAutoSend = outreach?.noAutoSendGuard.enabled === true;
-  const factsCount = data.facts?.length ?? 0;
-  renderLoopChecks(document.getElementById("prdChecks"), [
-    {
-      title: "Friday chain",
-      copy: `${factsCount} evidence items, lead packet, CRM prep, completed report, and dashboard are present.`,
-      status: factsCount > 0 ? "Present" : "Review",
-      tone: factsCount > 0 ? "ready" : "review"
-    },
-    {
-      title: "Two-week loop",
-      copy: "Estate/property workflow, source QA, lead quality, report, outreach drafts, and Podio prep are represented.",
-      status: "Mapped",
-      tone: "ready"
-    },
-    {
-      title: "External use",
-      copy: report?.reviewGate.externalUseBlocked ? "Report, offers, outreach, and document sends remain internal-only." : "External-use gate needs review.",
-      status: report?.reviewGate.externalUseBlocked ? "Blocked" : "Review",
-      tone: report?.reviewGate.externalUseBlocked ? "blocked" : "review"
-    },
-    {
-      title: "No auto-send",
-      copy: noAutoSend ? "No calls, SMS, emails, or offer letters can be sent from this dashboard." : "No-auto-send guard is missing.",
-      status: noAutoSend ? "Enabled" : "Missing",
-      tone: noAutoSend ? "blocked" : "blocked"
-    }
-  ]);
-}
-
-function firstOrCount(values, fallback) {
-  if (!values?.length) return fallback;
-  if (values.length === 1) return values[0];
-  return `${values[0]} plus ${values.length - 1} more`;
-}
-
-function renderPodioPrep(dossier) {
-  const podio = dossier.crm.payload?.podioReadiness;
-  const missingConfig = podio?.missingConfig ?? [];
-  const blockers = podio?.blockers ?? [];
-  renderLoopChecks(document.getElementById("podioPrep"), [
-    {
-      title: "CRM mode",
-      copy: "Prep package only; live sync remains disabled.",
-      status: displayStatus(dossier.crm.status, "Prep only"),
-      tone: "review"
-    },
-    {
-      title: "Missing config",
-      copy: firstOrCount(missingConfig, "No missing Podio config recorded."),
-      status: missingConfig.length ? `${missingConfig.length} missing` : "Ready",
-      tone: missingConfig.length ? "blocked" : "ready"
-    },
-    {
-      title: "Safe live-write test",
-      copy: firstOrCount(podio?.safeLiveWriteTestSteps, "No safe live-write steps recorded."),
-      status: `${podio?.safeLiveWriteTestSteps.length ?? 0} steps`,
-      tone: "review"
-    },
-    {
-      title: "Readback",
-      copy: firstOrCount(podio?.readbackChecks, "No readback checks recorded."),
-      status: `${podio?.readbackChecks.length ?? 0} checks`,
-      tone: "review"
-    },
-    {
-      title: "Access blocker",
-      copy: firstOrCount(blockers, "No Podio access blockers recorded."),
-      status: blockers.length ? "Blocked" : "Clear",
-      tone: blockers.length ? "blocked" : "ready"
-    }
-  ]);
-}
-
-function selectLoopStage(key, shouldScroll = false) {
-  document.querySelectorAll("[data-loop-card]").forEach((card) => {
-    card.classList.toggle("is-selected", card.dataset.loopCard === key);
+  const podio = dossier.crm?.payload?.podioReadiness ?? {};
+  const podioBlocked = (podio.blockers?.length ?? 0) > 0 || (podio.missingConfig?.length ?? 0) > 0;
+  setConnectionChip(
+    "podioStatus",
+    podioBlocked ? "blocked" : "review",
+    podioBlocked ? "Podio is not connected. Export package is prep-only." : "Podio package is staged for a controlled test."
+  );
+  setConnectionChip(
+    "googleStatus",
+    "review",
+    "Google Workspace export is staged only. No live Docs or Sheets write has run."
+  );
+  const publicSourceOk = (state.data?.facts ?? []).some((fact) => {
+    const value = fact.value;
+    return fact.factType === "source_status" && value && typeof value === "object" && value.ok === true;
   });
-  document.querySelectorAll("[data-loop-target]").forEach((button) => {
-    const isSelected = button.dataset.loopTarget === key;
-    button.classList.toggle("is-selected", isSelected);
-    button.setAttribute("aria-current", isSelected ? "step" : "false");
-  });
-  const selectedCard = document.querySelector(`[data-loop-card="${key}"]`);
-  const selectedIndex = currentStages.findIndex((stage) => stage.key === key);
-  renderStageDetail(currentStages[selectedIndex], selectedIndex);
-  if (shouldScroll && selectedCard) {
-    selectedCard.scrollIntoView({ block: "center", inline: "nearest", behavior: "smooth" });
-  }
+  setConnectionChip(
+    "webSearchStatus",
+    publicSourceOk ? "ready" : "review",
+    publicSourceOk ? "Public web search sources are reachable in the latest packet." : "Public web search needs source validation."
+  );
 }
 
-function renderProductLoop(data, dossier, decision) {
-  const stages = makeLoopStages(data, dossier);
-  currentRunData = data;
-  currentDossier = dossier;
-  currentStages = stages;
-  renderTopMetrics(data, dossier, decision);
-  renderSourceFilters(data, dossier);
-  renderLeadHistory(data, dossier, decision);
-  renderMainDetail(data, dossier, decision, stages);
-  attachRefineActions();
-  renderResearchRails(data, dossier);
-  document.getElementById("statusRun").textContent = "packet: latest lead loaded";
-  document.getElementById("statusSelected").textContent = `view: ${claimValue(dossier.property.address, dossier.summary.displayName)}`;
+function renderLoadedState(data, dossier) {
+  state.data = data;
+  state.dossier = dossier;
+  state.rows = buildRows(data, dossier);
+  state.selectedId = state.selectedId ?? state.rows[0]?.id ?? null;
+  document.getElementById("topStatus").textContent = `${data.facts?.length ?? 0} evidence items loaded from the latest run.`;
+  document.getElementById("statusRun").textContent = `packet: [${String(data.runId ?? "LATEST").slice(0, 38)}]`;
+  updateConnectionStatuses();
+  renderAll();
 }
 
 async function loadRun() {
-  const status = document.getElementById("status");
   try {
+    document.getElementById("topStatus").textContent = "Loading latest lead packet...";
     const response = await fetch("/latest-run.json", { cache: "no-store" });
     if (!response.ok) throw new Error("No latest lead found. Run the lead review pipeline first.");
     const data = await response.json();
-    const dossier = data.dossier;
-    const decision = decisionCopy(dossier);
-
-    renderProductLoop(data, dossier, decision);
-    document.getElementById("exportBanner").hidden = true;
-    document.getElementById("statusExport").textContent = "export: ready";
-    status.innerHTML = `<span class="status-pill ${decision.className}">${escapeHtml(decision.label)}</span><h2>${escapeHtml(dossier.summary.displayName)}</h2>`;
-    document.getElementById("nextAction").textContent = decision.next;
-    renderFacts(document.getElementById("propertyFacts"), [
-      { label: "Estate", value: claimValue(dossier.property.estateName) },
-      { label: "Case number", value: claimValue(dossier.property.caseNumber) },
-      { label: "Address", value: claimValue(dossier.property.address) },
-      { label: "Owner", value: claimValue(dossier.property.ownerName) },
-      { label: "County", value: claimValue(dossier.property.county, "Miami-Dade") },
-      { label: "Folio", value: claimValue(dossier.property.parcelId) },
-      { label: "Lead state", value: decision.label }
-    ]);
-    renderTasks(document.getElementById("reviewList"), dossier.operatorQueue.items, "No review items are open.");
-    renderTasks(document.getElementById("taxTasks"), dossier.taxHistory.reviewTasks, "No tax review tasks are open.");
-    renderTasks(document.getElementById("deedTasks"), dossier.deedHistory.reviewTasks, "No deed or title review tasks are open.");
-    renderTasks(document.getElementById("probateTasks"), dossier.probateDocket.reviewTasks, "No probate or court review tasks are open.");
-    renderTasks(document.getElementById("heirshipTasks"), [
-      ...dossier.marriageDeathIndicators.reviewTasks,
-      ...dossier.familyTree.reviewTasks,
-      ...dossier.sourceGovernance.reviewTasks,
-    ], "No heirship research tasks are open.");
-
-    const report = dossier.completedLeadReport;
-    const offer = report?.offerMath;
-    renderFacts(document.getElementById("offerFacts"), [
-      { label: "Report status", value: displayStatus(report?.reviewGate.reportStatus, "Internal draft") },
-      { label: "Lead bucket", value: displayStatus(report?.leadQualityProfile.leadBucket, "Review required") },
-      { label: "Outreach readiness", value: displayStatus(report?.reviewGate.outreachReadiness, "Blocked") },
-      { label: "As-is value", value: formatMoney(offer?.asIsValue.value, offer?.asIsValue.currency) },
-      { label: "Taxes due", value: formatMoney(offer?.taxesDue.value, offer?.taxesDue.currency) },
-      { label: "Heir count", value: offer?.heirCount.value ?? "Needs review" },
-      { label: "Offer amount", value: formatMoney(offer?.offerAmount.value, offer?.offerAmount.currency) },
-      { label: "Minimum net profit", value: formatMoney(offer?.minimumNetProfit.value, offer?.minimumNetProfit.currency) },
-    ]);
-
-    const outreach = dossier.outreach;
-    renderFacts(document.getElementById("outreachFacts"), [
-      { label: "Readiness", value: displayStatus(outreach?.readiness.status, "Blocked") },
-      { label: "Compliance", value: displayStatus(outreach?.complianceStatus, "Needs compliance review") },
-      { label: "Draft assets", value: outreach?.assets.length ?? 0 },
-      { label: "No auto send", value: outreach?.noAutoSendGuard.enabled ? "Enabled" : "Missing" },
-    ]);
-    renderTasks(document.getElementById("followUpTasks"), outreach?.followUpTasks ?? [], "No manual follow-up tasks are open.");
-    renderTasks(
-      document.getElementById("outreachBlockers"),
-      (outreach?.readiness.blockers ?? []).map((blocker) => ({ title: "Review before outreach", description: blocker })),
-      "No outreach blockers are open."
-    );
-
-    document.getElementById("doc").srcdoc = report?.formats.html ?? dossier.documentPacket.formats.html;
-    document.getElementById("internalDetails").textContent = JSON.stringify({
-      runId: data.runId,
-      reviewCodes: dossier.audit.reviewFlags,
-      reportReviewGate: report?.reviewGate,
-      outreachReadiness: dossier.outreach?.readiness,
-      crmTaskPreview: dossier.crm.payload.tasks,
-      sourceFacts: data.facts
-    }, null, 2);
+    if (!data.dossier) throw new Error("The latest run did not include a dossier.");
+    renderLoadedState(data, data.dossier);
   } catch (error) {
-    status.innerHTML = `<span class="bad">Blocked</span> ${error.message}`;
-    document.getElementById("nextAction").textContent = "Run the lead review pipeline, then reload this page.";
+    state.data = null;
+    state.dossier = null;
+    state.rows = [];
+    state.filteredRows = [];
+    state.selectedId = null;
+    document.getElementById("topStatus").textContent = error.message;
+    document.getElementById("resultsBody").innerHTML = `<tr><td colspan="6"><span class="primary-text">No lead packet loaded.</span><span class="secondary-text">${escapeHtml(error.message)}</span></td></tr>`;
+    document.getElementById("statusRun").textContent = "packet: [BLOCKED]";
+    updateConnectionStatuses();
   }
 }
-document.getElementById("refresh").addEventListener("click", loadRun);
-attachExportActions();
+
+function exportRouteMeta(route) {
+  const routes = {
+    google: {
+      label: "Google Workspace",
+      status: "export: [GOOGLE]",
+      title: "Export to Google Workspace",
+      copy: "Stage the completed report for Google Docs or Sheets review. Use this when the team needs a clean document package before outreach."
+    },
+    podio: {
+      label: "Podio",
+      status: "export: [PODIO]",
+      title: "Export to Podio",
+      copy: "Stage the completed report and lead fields for Podio. Use this when the file is ready for CRM handoff."
+    },
+    both: {
+      label: "Google + Podio",
+      status: "export: [GOOGLE + PODIO]",
+      title: "Export to Google + Podio",
+      copy: "Stage one completed report package for Google Workspace review and Podio handoff."
+    }
+  };
+  return routes[route] ?? routes.both;
+}
+
+function setExportMenuOpen(open) {
+  const menu = document.getElementById("exportMenu");
+  const toggle = document.getElementById("exportToggle");
+  menu.dataset.open = open ? "true" : "false";
+  toggle.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function chooseExportRoute(route) {
+  const meta = exportRouteMeta(route);
+  setExportMenuOpen(false);
+  if (!state.dossier) {
+    document.getElementById("topStatus").textContent = "Load the latest lead packet before choosing an export route.";
+    document.getElementById("statusExport").textContent = "export: [WAITING]";
+    return;
+  }
+  state.exportRoute = route;
+  setRailOpen(true);
+  setRailTab("docs");
+  state.railPreview = {
+    title: meta.title,
+    markdown: `${meta.copy} The completed report remains the source of truth for this export.`,
+    updatedAt: Date.now()
+  };
+  document.getElementById("statusExport").textContent = meta.status;
+  document.getElementById("topStatus").textContent = `Completed report staged for ${meta.label}.`;
+  renderRail();
+}
+
+function openUtilityRail(kind) {
+  setRailOpen(true);
+  if (kind === "report") {
+    setRailTab("docs");
+    state.railPreview = {
+      title: "Lead report",
+      markdown: "Review the report preview and fill missing sections before outreach.",
+      updatedAt: Date.now()
+    };
+    document.getElementById("statusExport").textContent = "export: [REPORT VIEW]";
+  }
+  renderRail();
+}
+
+function wireEvents() {
+  document.getElementById("sidebarToggle").addEventListener("click", () => {
+    const workspace = document.getElementById("workspace");
+    workspace.classList.toggle("is-collapsed");
+    const collapsed = workspace.classList.contains("is-collapsed");
+    document.getElementById("sidebarToggle").setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
+    document.getElementById("sidebarToggle").setAttribute("aria-expanded", collapsed ? "false" : "true");
+    document.getElementById("sidebarToggle").setAttribute("title", collapsed ? "Expand sidebar" : "Collapse sidebar");
+  });
+  document.getElementById("themeToggle").addEventListener("click", () => {
+    applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
+  });
+  document.getElementById("refresh").addEventListener("click", loadRun);
+  document.getElementById("exportToggle").addEventListener("click", (event) => {
+    event.stopPropagation();
+    const isOpen = document.getElementById("exportMenu").dataset.open === "true";
+    setExportMenuOpen(!isOpen);
+  });
+  document.querySelectorAll("[data-export-route]").forEach((button) => {
+    button.addEventListener("click", () => chooseExportRoute(button.dataset.exportRoute));
+  });
+  document.addEventListener("click", (event) => {
+    if (!document.getElementById("exportMenu").contains(event.target)) {
+      setExportMenuOpen(false);
+    }
+  });
+  document.getElementById("openRailFromDetail").addEventListener("click", () => {
+    setRailOpen(true);
+    renderRail();
+  });
+  document.getElementById("closeRail").addEventListener("click", () => setRailOpen(false));
+  document.getElementById("quickReport").addEventListener("click", () => openUtilityRail("report"));
+  document.getElementById("saveSearch").addEventListener("click", () => {
+    document.getElementById("filterNote").textContent = "Search saved for this review session.";
+  });
+  ["globalSearch", "countyFilter", "leadTypeFilter", "statusFilter", "evidenceFilter", "missingFilter", "priorityOnly"].forEach((id) => {
+    document.getElementById(id).addEventListener("input", applyFilters);
+    document.getElementById(id).addEventListener("change", applyFilters);
+  });
+  document.querySelectorAll("[data-column-toggle]").forEach((toggle) => {
+    toggle.addEventListener("change", applyColumnVisibility);
+  });
+  document.querySelectorAll("[data-rail-tab]").forEach((button) => {
+    button.addEventListener("click", () => setRailTab(button.dataset.railTab));
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setExportMenuOpen(false);
+    }
+    if (event.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "SELECT") {
+      event.preventDefault();
+      document.getElementById("globalSearch").focus();
+    }
+  });
+  wireRailResize();
+}
+
+function wireRailResize() {
+  const handle = document.getElementById("railResizer");
+  let startX = 0;
+  let startWidth = state.railWidth;
+  function resize(event) {
+    state.railWidth = clampRailWidth(startWidth + startX - event.clientX);
+    localStorage.setItem(railWidthKey, String(state.railWidth));
+    setRailOpen(state.railOpen);
+  }
+  function stopResize() {
+    document.body.style.userSelect = "";
+    window.removeEventListener("pointermove", resize);
+    window.removeEventListener("pointerup", stopResize);
+  }
+  handle.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    startX = event.clientX;
+    startWidth = state.railWidth;
+    document.body.style.userSelect = "none";
+    window.addEventListener("pointermove", resize);
+    window.addEventListener("pointerup", stopResize, { once: true });
+  });
+}
+
+loadSavedState();
+wireEvents();
+setRailOpen(false);
 loadRun();
 </script>
 </body>
