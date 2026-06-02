@@ -173,6 +173,79 @@ export interface BetaAuthSession {
   };
 }
 
+export interface DailyRunConfig {
+  counties: string[];
+  targetRawLeadRange: { min: number; max: number };
+  targetQualifiedLeadRange: { min: number; max: number };
+  seeds: IntakeSeed[];
+  seedSource: "configured_batch" | "default_review_seeds" | "manual";
+  startedBy: "automation" | "operator_cli";
+}
+
+export interface DailyLeadResult {
+  dedupeKey: string;
+  county: string;
+  runId: string;
+  displayName: string;
+  status: RawDossier["status"];
+  workflowStatus: WorkflowRuleStatus;
+  operatorQueueState: OperatorQueueState;
+  leadBucket: LeadBucket;
+  qualified: boolean;
+  blockers: string[];
+  reportId?: string;
+}
+
+export interface DailyRunResult {
+  id: string;
+  generatedAt: string;
+  config: DailyRunConfig;
+  rawLeadCount: number;
+  qualifiedLeadCount: number;
+  reviewLeadCount: number;
+  duplicateCount: number;
+  errorCount: number;
+  leads: DailyLeadResult[];
+  deadLetters: DeadLetter[];
+  missedVolumeReasons: string[];
+  blockers: string[];
+}
+
+export type ExportRoute = "google" | "podio";
+
+export interface ExportRequest {
+  routes: ExportRoute[];
+  dossier: RawDossier;
+  dryRun?: boolean;
+}
+
+export interface ExportRouteResult {
+  route: ExportRoute;
+  ok: boolean;
+  mode: "live" | "dry_run" | "blocked";
+  externalId?: string;
+  url?: string;
+  readbackOk: boolean;
+  blockers: string[];
+  message: string;
+}
+
+export interface ExportResult {
+  ok: boolean;
+  generatedAt: string;
+  dossierId: string;
+  routes: ExportRouteResult[];
+  blockers: string[];
+}
+
+export interface ConnectionStatus {
+  name: "Podio" | "Google" | "Web Search";
+  ok: boolean;
+  mode: "live" | "dry_run" | "blocked";
+  message: string;
+  checkedAt: string;
+}
+
 export type ReviewFlag =
   | "SOURCE_BLOCKED"
   | "SOURCE_HEALTH_ONLY"

@@ -1,4 +1,6 @@
 import type { IntakeSeed } from "@ple/types";
+import { runDailyProduction } from "./daily/run-daily";
+import { connectionStatuses, exportCompletedReport } from "./export/export-package";
 import { runDryPipeline } from "./index";
 
 interface CloudflareEnv {
@@ -167,6 +169,33 @@ async function dryRunResponse(url: URL, env: CloudflareEnv): Promise<Response> {
   });
 }
 
+async function dailyRunResponse(env: CloudflareEnv): Promise<Response> {
+  const result = await runDailyProduction(undefined, {
+    env: env as Record<string, string | undefined>,
+  });
+  return json(result, { headers: { "cache-control": "no-store" } });
+}
+
+async function exportResponse(request: Request, url: URL, env: CloudflareEnv): Promise<Response> {
+  const dryRun = url.searchParams.get("dry-run") !== "false";
+  const routesParam = url.searchParams.get("routes");
+  const routes = routesParam
+    ? routesParam.split(",").map((route) => route.trim()).filter((route): route is "google" | "podio" => route === "google" || route === "podio")
+    : ["google", "podio"] as Array<"google" | "podio">;
+  const body = request.method === "POST"
+    ? await request.json().catch(() => undefined) as { seed?: IntakeSeed; routes?: Array<"google" | "podio">; dryRun?: boolean } | undefined
+    : undefined;
+  const pipeline = await runDryPipeline(body?.seed ?? seedFromUrl(url, env), {
+    env: env as Record<string, string | undefined>,
+  });
+  const result = await exportCompletedReport({
+    routes: body?.routes ?? routes,
+    dossier: pipeline.dossier,
+    dryRun: body?.dryRun ?? dryRun,
+  }, env as Record<string, string | undefined>);
+  return json(result, { headers: { "cache-control": "no-store" } });
+}
+
 export default {
   async fetch(request: Request, env: CloudflareEnv): Promise<Response> {
     const url = new URL(request.url);
@@ -180,7 +209,17 @@ export default {
         ok: true,
         service: "heirright-probate-lead-engine",
         deploymentKey: env.DEPLOYMENT_KEY || "heirright",
-        endpoints: ["/dry-run", "/latest-run.json", "/latest-dossier.json", "/podio-dry-run.json", "/internal-summary.md", "/internal-summary.html"],
+        endpoints: [
+          "/dry-run",
+          "/latest-run.json",
+          "/latest-dossier.json",
+          "/podio-dry-run.json",
+          "/internal-summary.md",
+          "/internal-summary.html",
+          "/daily-run.json",
+          "/api/exports",
+          "/api/connections/status",
+        ],
       });
     }
 
@@ -195,6 +234,24 @@ export default {
       const blocked = await authBlocker(request, env);
       if (blocked) return blocked;
       return dryRunResponse(url, env);
+    }
+
+    if (url.pathname === "/daily-run.json") {
+      const blocked = await authBlocker(request, env);
+      if (blocked) return blocked;
+      return dailyRunResponse(env);
+    }
+
+    if (url.pathname === "/api/exports" || url.pathname === "/export-result.json") {
+      const blocked = await authBlocker(request, env);
+      if (blocked) return blocked;
+      return exportResponse(request, url, env);
+    }
+
+    if (url.pathname === "/api/connections/status" || url.pathname === "/connection-status.json") {
+      const blocked = await authBlocker(request, env);
+      if (blocked) return blocked;
+      return json(await connectionStatuses(env as Record<string, string | undefined>), { headers: { "cache-control": "no-store" } });
     }
 
     return json({ ok: false, error: "Not found." }, { status: 404 });

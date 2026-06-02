@@ -198,6 +198,161 @@ function sessionBody(req) {
   };
 }
 
+function hasAll(keys) {
+  return keys.every((key) => Boolean(process.env[key]));
+}
+
+function localConnectionStatuses() {
+  const checkedAt = new Date().toISOString();
+  return [
+    {
+      name: "Podio",
+      ok: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"]),
+      mode: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"]) ? "live" : "blocked",
+      message: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"])
+        ? "Podio export config is present; controlled write still needs approval."
+        : "Podio export/readback config is missing.",
+      checkedAt,
+    },
+    {
+      name: "Google",
+      ok: hasAll(["GOOGLE_WORKSPACE_ACCESS_TOKEN", "GOOGLE_TRACKING_SHEET_ID"]),
+      mode: hasAll(["GOOGLE_WORKSPACE_ACCESS_TOKEN", "GOOGLE_TRACKING_SHEET_ID"]) ? "live" : "blocked",
+      message: hasAll(["GOOGLE_WORKSPACE_ACCESS_TOKEN", "GOOGLE_TRACKING_SHEET_ID"])
+        ? "Google export config is present; controlled write still needs approval."
+        : "Google Drive/Docs/Sheets export config is missing.",
+      checkedAt,
+    },
+    {
+      name: "Web Search",
+      ok: existsSync(workerOutput),
+      mode: existsSync(workerOutput) ? "dry_run" : "blocked",
+      message: existsSync(workerOutput)
+        ? "Public source checks are represented in the latest lead packet."
+        : "Run the worker before validating public source status.",
+      checkedAt,
+    },
+  ];
+}
+
+function workerApiBase() {
+  return process.env.HEIRRIGHT_WORKER_URL || process.env.WORKER_API_URL || process.env.WORKER_BASE_URL || "";
+}
+
+async function proxyWorkerJson(pathname, options = {}) {
+  const base = workerApiBase().replace(/\/+$/, "");
+  if (!base) return null;
+  const headers = {
+    "content-type": "application/json",
+    ...(options.headers || {}),
+  };
+  if (process.env.HEIRRIGHT_API_TOKEN) headers.authorization = `Bearer ${process.env.HEIRRIGHT_API_TOKEN}`;
+  const response = await fetch(`${base}${pathname}`, {
+    ...options,
+    headers,
+  });
+  const text = await response.text();
+  return {
+    status: response.status,
+    body: text,
+    contentType: response.headers.get("content-type") || "application/json; charset=utf-8",
+  };
+}
+
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+      if (body.length > 1_000_000) {
+        reject(new Error("Request body is too large."));
+        req.destroy();
+      }
+    });
+    req.on("end", () => {
+      if (!body) {
+        resolve({});
+        return;
+      }
+      try {
+        resolve(JSON.parse(body));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
+function localExportRoute(route, dryRun) {
+  const routeName = route === "google" ? "Google" : "Podio";
+  const required = route === "google"
+    ? ["GOOGLE_WORKSPACE_ACCESS_TOKEN", "GOOGLE_TRACKING_SHEET_ID"]
+    : ["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"];
+  const missing = required.filter((key) => !process.env[key]);
+  if (!dryRun && !workerApiBase()) {
+    return {
+      route,
+      ok: false,
+      mode: "blocked",
+      readbackOk: false,
+      blockers: [`Set HEIRRIGHT_WORKER_URL or WORKER_API_URL so the UI can call the real ${routeName} export endpoint.`],
+      message: `${routeName} export cannot run from the local artifact server alone.`,
+    };
+  }
+  if (missing.length) {
+    return {
+      route,
+      ok: false,
+      mode: "blocked",
+      readbackOk: false,
+      blockers: [`Missing ${routeName} export config: ${missing.join(", ")}`],
+      message: `${routeName} export is blocked until credentials and readback config are available.`,
+    };
+  }
+  return {
+    route,
+    ok: true,
+    mode: dryRun ? "dry_run" : "live",
+    externalId: `${dryRun ? "dry" : "ready"}-${route}-${Date.now()}`,
+    readbackOk: !dryRun,
+    blockers: dryRun ? [`${routeName} live readback skipped in dry-run mode.`] : [],
+    message: dryRun
+      ? `${routeName} export package is prepared for controlled live validation.`
+      : `${routeName} export config is present; route is ready for controlled live validation.`,
+  };
+}
+
+async function handleLocalExport(req, res) {
+  const body = req.method === "POST" ? await readJsonBody(req) : {};
+  const proxied = await proxyWorkerJson("/api/exports", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (proxied) {
+    res.writeHead(proxied.status, { "content-type": proxied.contentType, "cache-control": "no-store" });
+    res.end(proxied.body);
+    return;
+  }
+  if (!existsSync(workerOutput)) {
+    sendJson(res, 404, { ok: false, error: "Run the worker dry pipeline first." });
+    return;
+  }
+  const requestedRoutes = Array.isArray(body.routes) && body.routes.length ? body.routes : ["google", "podio"];
+  const routes = requestedRoutes
+    .map((route) => route === "both" ? ["google", "podio"] : [route])
+    .flat()
+    .filter((route) => route === "google" || route === "podio");
+  const dryRun = body.dryRun !== false;
+  const results = Array.from(new Set(routes)).map((route) => localExportRoute(route, dryRun));
+  sendJson(res, 200, {
+    ok: results.every((result) => result.ok),
+    generatedAt: new Date().toISOString(),
+    dossierId: JSON.parse(readFileSync(workerOutput, "utf8")).dossier?.id ?? "latest",
+    routes: results,
+    blockers: results.flatMap((result) => result.blockers),
+  });
+}
+
 async function handleLogin(req, res) {
   if (!oauthConfigured(req)) {
     sendHtml(res, 503, loginPage(req, "Google OAuth credentials are missing. Add the client ID, client secret, redirect URI, and session secret before beta access opens."));
@@ -306,11 +461,35 @@ createServer((req, res) => {
 
   const session = readSession(req);
   if (authRequired() && !session) {
-    if (url.pathname === "/latest-run.json") {
+    if (url.pathname === "/latest-run.json" || url.pathname.startsWith("/api/")) {
       sendJson(res, 401, { ok: false, error: "auth_required", loginUrl: "/auth/login" });
       return;
     }
     sendHtml(res, 401, loginPage(req));
+    return;
+  }
+
+  if (url.pathname === "/api/connections/status") {
+    proxyWorkerJson("/api/connections/status")
+      .then((proxied) => {
+        if (proxied) {
+          res.writeHead(proxied.status, { "content-type": proxied.contentType, "cache-control": "no-store" });
+          res.end(proxied.body);
+          return;
+        }
+        sendJson(res, 200, localConnectionStatuses(), { "cache-control": "no-store" });
+      })
+      .catch((error) => sendJson(res, 502, { ok: false, error: error.message }));
+    return;
+  }
+
+  if (url.pathname === "/connection-status.json") {
+    sendJson(res, 200, localConnectionStatuses(), { "cache-control": "no-store" });
+    return;
+  }
+
+  if (url.pathname === "/api/exports") {
+    handleLocalExport(req, res).catch((error) => sendJson(res, 500, { ok: false, error: error.message }));
     return;
   }
 

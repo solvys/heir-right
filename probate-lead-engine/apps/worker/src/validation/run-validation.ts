@@ -1,6 +1,8 @@
 import { existsSync } from "node:fs";
 import type { SourceFact, SourceKey, SourceSubject } from "@ple/types";
+import { runDailyProduction } from "../daily/run-daily";
 import { buildRawDossier } from "../dossier/build-raw-dossier";
+import { connectionStatuses, exportCompletedReport } from "../export/export-package";
 import { runDryPipeline } from "../index";
 import { fact, nowIso } from "../lib";
 import { persistOutput } from "../storage/write-output";
@@ -146,6 +148,74 @@ async function main(): Promise<void> {
   if (!result.dossier.operatorQueue.items.length) failures.push("Operator queue items missing.");
   if (!result.dossier.evidenceQa.checks.length) failures.push("Source evidence QA checks missing.");
   if (result.dossier.evidenceQa.status === "failed") failures.push("Source evidence QA failed.");
+
+  const dailyResult = await runDailyProduction({
+    counties: ["miami-dade", "broward"],
+    targetRawLeadRange: { min: 200, max: 400 },
+    targetQualifiedLeadRange: { min: 80, max: 150 },
+    seedSource: "manual",
+    startedBy: "automation",
+    seeds: [
+      {
+        propertyAddress: "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+        ownerName: "Fresh public-source validation lead",
+        county: "miami-dade",
+        source: "operator_cli",
+      },
+      {
+        propertyAddress: "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+        ownerName: "Fresh public-source validation lead",
+        county: "miami-dade",
+        source: "operator_cli",
+      },
+      {
+        estateName: "Estate of Broward Daily Review",
+        county: "broward",
+        source: "operator_cli",
+      },
+    ],
+  });
+  if (!dailyResult.id.startsWith("daily-")) failures.push("S14 daily run id missing.");
+  if (dailyResult.rawLeadCount !== 2) failures.push("S14 daily run did not dedupe repeated seeds.");
+  if (dailyResult.duplicateCount !== 1) failures.push("S14 daily duplicate count missing.");
+  if (dailyResult.qualifiedLeadCount !== 0) failures.push("S14 should not count review-placeholder/no-enrichment leads as qualified.");
+  if (!dailyResult.missedVolumeReasons.some((reason) => reason.includes("Qualified lead count"))) failures.push("S14 missed qualified-volume reason missing.");
+  if (!dailyResult.missedVolumeReasons.some((reason) => reason.includes("No production batch seed file"))) failures.push("S14 production seed blocker missing.");
+  if (!dailyResult.blockers.some((blocker) => blocker.includes("No enrichment/contact"))) failures.push("S14 no-enrichment qualification blocker missing.");
+
+  const dryExport = await exportCompletedReport({
+    routes: ["google", "podio"],
+    dossier: result.dossier,
+    dryRun: true,
+  }, {
+    GOOGLE_WORKSPACE_ACCESS_TOKEN: "validation-google-token",
+    GOOGLE_TRACKING_SHEET_ID: "validation-sheet",
+    PODIO_ACCESS_TOKEN: "validation-podio-token",
+    PODIO_APP_ID: "validation-app",
+    PODIO_FIELD_MAP_JSON: JSON.stringify({
+      title: "title",
+      property_address: "property_address",
+      report_link: "report_link",
+    }),
+  });
+  if (!dryExport.ok) failures.push("S15 dry export should prepare both routes.");
+  if (dryExport.routes.length !== 2) failures.push("S15 dry export did not return Google and Podio routes.");
+  if (!dryExport.routes.every((route) => route.mode === "dry_run")) failures.push("S15 dry export routes should stay dry-run.");
+  if (!dryExport.routes.every((route) => route.blockers.some((blocker) => blocker.includes("skipped in dry-run")))) failures.push("S15 dry export readback blockers missing.");
+
+  const blockedExport = await exportCompletedReport({
+    routes: ["google", "podio"],
+    dossier: result.dossier,
+    dryRun: false,
+  }, {});
+  if (blockedExport.ok) failures.push("S15 live export should not succeed without configured credentials.");
+  if (!blockedExport.blockers.some((blocker) => blocker.includes("Missing Google Workspace config"))) failures.push("S15 missing Google config blocker missing.");
+  if (!blockedExport.blockers.some((blocker) => blocker.includes("Missing Podio export config"))) failures.push("S15 missing Podio config blocker missing.");
+
+  const statuses = await connectionStatuses({});
+  for (const name of ["Podio", "Google", "Web Search"] as const) {
+    if (!statuses.some((status) => status.name === name)) failures.push(`S15 connection status missing ${name}.`);
+  }
 
   const estateResult = await runDryPipeline({
     estateName: "Estate of Maria Lopez",

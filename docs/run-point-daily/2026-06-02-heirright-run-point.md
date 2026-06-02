@@ -154,3 +154,89 @@ Required corrections before complete:
 
 - Ready for review on the local S8 implementation and the S9 prep-only posture.
 - Not ready to call S9 complete; real Podio validation remains blocked on external access and approval.
+
+---
+
+# 2.0 Beta Sprint Automation Closeout - S12 through S15
+
+Branch wave 1: `sprint/S12-S13-heirright-2-beta-access-ui`  
+Branch wave 2: `sprint/S14-S15-heirright-2-beta-production-export`  
+Daily automation rule applied: two whole sprints per branch, two tracks per sprint.
+
+## Completed Sprint Waves
+
+- S12 - Organization Access + Beta Runtime Gate.
+- S13 - Report Rail + Operator UI Completion.
+- S14 - Daily Lead Production + Qualification.
+- S15 - Google/Podio Export + Readback.
+
+## Wave 2 Branch Work
+
+- Added the S14/S15 sprint briefs as whole-sprint artifacts with exactly two tracks per sprint.
+- Added a daily production ledger that reads configurable counties/seeds, dedupes leads, records dead letters, separates raw/review/qualified counts, and explains missed contract-volume reasons.
+- Added qualification blockers so no-enrichment, source-health-only, placeholder, duplicate, stopped, or incomplete report records do not count as qualified fulfillment leads.
+- Added Google Workspace export preparation/live path for Drive folder, Google Doc body write, tracking Sheet append, and Drive readback.
+- Added Podio export preparation/live path for item create, report/source-note comment, manual review task, optional report link field, and item readback.
+- Added worker endpoints for `/daily-run.json`, `/api/exports`, and `/api/connections/status`.
+- Updated the local artifact server so the UI can proxy to the real worker export endpoint when `HEIRRIGHT_WORKER_URL` or `WORKER_API_URL` is configured, otherwise it shows live-export blockers instead of false success.
+- Updated the right rail to show export route results and blockers after the Export dropdown is used.
+
+## Validation Commands / Results
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker test
+```
+
+Passed. Validation now includes S14 daily run accounting and S15 dry/live-blocked export assertions.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker run:daily
+```
+
+Passed. Output reported two raw review leads, zero qualified leads, and missed-volume blockers for 200-400 raw / 80-150 qualified targets because only default review seeds were provided.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker export:dry
+```
+
+Passed. Google and Podio dry-run routes prepared successfully; live readback stayed explicitly blocked in dry-run mode.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+rm -rf apps/artifact/dist && pnpm --filter @ple/artifact build
+node -c apps/artifact/server.js
+```
+
+Passed.
+
+## Browser Evidence
+
+- Local preview refreshed on `http://localhost:4175/`.
+- Export dropdown route `Google + Podio` opened the docs rail.
+- Rail displayed `Export result` and `Export blockers`.
+- Footer statuses showed Podio, Google, and Web Search.
+- Browser console had no error or warning logs during the export interaction.
+- Screenshot evidence: `/tmp/heirright-s15-export-rail.png`.
+
+## Remaining Blockers
+
+- S9 remains open until live Podio workspace access, controlled write, and readback are proven.
+- Google live export needs real Workspace credentials, target Sheet ID, and approved live write/readback.
+- Podio live export needs real access token, app ID, field map, and approved live write/readback.
+- Daily fulfillment volume needs production county seed/input feed. Default review seeds intentionally do not satisfy the contract-volume target.
+- Live outreach remains out of scope and blocked; all outreach remains draft/manual-review only.
+
+## Next Branch
+
+- No S16/S17 branch is defined in the 2.0 Beta completion pack yet.
+- Next automation should either run the same S14/S15 branch with real production credentials/seeds for validation, or wait for the next sprint pair to be defined.
