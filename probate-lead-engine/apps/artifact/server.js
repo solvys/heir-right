@@ -1,16 +1,322 @@
+// [claude-code 2026-06-02] Google OAuth gate for the HeirRight beta artifact.
 const { createServer } = require("node:http");
+const { randomBytes, createHmac } = require("node:crypto");
 const { readFileSync, existsSync } = require("node:fs");
 const { join } = require("node:path");
 
 const port = Number(process.env.PORT || 4173);
 const root = join(__dirname, "dist");
 const workerOutput = join(__dirname, "..", "worker", "output", "latest-run.json");
+const sessionCookie = process.env.AUTH_SESSION_COOKIE || "hr_session";
+const stateCookie = process.env.AUTH_STATE_COOKIE || "hr_oauth_state";
+const sessionTtlSeconds = Number(process.env.AUTH_SESSION_TTL_SECONDS || 60 * 60 * 12);
+
+function splitList(value) {
+  return String(value || "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function authRequired() {
+  return process.env.AUTH_REQUIRED !== "false";
+}
+
+function allowedDomains() {
+  return splitList(process.env.AUTH_ALLOWED_DOMAINS || "heirright.com");
+}
+
+function allowedEmails() {
+  return splitList(process.env.AUTH_ALLOWED_EMAILS || process.env.SOLVYS_ADMIN_EMAILS || "");
+}
+
+function originFor(req) {
+  const host = req.headers["x-forwarded-host"] || req.headers.host || `localhost:${port}`;
+  const proto = req.headers["x-forwarded-proto"] || (String(host).startsWith("localhost") ? "http" : "https");
+  return `${proto}://${host}`;
+}
+
+function redirectUriFor(req) {
+  return process.env.GOOGLE_OAUTH_REDIRECT_URI || `${originFor(req)}/auth/callback`;
+}
+
+function oauthConfigured(req) {
+  return Boolean(
+    process.env.GOOGLE_OAUTH_CLIENT_ID
+      && process.env.GOOGLE_OAUTH_CLIENT_SECRET
+      && process.env.AUTH_SESSION_SECRET
+      && redirectUriFor(req)
+  );
+}
+
+function parseCookies(req) {
+  const out = {};
+  for (const pair of String(req.headers.cookie || "").split(";")) {
+    const index = pair.indexOf("=");
+    if (index === -1) continue;
+    out[pair.slice(0, index).trim()] = decodeURIComponent(pair.slice(index + 1).trim());
+  }
+  return out;
+}
+
+function base64Url(input) {
+  return Buffer.from(input).toString("base64url");
+}
+
+function sign(value) {
+  return createHmac("sha256", process.env.AUTH_SESSION_SECRET || "")
+    .update(value)
+    .digest("base64url");
+}
+
+function emailAllowed(email) {
+  const normalized = String(email || "").toLowerCase();
+  const domain = normalized.split("@")[1] || "";
+  return allowedEmails().includes(normalized) || allowedDomains().includes(domain);
+}
+
+function createSessionToken(user) {
+  const payload = base64Url(JSON.stringify({
+    email: user.email,
+    name: user.name || user.email,
+    picture: user.picture || null,
+    domain: String(user.email || "").split("@")[1] || "",
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + sessionTtlSeconds,
+  }));
+  return `${payload}.${sign(payload)}`;
+}
+
+function readSession(req) {
+  if (!authRequired()) {
+    return {
+      email: "local-dev@heirright.com",
+      name: "Local Beta Review",
+      picture: null,
+      domain: "heirright.com",
+      mode: "disabled",
+    };
+  }
+  if (!process.env.AUTH_SESSION_SECRET) return null;
+
+  const token = parseCookies(req)[sessionCookie];
+  if (!token || !token.includes(".")) return null;
+  const [payload, signature] = token.split(".");
+  if (!payload || !signature || sign(payload) !== signature) return null;
+
+  try {
+    const session = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    if (!session.exp || session.exp < Math.floor(Date.now() / 1000)) return null;
+    if (!emailAllowed(session.email)) return null;
+    return { ...session, mode: "oauth" };
+  } catch {
+    return null;
+  }
+}
+
+function secureCookie(req) {
+  return originFor(req).startsWith("https://") ? "; Secure" : "";
+}
+
+function cookie(name, value, req, maxAgeSeconds) {
+  const maxAge = Number.isFinite(maxAgeSeconds) ? `; Max-Age=${maxAgeSeconds}` : "";
+  return `${name}=${encodeURIComponent(value)}; Path=/; HttpOnly; SameSite=Lax${maxAge}${secureCookie(req)}`;
+}
+
+function clearCookie(name, req) {
+  return cookie(name, "", req, 0);
+}
+
+function sendJson(res, status, body, headers = {}) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8", ...headers });
+  res.end(`${JSON.stringify(body, null, 2)}\n`);
+}
+
+function sendHtml(res, status, body, headers = {}) {
+  res.writeHead(status, { "content-type": "text/html; charset=utf-8", ...headers });
+  res.end(body);
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function loginPage(req, message = "Sign in with your HeirRight Google account to review lead packets.") {
+  const configured = oauthConfigured(req);
+  const domainText = allowedDomains().join(", ") || "heirright.com";
+  const emailText = allowedEmails().join(", ") || "configured Solvys admin emails";
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HeirRight Beta Login</title>
+  <style>
+    :root { color-scheme: light; --page:#f2f2f7; --text:#1d1d1f; --muted:#6e7681; --line:rgba(16,24,40,.12); --glass:rgba(255,255,255,.74); }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; display:grid; place-items:center; background:var(--page); color:var(--text); font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif; }
+    main { width:min(420px, calc(100vw - 32px)); padding:22px; border:1px solid var(--line); border-radius:14px; background:var(--glass); backdrop-filter:saturate(180%) blur(28px); -webkit-backdrop-filter:saturate(180%) blur(28px); }
+    h1 { margin:0 0 8px; font-size:24px; letter-spacing:0; }
+    p { margin:0 0 14px; color:var(--muted); line-height:1.45; }
+    a { display:inline-flex; align-items:center; justify-content:center; min-height:40px; width:100%; color:#fff; background:#2f3137; text-decoration:none; border-radius:9px; font-weight:720; }
+    .meta { margin-top:14px; padding-top:14px; border-top:1px solid var(--line); font-size:12px; }
+    code { font-family:"SFMono-Regular","SF Mono",ui-monospace,Menlo,Consolas,monospace; color:var(--text); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>HeirRight Beta</h1>
+    <p>${escapeHtml(message)}</p>
+    ${configured ? `<a href="/auth/login">Continue with Google</a>` : `<p><strong>Google OAuth is not configured yet.</strong></p>`}
+    <p class="meta">Allowed domain: <code>${escapeHtml(domainText)}</code><br>Solvys admin access: <code>${escapeHtml(emailText)}</code></p>
+  </main>
+</body>
+</html>`;
+}
+
+function sessionBody(req) {
+  const session = readSession(req);
+  return {
+    authenticated: Boolean(session),
+    user: session ? {
+      email: session.email,
+      name: session.name,
+      picture: session.picture ?? null,
+      domain: session.domain,
+      mode: session.mode,
+    } : null,
+    auth: {
+      required: authRequired(),
+      configured: oauthConfigured(req),
+      allowedDomains: allowedDomains(),
+      allowedEmails: allowedEmails(),
+    },
+  };
+}
+
+async function handleLogin(req, res) {
+  if (!oauthConfigured(req)) {
+    sendHtml(res, 503, loginPage(req, "Google OAuth credentials are missing. Add the client ID, client secret, redirect URI, and session secret before beta access opens."));
+    return;
+  }
+
+  const state = randomBytes(24).toString("base64url");
+  const params = new URLSearchParams({
+    client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+    redirect_uri: redirectUriFor(req),
+    response_type: "code",
+    scope: "openid email profile",
+    state,
+    prompt: "select_account",
+  });
+  res.writeHead(302, {
+    "set-cookie": cookie(stateCookie, state, req, 600),
+    location: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+  });
+  res.end();
+}
+
+async function exchangeGoogleCode(req, code) {
+  const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code,
+      client_id: process.env.GOOGLE_OAUTH_CLIENT_ID,
+      client_secret: process.env.GOOGLE_OAUTH_CLIENT_SECRET,
+      redirect_uri: redirectUriFor(req),
+      grant_type: "authorization_code",
+    }),
+  });
+  if (!tokenResponse.ok) throw new Error(`Google token exchange failed: ${tokenResponse.status}`);
+  const token = await tokenResponse.json();
+  const profileResponse = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+    headers: { authorization: `Bearer ${token.access_token}` },
+  });
+  if (!profileResponse.ok) throw new Error(`Google profile lookup failed: ${profileResponse.status}`);
+  return profileResponse.json();
+}
+
+async function handleCallback(req, res, url) {
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
+  const expectedState = parseCookies(req)[stateCookie];
+  if (!code || !state || !expectedState || state !== expectedState) {
+    sendHtml(res, 400, loginPage(req, "The Google sign-in request expired. Start the login again."));
+    return;
+  }
+
+  try {
+    const profile = await exchangeGoogleCode(req, code);
+    if (!profile.email || !emailAllowed(profile.email)) {
+      sendHtml(res, 403, loginPage(req, "This Google account is not approved for the HeirRight beta workspace."));
+      return;
+    }
+    const token = createSessionToken(profile);
+    res.writeHead(302, {
+      "set-cookie": [
+        cookie(sessionCookie, token, req, sessionTtlSeconds),
+        clearCookie(stateCookie, req),
+      ],
+      location: "/",
+    });
+    res.end();
+  } catch (error) {
+    sendHtml(res, 502, loginPage(req, error.message));
+  }
+}
 
 createServer((req, res) => {
-  if (req.url === "/latest-run.json") {
+  const url = new URL(req.url || "/", originFor(req));
+
+  if (url.pathname === "/health") {
+    sendJson(res, 200, {
+      ok: true,
+      service: "heirright-artifact",
+      authRequired: authRequired(),
+      authConfigured: oauthConfigured(req),
+    });
+    return;
+  }
+
+  if (url.pathname === "/auth/session") {
+    sendJson(res, 200, sessionBody(req));
+    return;
+  }
+
+  if (url.pathname === "/auth/login") {
+    handleLogin(req, res).catch((error) => sendHtml(res, 500, loginPage(req, error.message)));
+    return;
+  }
+
+  if (url.pathname === "/auth/callback") {
+    handleCallback(req, res, url).catch((error) => sendHtml(res, 500, loginPage(req, error.message)));
+    return;
+  }
+
+  if (url.pathname === "/auth/logout") {
+    res.writeHead(302, { "set-cookie": clearCookie(sessionCookie, req), location: "/" });
+    res.end();
+    return;
+  }
+
+  const session = readSession(req);
+  if (authRequired() && !session) {
+    if (url.pathname === "/latest-run.json") {
+      sendJson(res, 401, { ok: false, error: "auth_required", loginUrl: "/auth/login" });
+      return;
+    }
+    sendHtml(res, 401, loginPage(req));
+    return;
+  }
+
+  if (url.pathname === "/latest-run.json") {
     if (!existsSync(workerOutput)) {
-      res.writeHead(404, { "content-type": "application/json" });
-      res.end(JSON.stringify({ error: "Run the worker dry pipeline first." }));
+      sendJson(res, 404, { error: "Run the worker dry pipeline first." });
       return;
     }
     res.writeHead(200, { "content-type": "application/json" });

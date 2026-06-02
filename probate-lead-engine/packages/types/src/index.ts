@@ -154,6 +154,25 @@ export interface DeploymentConfig {
   featureFlags: Record<string, boolean>;
 }
 
+export interface BetaAccessUser {
+  email: string;
+  name: string;
+  picture: string | null;
+  domain: string;
+  mode: "oauth" | "disabled";
+}
+
+export interface BetaAuthSession {
+  authenticated: boolean;
+  user: BetaAccessUser | null;
+  auth: {
+    required: boolean;
+    configured: boolean;
+    allowedDomains: string[];
+    allowedEmails: string[];
+  };
+}
+
 export type ReviewFlag =
   | "SOURCE_BLOCKED"
   | "SOURCE_HEALTH_ONLY"
