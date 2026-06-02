@@ -2,7 +2,7 @@
 
 Branch: `codex/heirright-2026-06-02-s8-s9-run-point`  
 Pushed remote branch: `origin/codex/heirright-2026-06-02-s8-s9-run-point`  
-Pushed ref: `6593e55`
+Pushed ref: `be1aed3`
 
 ## Previous-Day Touchups Reviewed
 
