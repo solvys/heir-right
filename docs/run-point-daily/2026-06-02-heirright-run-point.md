@@ -2,7 +2,8 @@
 
 Branch: `codex/heirright-2026-06-02-s8-s9-run-point`  
 Pushed remote branch: `origin/codex/heirright-2026-06-02-s8-s9-run-point`  
-Pushed ref: `origin/codex/heirright-2026-06-02-s8-s9-run-point` @ `4d496a76a667661912ecf78fff42b4357d84223b`
+Pushed ref: `origin/codex/heirright-2026-06-02-s8-s9-run-point`
+Artifact dashboard polish implementation evidence: `4d496a76a667661912ecf78fff42b4357d84223b`
 
 ## Previous-Day Touchups Reviewed
 
