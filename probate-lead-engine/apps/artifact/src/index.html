@@ -655,11 +655,12 @@
       min-width: 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: 250px minmax(0, 1fr);
+      grid-template-columns: var(--filters-width, 320px) minmax(0, 1fr);
       overflow: hidden;
     }
 
     .filters {
+      position: relative;
       min-width: 0;
       min-height: 0;
       display: grid;
@@ -670,9 +671,39 @@
       -webkit-backdrop-filter: saturate(180%) blur(18px);
     }
 
+    .filter-resizer {
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 12px;
+      transform: translateX(50%);
+      cursor: col-resize;
+      touch-action: none;
+      z-index: 6;
+    }
+
+    .filter-resizer::after {
+      content: "";
+      position: absolute;
+      top: 46%;
+      left: 50%;
+      width: 4px;
+      height: 46px;
+      border-left: 1px solid rgba(16,24,40,.20);
+      border-right: 1px solid rgba(16,24,40,.20);
+      opacity: .34;
+      transform: translate(-50%, -50%);
+      transition: opacity .18s var(--ease);
+    }
+
+    .filter-resizer:hover::after { opacity: .78; }
+
     .pane-head {
       padding: 16px;
       border-bottom: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
     }
 
     .eyebrow {
@@ -697,6 +728,12 @@
       color: var(--muted);
       font-size: 12px;
       line-height: 1.42;
+    }
+
+    .filter-width-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
     }
 
     .filter-scroll {
@@ -1606,7 +1643,7 @@
     }
 
     @media (max-width: 1180px) {
-      .content { grid-template-columns: 230px minmax(0, 1fr); }
+      .content { grid-template-columns: var(--filters-width, 320px) minmax(0, 1fr); }
       .research-rail {
         top: 0;
         bottom: 0;
@@ -1634,6 +1671,7 @@
       }
       .content { grid-template-columns: 1fr; overflow: visible; }
       .filters { max-height: none; }
+      .filter-resizer { display: none; }
       .workbench { overflow: visible; }
       .workbench-body { overflow: visible; }
       .results { min-height: 520px; }
@@ -1746,10 +1784,16 @@
 
     <section class="content">
       <aside class="filters" aria-label="Lead filters">
+        <div id="filterResizer" class="filter-resizer" role="separator" aria-orientation="vertical" aria-label="Resize filters" title="Resize filters"></div>
         <div class="pane-head">
-          <p class="eyebrow">Filters</p>
-          <h2 class="pane-title">Start here</h2>
-          <p class="pane-copy">Choose the county and the missing information you want to clean up first.</p>
+          <div>
+            <p class="eyebrow">Filters</p>
+            <h2 class="pane-title">Start here</h2>
+            <p class="pane-copy">Choose the county and the missing information you want to clean up first.</p>
+          </div>
+          <button id="filterWidthToggle" class="icon-button filter-width-toggle" type="button" aria-label="Expand filters" title="Expand filters" aria-pressed="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5 3 12l5 7M16 5l5 7-5 7M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
         </div>
         <div class="filter-scroll">
           <div class="field">
@@ -1943,12 +1987,14 @@ const state = {
   railOpen: false,
   railTab: "flow",
   railWidth: 388,
+  filterWidth: 320,
   railPreview: null,
   exportRoute: null,
   filled: new Set()
 };
 
 const railWidthKey = "heirright:research-rail-width";
+const filterWidthKey = "heirright:filter-rail-width";
 const filledKey = "heirright:filled-report-gaps";
 const themeKey = "heirright:theme";
 const columnMap = {
@@ -2236,6 +2282,9 @@ function loadSavedState() {
   applyTheme(storedTheme === "dark" ? "dark" : "light", false);
   const storedWidth = Number(localStorage.getItem(railWidthKey));
   if (Number.isFinite(storedWidth)) state.railWidth = clampRailWidth(storedWidth);
+  const storedFilterWidth = Number(localStorage.getItem(filterWidthKey));
+  if (Number.isFinite(storedFilterWidth)) state.filterWidth = clampFilterWidth(Math.max(320, storedFilterWidth));
+  applyFilterWidth();
   try {
     const storedFilled = JSON.parse(localStorage.getItem(filledKey) ?? "[]");
     if (Array.isArray(storedFilled)) state.filled = new Set(storedFilled.map(String));
@@ -2251,6 +2300,26 @@ function persistFilled() {
 function clampRailWidth(value) {
   const max = Math.max(320, Math.floor(window.innerWidth * .55));
   return Math.min(max, Math.max(320, Math.round(value)));
+}
+
+function clampFilterWidth(value) {
+  const max = Math.min(420, Math.max(320, Math.floor(window.innerWidth * .38)));
+  return Math.min(max, Math.max(292, Math.round(value)));
+}
+
+function applyFilterWidth() {
+  state.filterWidth = clampFilterWidth(state.filterWidth);
+  document.querySelector(".content")?.style.setProperty("--filters-width", `${state.filterWidth}px`);
+  syncFilterWidthToggle();
+}
+
+function syncFilterWidthToggle() {
+  const toggle = document.getElementById("filterWidthToggle");
+  if (!toggle) return;
+  const expanded = state.filterWidth >= 360;
+  toggle.setAttribute("aria-pressed", expanded ? "true" : "false");
+  toggle.setAttribute("aria-label", expanded ? "Reset filter width" : "Expand filters");
+  toggle.setAttribute("title", expanded ? "Reset filter width" : "Expand filters");
 }
 
 function setRailOpen(open) {
@@ -2832,6 +2901,11 @@ function wireEvents() {
   document.getElementById("themeToggle").addEventListener("click", () => {
     applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
   });
+  document.getElementById("filterWidthToggle").addEventListener("click", () => {
+    state.filterWidth = state.filterWidth >= 360 ? 320 : 380;
+    localStorage.setItem(filterWidthKey, String(state.filterWidth));
+    applyFilterWidth();
+  });
   document.getElementById("refresh").addEventListener("click", loadRun);
   document.getElementById("exportToggle").addEventListener("click", (event) => {
     event.stopPropagation();
@@ -2874,7 +2948,13 @@ function wireEvents() {
       document.getElementById("globalSearch").focus();
     }
   });
+  window.addEventListener("resize", () => {
+    applyFilterWidth();
+    state.railWidth = clampRailWidth(state.railWidth);
+    setRailOpen(state.railOpen);
+  });
   wireRailResize();
+  wireFilterResize();
 }
 
 function wireRailResize() {
@@ -2898,6 +2978,36 @@ function wireRailResize() {
     document.body.style.userSelect = "none";
     window.addEventListener("pointermove", resize);
     window.addEventListener("pointerup", stopResize, { once: true });
+  });
+}
+
+function wireFilterResize() {
+  const handle = document.getElementById("filterResizer");
+  if (!handle) return;
+  let startX = 0;
+  let startWidth = state.filterWidth;
+  function resize(event) {
+    state.filterWidth = clampFilterWidth(startWidth + event.clientX - startX);
+    localStorage.setItem(filterWidthKey, String(state.filterWidth));
+    applyFilterWidth();
+  }
+  function stopResize() {
+    document.body.style.userSelect = "";
+    window.removeEventListener("pointermove", resize);
+    window.removeEventListener("pointerup", stopResize);
+  }
+  handle.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
+    startX = event.clientX;
+    startWidth = state.filterWidth;
+    document.body.style.userSelect = "none";
+    window.addEventListener("pointermove", resize);
+    window.addEventListener("pointerup", stopResize, { once: true });
+  });
+  handle.addEventListener("dblclick", () => {
+    state.filterWidth = 320;
+    localStorage.setItem(filterWidthKey, String(state.filterWidth));
+    applyFilterWidth();
   });
 }
 
