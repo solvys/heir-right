@@ -1,12 +1,12 @@
 # HeirRight Site Copy + Layout Drafts
 
-Status: S10-T3 ready for Joshua/Sam selection
+Status: S10-T3 complete; Civic Ledger selected for S10-T4/S10-T5 completion
 Last updated: 2026-06-03
 Source posture: based on the S10 content intake, the S10 visual direction gallery, the HeirRight workflow packet, and current public-site positioning captured on June 3, 2026.
 
 ## Recommendation
 
-Use **Civic Ledger** as the default production direction unless Joshua or Sam strongly prefers a warmer personal tone.
+Use **Civic Ledger** as the production direction unless Joshua or Sam later ask to pivot.
 
 Reason: it gives HeirRight the most room to look credible, estate-specific, and premium without sounding like a generic cash-buyer page. It also lines up best with the actual workflow: property review, deed/title checks, taxes, probate, heirs, and then a plain next step.
 

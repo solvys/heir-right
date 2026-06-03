@@ -258,3 +258,115 @@ Required corrections before complete:
 
 - Start S10-T4 only after direction approval, with Civic Ledger as the default if no preference is supplied.
 - Keep S9 blocked until Podio access, controlled write approval, and readback proof exist.
+
+## Same-Day Continuation - Complete S10
+
+- Branch: `codex/heirright-2026-06-03-s10-complete`
+- Pushed remote branch: `origin/codex/heirright-2026-06-03-s10-complete`
+- Pushed ref: `origin/codex/heirright-2026-06-03-s10-complete`
+
+### Lanes Worked
+
+- S10-T4 - Build + Polish
+- S10-T5 - Launch QA
+
+### What Was Done
+
+- Built the selected Civic Ledger public-site draft in [`/Users/tifos/Documents/Codebases/heir-right/site-v2/index.html`](/Users/tifos/Documents/Codebases/heir-right/site-v2/index.html).
+- Replaced the older dark/probate-cash-buyer posture with an inherited-property review page focused on property, title, taxes, liens, probate, heirs, and next-step clarity.
+- Added generated visual asset [`/Users/tifos/Documents/Codebases/heir-right/site-v2/public/assets/property-review-dossier.png`](/Users/tifos/Documents/Codebases/heir-right/site-v2/public/assets/property-review-dossier.png).
+- Rebuilt [`/Users/tifos/Documents/Codebases/heir-right/site-v2/src/styles.css`](/Users/tifos/Documents/Codebases/heir-right/site-v2/src/styles.css) around the Civic Ledger system with desktop/mobile responsive behavior.
+- Simplified [`/Users/tifos/Documents/Codebases/heir-right/site-v2/src/main.ts`](/Users/tifos/Documents/Codebases/heir-right/site-v2/src/main.ts) to nav scroll state, anchor scrolling, and preview intake confirmation.
+- Added [`/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_SITE_LAUNCH_QA.md`](/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_SITE_LAUNCH_QA.md) with S10-T5 evidence and launch approval notes.
+- Updated the roadmap and copy/layout packet so S10 is recorded as complete with Civic Ledger selected.
+
+### What Was Not Done
+
+- No production launch or hosting/domain deployment was performed.
+- The preview intake form does not write to CRM and does not send outreach.
+- No testimonial quote, founder-faith language, Texas market claim, or final attorney-fee disclaimer was added without approval.
+- No Podio, Google, CRM, or live outreach work was attempted.
+
+### Validation Commands / Results
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/site-v2
+pnpm build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/artifact build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker test
+```
+
+Passed. Validation output reported `ok: true`.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker run:dry -- --address="20611 NW 33rd Pl, Miami Gardens, FL 33056" --owner="Fresh public-source lead"
+```
+
+Passed. Dry run reported:
+
+- `status: ready_for_review`
+- `workflowStatus: review_required`
+- `operatorQueueState: manual_review`
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/site-v2
+pnpm preview
+```
+
+Preview served at `http://127.0.0.1:4173/`.
+
+Visual and launch QA:
+
+- Browser tool was not directly exposed, so Playwright was used as fallback.
+- Desktop `1440 x 1100`: no horizontal overflow, hero/CTA/image/proof/next-section hint visible.
+- Mobile `390 x 1100`: no horizontal overflow, nav height fixed at `58px`, H1 visible, next section visible.
+- All internal anchors resolved.
+- `tel:+17869623457` links were present.
+- `https://heirright.com/#get_your_offer` was present as the current consultation path.
+- Form confirmation appeared without live CRM writes.
+- `/assets/property-review-dossier.png`, `/assets/og-image.jpg`, `/robots.txt`, and `/sitemap.xml` returned `200 OK` locally.
+
+## /solvys-heir-audit
+
+```text
+/solvys-heir-audit
+Source checked: HeirRight deal-flow checklist, canonical repo workflow packet paths, S10 intake packet, S10 Civic Ledger prototype, S10 copy/layout draft packet, site-v2 production app, launch QA doc, and local Playwright render
+Backward: completed S10 by selecting Civic Ledger, building the public-site draft, adding a generated property-review dossier visual, implementing the inherited-property review page, validating responsive desktop/mobile rendering, preserving no-live-write/no-outreach behavior in the preview form, and documenting launch approval notes
+UX pass: aligned
+Forward: move to deployment prep only after intake destination, disclaimer language, market scope, and public proof approvals are confirmed; otherwise S11 can begin while S9 remains blocked on Podio access/readback proof
+Alignment: aligned
+Required corrections before complete:
+- none
+```
+
+### Remaining Approval Notes
+
+- Confirm production intake destination and follow-up owner.
+- Confirm final disclaimer language for attorney-fee support and consultation claims.
+- Confirm whether Texas stays in the public market story.
+- Confirm whether testimonial quotes and founder-faith language should be added.
+
+### Next Agent Starting Point
+
+- S10 is complete locally; next safe non-Podio lane is S11 unless deployment approval arrives.
+- Keep S9 blocked until Podio access, controlled write approval, and readback proof exist.

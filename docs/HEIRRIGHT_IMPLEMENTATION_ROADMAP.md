@@ -326,7 +326,7 @@ Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automatio
 | S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
 | S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
 | S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
-| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | In Progress; intake, prototype gallery, and copy/layout drafts landed | 2026-06-03 |
+| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Done; Civic Ledger site built and launch-QA checked with approval notes | 2026-06-03 |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
 | S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
 | S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
@@ -351,7 +351,8 @@ Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) still blocks on S9 Po
 - `PodioAdapter` produces dry-run payloads with expanded S6/S7/S8 fields plus S9 access, CSV, readback, and blocker prep; live sync remains disabled until Podio access and live-write approval are validated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
-- `site-v2/` scaffold now exists for the S10 website redesign track with a reviewable prototype gallery and shared styles (not launched).
+- `probate-lead-engine/site-v2/` preserves the S10 prototype gallery and copy/layout review surface.
+- `site-v2/` now contains the built Civic Ledger public-site draft with responsive layout, intake bridge, generated dossier image, SEO metadata, and S10 launch QA notes.
 
 ## Workflow PDF Planning Deltas
 
@@ -487,6 +488,8 @@ Tracks:
 
 ### S10 - Website Redesign
 
+Status: **Done** (2026-06-03, Linear `HEI-35` / `HEI-66`–`HEI-70`)
+
 Goal: redesign the public HeirRight website after the lead engine reaches forward testing.
 
 Tracks:
@@ -501,10 +504,10 @@ Tracks:
    Prepare 2-3 copy and layout options. S10-T3 draft packet is ready for Joshua/Sam selection in `docs/HEIRRIGHT_SITE_COPY_LAYOUT_DRAFTS.md`.
 
 4. `S10-T4: Build + Polish`
-   Build the selected direction into a sharp, modern site.
+   Build the selected direction into a sharp, modern site. Civic Ledger is implemented in `site-v2/`.
 
 5. `S10-T5: Launch QA`
-   Validate mobile, desktop, forms, analytics, and handoff.
+   Validate mobile, desktop, forms, analytics, and handoff. Launch QA is recorded in `docs/HEIRRIGHT_SITE_LAUNCH_QA.md`.
 
 ### S11 - White-Labeled Operator Shell Foundation
 
