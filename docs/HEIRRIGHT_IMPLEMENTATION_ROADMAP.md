@@ -314,7 +314,7 @@ Acceptance:
 
 ## Current Implementation Status
 
-Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-90`).
+Last roadmap sync: June 3, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-90`).
 
 ### Sprint completion (post-Friday)
 
@@ -327,7 +327,7 @@ Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automatio
 | S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
 | S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
 | S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Done; Civic Ledger site built and launch-QA checked with approval notes | 2026-06-03 |
-| S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
+| S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Done; HeirRight shell MVP, composer/drawer, settings, runtime/Linear, admin event contract, and extraction notes landed locally | 2026-06-03 |
 | S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
 | S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
 | S14 — Daily lead production + qualification | `HEI-85`, `HEI-87`–`HEI-88` | Done; production seeds needed for volume proof | 2026-06-02 |
@@ -353,6 +353,8 @@ Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) still blocks on S9 Po
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
 - `probate-lead-engine/site-v2/` preserves the S10 prototype gallery and copy/layout review surface.
 - `site-v2/` now contains the built Civic Ledger public-site draft with responsive layout, intake bridge, generated dossier image, SEO metadata, and S10 launch QA notes.
+- `@ple/artifact` now carries the S11 HeirRight operator shell foundation: project-specific nav, CRM/work-queue shell status, bottom composer, lightweight activity drawer, lead-quality settings, runtime/Linear panel, Solvys admin event counters, and prep-only export guardrails.
+- `docs/S11_OPERATOR_SHELL_FOUNDATION.md` records the reusable shell contract, HeirRight config example, analytics event inventory, local runtime/Linear sync model, and extraction plan for Solvys-1/Fintheon hooks.
 
 ## Workflow PDF Planning Deltas
 
@@ -511,24 +513,26 @@ Tracks:
 
 ### S11 - White-Labeled Operator Shell Foundation
 
+Status: **Done locally** (2026-06-03, Linear `HEI-36` / `HEI-71`-`HEI-75`)
+
 Goal: extract a reusable Solvys operator shell pattern after HeirRight validates the MVP.
 
 Tracks:
 
 1. `S11-T1: Project Shell Contract`
-   Define the reusable project-shell contract without forcing a generic HeirRight UI.
+   Define the reusable project-shell contract without forcing a generic HeirRight UI. Landed in `docs/S11_OPERATOR_SHELL_FOUNDATION.md` with `ProjectShellConfig`, nav, workspace slots, composer commands, activity events, guardrails, and a HeirRight config example.
 
 2. `S11-T2: HeirRight Shell MVP Pattern`
-   Identify the HeirRight-specific shell behavior that should become reusable.
+   Identify the HeirRight-specific shell behavior that should become reusable. Landed in `@ple/artifact` with Source Runs, Dossiers, Lead Reports, CRM Queue, Documents, Blockers, Settings, bottom composer, activity drawer, lead-quality controls, runtime/Linear panel, and admin counters.
 
 3. `S11-T3: Solvys Admin Analytics Hub`
-   Define the Solvys-side visibility layer for cross-project analytics and deeper Solvys-1 control.
+   Define the Solvys-side visibility layer for cross-project analytics and deeper Solvys-1 control. Landed as a provider-agnostic event inventory for shell views, commands, settings changes, staged runs, exports, blockers, and Linear sync.
 
 4. `S11-T4: Local Runtime + Linear Sync`
-   Keep build/test/dry-run/artifact preview and Linear sync reproducible.
+   Keep build/test/dry-run/artifact preview and Linear sync reproducible. Landed as a local command registry, browser-execution boundary, and Linear sync state model with Linear still authoritative.
 
 5. `S11-T5: Extraction + Solvys-1/Fintheon Hooks`
-   Document reusable integration hooks after the HeirRight pattern is validated.
+   Document reusable integration hooks after the HeirRight pattern is validated. Landed as an extraction readiness checklist and `packages/shell-core` boundary proposal that keeps client-specific home screens project-owned.
 
 ### Milestone Human Testing Gates
 

@@ -370,3 +370,130 @@ Required corrections before complete:
 
 - S10 is complete locally; next safe non-Podio lane is S11 unless deployment approval arrives.
 - Keep S9 blocked until Podio access, controlled write approval, and readback proof exist.
+
+## Same-Day Continuation - Complete S11
+
+- Branch: `codex/heirright-2026-06-03-s11-complete`
+- Pushed remote branch: `origin/codex/heirright-2026-06-03-s11-complete`
+- Pushed ref: `origin/codex/heirright-2026-06-03-s11-complete`
+
+### Lanes Worked
+
+- S11-T1 - Project Shell Contract
+- S11-T2 - HeirRight Shell MVP Pattern
+- S11-T3 - Solvys Admin Analytics Hub
+- S11-T4 - Local Runtime + Linear Sync
+- S11-T5 - Extraction + Solvys-1/Fintheon Hooks
+
+### What Was Done
+
+- Added [`/Users/tifos/Documents/Codebases/heir-right/docs/S11_OPERATOR_SHELL_FOUNDATION.md`](/Users/tifos/Documents/Codebases/heir-right/docs/S11_OPERATOR_SHELL_FOUNDATION.md) with the reusable shell contract, HeirRight config example, analytics event inventory, runtime/Linear sync model, and extraction plan.
+- Upgraded [`/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/apps/artifact/src/index.html`](/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/apps/artifact/src/index.html) into the S11 HeirRight operator shell foundation:
+  - Source Runs, Dossiers, Lead Reports, CRM Queue, Documents, Blockers, Settings navigation.
+  - CRM/work-queue shell status strip.
+  - Bottom command composer.
+  - Lightweight agent activity drawer.
+  - Lead-quality settings for source-signal weighting, tax pressure threshold, reason codes, deed proof, review-only guardrail, and paid-source approval.
+  - Runtime/Linear panel for staged dry run, artifact preview, and Linear source-of-truth state.
+  - Solvys admin counters for commands, blockers, and events.
+  - Prep-only export and blocker command behavior with no live CRM or outreach write.
+- Removed remaining individual-led app shell language in the artifact UI and kept the public website/prototype copy free of the disallowed "Joshua-led" framing.
+- Fixed the S11 mobile shell layout so the auto-collapsed desktop grid does not squeeze the app into a 60px column.
+- Fixed mobile topbar actions so Activity is visible and tappable without horizontal scrolling.
+- Updated [`/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_IMPLEMENTATION_ROADMAP.md`](/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_IMPLEMENTATION_ROADMAP.md) so S11 is recorded as done locally.
+
+### What Was Not Done
+
+- No live Podio or Google write was attempted.
+- No live outreach, external document send, or paid-source lookup was approved or automated.
+- No shared `shell-core` package was extracted yet; S11 documents the boundary and keeps extraction gated until HeirRight MVP validation proves the pattern.
+- Linear was not mutated from the repo; the roadmap and run-point handoff record the local state for follow-up sync.
+
+### Validation Commands / Results
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm build
+```
+
+Passed. Turbo reported 3 successful package builds.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker test
+```
+
+Passed. Validation output reported `ok: true` with `49` facts and latest run, dossier, Podio dry-run, internal summary, and completed report outputs.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker run:dry -- --address="20611 NW 33rd Pl, Miami Gardens, FL 33056" --owner="Fresh public-source lead"
+```
+
+Passed. Dry run reported:
+
+- `status: ready_for_review`
+- `workflowStatus: review_required`
+- `operatorQueueState: manual_review`
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/artifact build
+```
+
+Passed.
+
+```bash
+rg -n "Joshua|Joshua-led|joshua-led" probate-lead-engine/apps/artifact/src/index.html probate-lead-engine/apps/artifact/dist/index.html site-v2 probate-lead-engine/site-v2 docs/HEIRRIGHT_SITE_LAUNCH_QA.md docs/HEIRRIGHT_SITE_COPY_LAYOUT_DRAFTS.md
+```
+
+Passed with no matches.
+
+### Rendered UI QA
+
+- Target URL: `http://127.0.0.1:4173/`
+- Browser path: Browser plugin direct control was not exposed in this session; used bundled Playwright through Node REPL fallback.
+- Desktop `1440 x 1100`:
+  - Page title: `HeirRight Lead Review`.
+  - S11 shell content rendered.
+  - Composer, activity drawer, settings controls, runtime/Linear panel, and report rail existed.
+  - No framework overlay.
+  - No console warnings or errors.
+  - No horizontal overflow.
+  - Activity, Blocker, Report command hit targets resolved to the intended controls.
+  - Blocker command opened the drawer and set `export: [BLOCKED]`.
+  - Stage export command opened the rail in prep-only mode and left the drawer closed.
+  - Report command opened the report rail.
+  - Settings nav selected the settings area, and source-signal weighting persisted locally as `High-volume review`.
+- Mobile `390 x 1100`:
+  - Page title: `HeirRight Lead Review`.
+  - S11 shell content rendered full width.
+  - No framework overlay.
+  - No console warnings or errors.
+  - No horizontal overflow.
+  - Activity button hit target resolved to the intended control and opened the drawer.
+
+### /solvys-heir-audit
+
+```text
+/solvys-heir-audit
+Source checked: HeirRight deal-flow checklist, S11 sprint briefs, canonical repo artifact app, latest-run dry-run data, S11 shell foundation doc, roadmap, and local rendered artifact UI
+Backward: completed all five S11 lanes by documenting the reusable shell contract, implementing the HeirRight-specific operator shell MVP, adding composer/drawer/settings/runtime/admin shell surfaces, preserving Linear as source of truth, documenting analytics and extraction boundaries, and fixing responsive/mobile shell regressions found during QA
+UX pass: aligned
+Forward: keep S9 blocked until Podio access, controlled write approval, and readback proof exist; after MVP validation, extract only the stable config/event/composer/drawer/runtime primitives and keep project home screens client-owned
+Alignment: aligned
+Required corrections before complete:
+- none
+```
+
+### Remaining Blockers / Decisions
+
+- S9 remains blocked on Podio workspace access, credentials, controlled write approval, and readback proof.
+- Public-site launch still needs final intake destination, disclaimer, market scope, and public proof approvals from S10.
+- Generic shell extraction should wait until HeirRight MVP testing confirms the operator pattern.
+
+### Next Agent Starting Point
+
+- S11 is complete locally on `codex/heirright-2026-06-03-s11-complete`.
+- Next safe work depends on approvals: either sync S11 evidence into Linear, prepare S10 launch/deploy after approvals, or continue post-MVP shell extraction planning only after HeirRight validation.
+- Do not unblock S9 without real Podio access and readback proof.

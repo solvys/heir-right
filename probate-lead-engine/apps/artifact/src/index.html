@@ -364,6 +364,14 @@
     body[data-theme="dark"] .field input:not([type="checkbox"]),
     body[data-theme="dark"] .filter-note,
     body[data-theme="dark"] .metric,
+    body[data-theme="dark"] .shell-mode,
+    body[data-theme="dark"] .shell-composer,
+    body[data-theme="dark"] .command-form,
+    body[data-theme="dark"] .agent-drawer,
+    body[data-theme="dark"] .activity-event,
+    body[data-theme="dark"] .setting-card,
+    body[data-theme="dark"] .runtime-card,
+    body[data-theme="dark"] .admin-metric,
     body[data-theme="dark"] .glass-card,
     body[data-theme="dark"] .account-chip,
     body[data-theme="dark"] .rail-context,
@@ -394,6 +402,10 @@
     body[data-theme="dark"] .nav-item:hover,
     body[data-theme="dark"] .nav-item.is-active,
     body[data-theme="dark"] .btn.quick:hover,
+    body[data-theme="dark"] .shell-mode strong,
+    body[data-theme="dark"] .setting-card strong,
+    body[data-theme="dark"] .runtime-card strong,
+    body[data-theme="dark"] .activity-event strong,
     body[data-theme="dark"] .primary-text,
     body[data-theme="dark"] .detail-title,
     body[data-theme="dark"] .card-title,
@@ -434,7 +446,7 @@
       min-width: 0;
       height: 100vh;
       display: grid;
-      grid-template-rows: 64px minmax(0, 1fr) 34px;
+      grid-template-rows: 64px minmax(0, 1fr) auto 34px;
     }
 
     .topbar {
@@ -500,8 +512,11 @@
     }
 
     .top-actions {
+      position: relative;
+      z-index: 2;
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       gap: 8px;
       min-width: 0;
       max-width: 100%;
@@ -555,12 +570,19 @@
     .account-domain { color: var(--muted); font-size: 10px; }
 
     .quick-actions {
+      position: relative;
+      z-index: 2;
       display: flex;
       gap: 8px;
       min-width: 0;
-      flex: 1 1 auto;
+      flex: 0 1 auto;
       overflow-x: auto;
       scrollbar-width: none;
+    }
+
+    .quick-actions .btn,
+    .export-toggle {
+      flex: 0 0 auto;
     }
 
     .quick-actions::-webkit-scrollbar { display: none; }
@@ -607,6 +629,43 @@
       background: rgba(255,255,255,.50);
     }
 
+    .shell-mode-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .shell-mode {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.54);
+    }
+
+    .shell-mode strong,
+    .setting-card strong,
+    .runtime-card strong,
+    .activity-event strong {
+      display: block;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 780;
+      line-height: 1.24;
+    }
+
+    .shell-mode span,
+    .setting-card span,
+    .runtime-card span,
+    .activity-event span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
     .right-rail-toggle {
       width: 38px;
       padding: 0;
@@ -614,6 +673,7 @@
 
     .export-menu {
       position: relative;
+      z-index: 3;
       flex: 0 0 auto;
     }
 
@@ -1275,6 +1335,116 @@
       line-height: 1.45;
     }
 
+    .shell-panel {
+      padding: 13px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .settings-grid,
+    .runtime-grid,
+    .admin-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .settings-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .setting-card,
+    .runtime-card {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.46);
+    }
+
+    .setting-card label {
+      display: grid;
+      gap: 6px;
+    }
+
+    .setting-card select,
+    .setting-card input[type="text"] {
+      width: 100%;
+      min-height: 34px;
+      color: var(--text);
+      background: rgba(255,255,255,.76);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 7px 9px;
+      outline: 0;
+    }
+
+    .setting-card input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .toggle-line {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .toggle-line input {
+      flex: 0 0 auto;
+      width: 17px;
+      height: 17px;
+      accent-color: var(--accent);
+    }
+
+    .runtime-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .runtime-card {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .runtime-card .btn {
+      min-height: 32px;
+      padding: 6px 9px;
+      font-size: 12px;
+    }
+
+    .admin-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .admin-metric {
+      min-width: 0;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.46);
+    }
+
+    .admin-metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 760;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .admin-metric strong {
+      display: block;
+      margin-top: 4px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 780;
+    }
+
     .fact-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1693,6 +1863,139 @@
       -webkit-backdrop-filter: saturate(180%) blur(18px);
     }
 
+    .shell-composer {
+      position: relative;
+      z-index: 20;
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid var(--line);
+      background: rgba(250,250,252,.82);
+      backdrop-filter: saturate(180%) blur(22px);
+      -webkit-backdrop-filter: saturate(180%) blur(22px);
+    }
+
+    .command-form {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 42px;
+      padding: 0 6px 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.66);
+    }
+
+    .command-form input {
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .command-form input::placeholder { color: var(--soft); }
+
+    .composer-actions {
+      min-width: 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 7px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .composer-actions::-webkit-scrollbar { display: none; }
+
+    .agent-drawer {
+      position: fixed;
+      right: 16px;
+      bottom: 74px;
+      z-index: 70;
+      width: min(392px, calc(100vw - 32px));
+      max-height: min(520px, calc(100vh - 108px));
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 26px 70px rgba(15,23,42,.16);
+      backdrop-filter: saturate(190%) blur(30px);
+      -webkit-backdrop-filter: saturate(190%) blur(30px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 14px, 0) scale(.985);
+      transition: opacity .2s var(--ease), transform .24s var(--ease-out);
+    }
+
+    .agent-drawer[data-open="true"] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .drawer-head {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+      align-items: start;
+      padding: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .drawer-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .drawer-body {
+      min-height: 0;
+      overflow: auto;
+      padding: 10px 12px 12px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .activity-event {
+      position: relative;
+      min-width: 0;
+      padding: 9px 9px 9px 24px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.56);
+    }
+
+    .activity-event::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 14px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+
+    .activity-event.ready::before { background: var(--green); }
+    .activity-event.blocked::before { background: var(--red); }
+    .activity-time {
+      margin-top: 5px;
+      color: var(--soft);
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
     .footer-left,
     .connection-statuses {
       min-width: 0;
@@ -1797,6 +2100,7 @@
 
     @media (max-width: 1180px) {
       .content { grid-template-columns: var(--filters-width, 320px) minmax(0, 1fr); }
+      .shell-mode-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .research-rail {
         top: 0;
         bottom: 0;
@@ -1808,15 +2112,31 @@
     @media (max-width: 820px) {
       body { overflow: auto; }
       .workspace,
-      .workspace.is-collapsed {
+      .workspace.is-collapsed,
+      .workspace.is-auto-collapsed {
         height: auto;
         min-height: 100vh;
         grid-template-columns: 1fr;
       }
       .sidebar { display: none; }
-      .app { height: auto; min-height: 100vh; grid-template-rows: auto auto auto; }
+      .app { grid-column: 1 / -1; height: auto; min-height: 100vh; grid-template-rows: auto auto auto auto; }
       .topbar { grid-template-columns: 1fr; }
+      .top-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        overflow: visible;
+      }
+      .quick-actions {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+        overflow: visible;
+      }
       .top-status { text-align: left; }
+      .shell-mode-strip { grid-template-columns: 1fr; }
+      .shell-composer { grid-template-columns: 1fr; }
+      .composer-actions { justify-content: flex-start; }
+      .settings-grid,
+      .admin-grid { grid-template-columns: 1fr; }
       .export-popover {
         left: 0;
         right: auto;
@@ -1858,11 +2178,13 @@
       </div>
     </div>
     <nav class="nav-list" aria-label="HeirRight sections">
-      <button class="nav-item is-active" type="button" title="Leads"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.6-4.6M10.7 18a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Leads</span></button>
-      <button class="nav-item" type="button" title="Files"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10l2 2.5h5.5A2.5 2.5 0 0 1 20 9v8.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span class="nav-label">Files</span></button>
-      <button class="nav-item" type="button" title="Reports"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 19V9m7 10V5m7 14v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Reports</span></button>
-      <button class="nav-item" type="button" title="Exports"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 4v10m0 0 4-4m-4 4-4-4M5 17v2h14v-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nav-label">Exports</span></button>
-      <button class="nav-item" type="button" title="Settings"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 2v4M8 10v4M16 18v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Settings</span></button>
+      <button class="nav-item is-active" type="button" title="Source Runs" data-shell-nav="source-runs"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.6-4.6M10.7 18a7.3 7.3 0 1 1 0-14.6 7.3 7.3 0 0 1 0 14.6Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Source Runs</span></button>
+      <button class="nav-item" type="button" title="Dossiers" data-shell-nav="dossiers"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H10l2 2.5h5.5A2.5 2.5 0 0 1 20 9v8.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 17.5v-11Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></span><span class="nav-label">Dossiers</span></button>
+      <button class="nav-item" type="button" title="Lead Reports" data-shell-nav="lead-reports"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 3v5h4M9 13h6M9 17h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Lead Reports</span></button>
+      <button class="nav-item" type="button" title="CRM Queue" data-shell-nav="crm-queue"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M5 6h14v12H5V6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 10h8M8 14h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">CRM Queue</span></button>
+      <button class="nav-item" type="button" title="Documents" data-shell-nav="documents"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M8 7h10v12H8V7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1M11 11h4M11 15h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Documents</span></button>
+      <button class="nav-item" type="button" title="Blockers" data-shell-nav="blockers"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M12 9v4m0 4h.01M10.3 4.7 3.4 17.5A2 2 0 0 0 5.2 20h13.6a2 2 0 0 0 1.8-2.9L13.7 4.7a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nav-label">Blockers</span></button>
+      <button class="nav-item" type="button" title="Settings" data-shell-nav="settings"><span class="nav-icon"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 2v4M8 10v4M16 18v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="nav-label">Settings</span></button>
     </nav>
     <div class="sidebar-footer">
       <div class="theme-row">
@@ -1872,10 +2194,10 @@
         </button>
       </div>
       <div class="user-strip">
-        <span class="avatar">JD</span>
+        <span class="avatar">HR</span>
         <span>
-          <span class="user-name">Joshua Desk</span>
-          <span class="user-meta">Miami-Dade workflow</span>
+          <span class="user-name">HeirRight Ops</span>
+          <span class="user-meta">Company workspace</span>
         </span>
       </div>
     </div>
@@ -1919,6 +2241,10 @@
           <button id="saveSearch" class="btn quick" type="button">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 4h12v16l-6-3-6 3V4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
             Save search
+          </button>
+          <button id="agentDrawerToggle" class="btn quick" type="button" aria-controls="agentDrawer" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7h10M7 12h7M7 17h4M5 3h14a2 2 0 0 1 2 2v14l-4-3H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Activity
           </button>
           <button id="refresh" class="btn quick" type="button">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 6v5h-5M4 18v-5h5M18.5 9A7 7 0 0 0 6.2 6.7L4 11m16 2-2.2 4.3A7 7 0 0 1 5.5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2012,6 +2338,24 @@
           <div>
             <h1>Find Estates</h1>
             <p class="lead-help">Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</p>
+            <div class="shell-mode-strip" aria-label="Operator shell status">
+              <section class="shell-mode">
+                <strong>CRM queue first</strong>
+                <span>Research, review, and handoff stay centered on lead files.</span>
+              </section>
+              <section class="shell-mode">
+                <strong>Command center ready</strong>
+                <span>Composer captures commands without approving live outreach.</span>
+              </section>
+              <section class="shell-mode">
+                <strong>Linear authoritative</strong>
+                <span>Sprint state and blockers stay synced to the project plan.</span>
+              </section>
+              <section class="shell-mode">
+                <strong>Prep-only exports</strong>
+                <span>Podio and Google require access and readback proof.</span>
+              </section>
+            </div>
           </div>
           <div id="summaryMetrics" class="summary-metrics" aria-label="Lead summary metrics"></div>
         </div>
@@ -2077,6 +2421,77 @@
                 <h3 class="card-title">Report gaps</h3>
                 <div id="detailChips" class="chip-list"></div>
               </section>
+              <section class="glass-card shell-panel" aria-label="Lead quality settings">
+                <div>
+                  <p class="eyebrow">Settings</p>
+                  <h3 class="card-title">Lead-quality controls</h3>
+                </div>
+                <div class="settings-grid">
+                  <div class="setting-card">
+                    <label for="signalWeight"><strong>Source signal weight</strong><span id="signalWeightValue">Balanced</span></label>
+                    <input id="signalWeight" type="range" min="1" max="5" value="3">
+                  </div>
+                  <div class="setting-card">
+                    <label for="taxThreshold"><strong>Tax pressure threshold</strong><span>Unpaid years before priority review.</span></label>
+                    <select id="taxThreshold">
+                      <option value="1">1+ unpaid year</option>
+                      <option value="2" selected>2+ unpaid years</option>
+                      <option value="3">3+ unpaid years</option>
+                    </select>
+                  </div>
+                  <div class="setting-card">
+                    <label for="reasonCodes"><strong>Reason-code set</strong><span>Operator-facing qualification reasons.</span></label>
+                    <select id="reasonCodes">
+                      <option value="probate-title-tax" selected>Probate + title + tax</option>
+                      <option value="property-pressure">Property pressure only</option>
+                      <option value="heirship-first">Heirship first</option>
+                    </select>
+                  </div>
+                  <div class="setting-card">
+                    <label class="toggle-line"><strong>Require deed proof</strong><input id="deedProofRequired" type="checkbox" checked></label>
+                    <span>OR book/page evidence stays required before promotion.</span>
+                  </div>
+                  <div class="setting-card">
+                    <label class="toggle-line"><strong>Review-only guardrail</strong><input id="reviewOnlyGuard" type="checkbox" checked disabled></label>
+                    <span>Live outreach stays locked until future approval.</span>
+                  </div>
+                  <div class="setting-card">
+                    <label class="toggle-line"><strong>Manual paid-source approval</strong><input id="paidSourceApproval" type="checkbox" checked></label>
+                    <span>IDI, Intelius, Ancestry, ForeWarn, VitalChek, and PI work stay gated.</span>
+                  </div>
+                </div>
+              </section>
+              <section class="glass-card shell-panel" aria-label="Runtime and Linear sync">
+                <div>
+                  <p class="eyebrow">Runtime</p>
+                  <h3 class="card-title">Local runs and Linear sync</h3>
+                </div>
+                <div class="runtime-grid">
+                  <div class="runtime-card">
+                    <span><strong>Latest dry run</strong><span id="runtimeRunId">Waiting for packet</span></span>
+                    <button class="btn" type="button" data-shell-command="dry-run">Stage</button>
+                  </div>
+                  <div class="runtime-card">
+                    <span><strong>Artifact preview</strong><span>Served from the latest local packet.</span></span>
+                    <button class="btn" type="button" data-shell-command="open-report">Open</button>
+                  </div>
+                  <div class="runtime-card">
+                    <span><strong>Linear source of truth</strong><span id="linearSyncState">S11 shell foundation in progress</span></span>
+                    <button class="btn" type="button" data-shell-command="linear-sync">Sync</button>
+                  </div>
+                </div>
+              </section>
+              <section class="glass-card shell-panel" aria-label="Solvys admin analytics">
+                <div>
+                  <p class="eyebrow">Admin</p>
+                  <h3 class="card-title">Solvys analytics contract</h3>
+                </div>
+                <div class="admin-grid">
+                  <div class="admin-metric"><span>Commands</span><strong id="analyticsCommands">0</strong></div>
+                  <div class="admin-metric"><span>Blockers</span><strong id="analyticsBlockers">1</strong></div>
+                  <div class="admin-metric"><span>Events</span><strong id="analyticsEvents">0</strong></div>
+                </div>
+              </section>
             </div>
           </aside>
         </div>
@@ -2117,6 +2532,33 @@
       </aside>
     </section>
 
+    <section class="shell-composer" aria-label="HeirRight command composer">
+      <form id="commandForm" class="command-form">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>
+        <input id="commandInput" type="text" autocomplete="off" placeholder="Review a lead, open a report, record a blocker, or stage an export">
+        <button class="btn primary" type="submit">Run</button>
+      </form>
+      <div class="composer-actions" aria-label="Common commands">
+        <button class="btn quick" type="button" data-shell-command="open-report">Report</button>
+        <button class="btn quick" type="button" data-shell-command="record-blocker">Blocker</button>
+        <button class="btn quick" type="button" data-shell-command="stage-export">Stage export</button>
+        <button class="btn quick" type="button" data-shell-command="linear-sync">Linear</button>
+      </div>
+    </section>
+
+    <aside id="agentDrawer" class="agent-drawer" data-open="false" aria-label="Agent activity">
+      <div class="drawer-head">
+        <div>
+          <p class="eyebrow">Agent Activity</p>
+          <h2 class="drawer-title">Review trail</h2>
+        </div>
+        <button id="closeAgentDrawer" class="btn icon-only" type="button" aria-label="Close activity drawer" title="Close activity drawer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="activityList" class="drawer-body"></div>
+    </aside>
+
     <footer class="statusbar" aria-label="System status">
       <div class="footer-left">
         <span id="statusRun">packet: [LOADING]</span>
@@ -2150,13 +2592,24 @@ const state = {
   filterWidth: 320,
   railPreview: null,
   exportRoute: null,
-  filled: new Set()
+  filled: new Set(),
+  activityOpen: false,
+  shellCommandCount: 0,
+  shellEvents: [],
+  shellSettings: {
+    signalWeight: "3",
+    taxThreshold: "2",
+    reasonCodes: "probate-title-tax",
+    deedProofRequired: true,
+    paidSourceApproval: true
+  }
 };
 
 const railWidthKey = "heirright:research-rail-width";
 const filterWidthKey = "heirright:filter-rail-width";
 const filledKey = "heirright:filled-report-gaps";
 const themeKey = "heirright:theme";
+const shellSettingsKey = "heirright:shell-settings";
 const columnMap = {
   address: '[data-column="address"]',
   score: '[data-column="score"]',
@@ -2251,7 +2704,7 @@ function decisionCopy(dossier) {
     return {
       label: "Do not contact yet",
       tone: "blocked",
-      next: dossier.summary?.nextBestAction ?? "Move on unless Joshua overrides this lead."
+      next: dossier.summary?.nextBestAction ?? "Move on unless the HeirRight review team approves this lead."
     };
   }
   if (dossier.operatorQueue?.state === "manual_review" || dossier.workflow?.status === "review_required") {
@@ -2453,10 +2906,162 @@ function loadSavedState() {
   } catch {
     state.filled = new Set();
   }
+  loadShellSettings();
+  state.shellEvents = defaultShellEvents();
+  syncShellSettings();
+  renderShellPanels();
 }
 
 function persistFilled() {
   localStorage.setItem(filledKey, JSON.stringify([...state.filled]));
+}
+
+function defaultShellEvents() {
+  return [
+    {
+      title: "S11 shell foundation loaded",
+      copy: "HeirRight navigation, composer, settings, runtime, and admin event surfaces are active.",
+      tone: "ready",
+      at: Date.now()
+    },
+    {
+      title: "Podio access remains gated",
+      copy: "Live CRM writes stay blocked until credentials, controlled write approval, and readback proof are available.",
+      tone: "blocked",
+      at: Date.now() - 60000
+    }
+  ];
+}
+
+function signalWeightLabel(value) {
+  const labels = {
+    "1": "Very conservative",
+    "2": "Conservative",
+    "3": "Balanced",
+    "4": "Aggressive review",
+    "5": "High-volume review"
+  };
+  return labels[String(value)] ?? labels["3"];
+}
+
+function loadShellSettings() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(shellSettingsKey) ?? "{}");
+    state.shellSettings = { ...state.shellSettings, ...stored };
+  } catch {
+    state.shellSettings = { ...state.shellSettings };
+  }
+}
+
+function persistShellSettings(reason = "Settings changed") {
+  localStorage.setItem(shellSettingsKey, JSON.stringify(state.shellSettings));
+  addShellEvent(reason, "Lead-quality settings were updated locally. Review-only guardrails remain active.", "review", false);
+  syncShellSettings();
+}
+
+function syncShellSettings() {
+  const signalWeight = document.getElementById("signalWeight");
+  const taxThreshold = document.getElementById("taxThreshold");
+  const reasonCodes = document.getElementById("reasonCodes");
+  const deedProofRequired = document.getElementById("deedProofRequired");
+  const paidSourceApproval = document.getElementById("paidSourceApproval");
+  const signalWeightValue = document.getElementById("signalWeightValue");
+  if (signalWeight) signalWeight.value = state.shellSettings.signalWeight;
+  if (taxThreshold) taxThreshold.value = state.shellSettings.taxThreshold;
+  if (reasonCodes) reasonCodes.value = state.shellSettings.reasonCodes;
+  if (deedProofRequired) deedProofRequired.checked = Boolean(state.shellSettings.deedProofRequired);
+  if (paidSourceApproval) paidSourceApproval.checked = Boolean(state.shellSettings.paidSourceApproval);
+  if (signalWeightValue) signalWeightValue.textContent = signalWeightLabel(state.shellSettings.signalWeight);
+}
+
+function eventTime(value) {
+  return new Date(value).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function renderActivityDrawer() {
+  const list = document.getElementById("activityList");
+  if (!list) return;
+  const events = state.shellEvents.length ? state.shellEvents : defaultShellEvents();
+  list.innerHTML = events.map((event) => `
+    <article class="activity-event ${escapeHtml(event.tone ?? "review")}">
+      <strong>${escapeHtml(event.title)}</strong>
+      <span>${escapeHtml(event.copy)}</span>
+      <div class="activity-time">${escapeHtml(eventTime(event.at ?? Date.now()))}</div>
+    </article>
+  `).join("");
+}
+
+function renderShellPanels() {
+  const commands = document.getElementById("analyticsCommands");
+  const blockers = document.getElementById("analyticsBlockers");
+  const events = document.getElementById("analyticsEvents");
+  const runtimeRunId = document.getElementById("runtimeRunId");
+  const linearSyncState = document.getElementById("linearSyncState");
+  if (commands) commands.textContent = String(state.shellCommandCount);
+  if (blockers) blockers.textContent = String((state.exportResult?.blockers?.length ?? 0) + 1);
+  if (events) events.textContent = String(Math.max(state.shellEvents.length, defaultShellEvents().length));
+  if (runtimeRunId) runtimeRunId.textContent = state.data?.runId ? String(state.data.runId).slice(0, 38) : "Waiting for packet";
+  if (linearSyncState) linearSyncState.textContent = state.activityOpen ? "Activity drawer open" : "S11 shell foundation in progress";
+  renderActivityDrawer();
+}
+
+function setActivityOpen(open) {
+  state.activityOpen = open;
+  const drawer = document.getElementById("agentDrawer");
+  const toggle = document.getElementById("agentDrawerToggle");
+  if (drawer) drawer.dataset.open = open ? "true" : "false";
+  if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  renderShellPanels();
+}
+
+function addShellEvent(title, copy, tone = "review", openDrawer = true) {
+  state.shellEvents = [
+    { title, copy, tone, at: Date.now() },
+    ...state.shellEvents
+  ].slice(0, 10);
+  renderShellPanels();
+  if (openDrawer) setActivityOpen(true);
+}
+
+function shellCommandCopy(command) {
+  const normalized = String(command || "").trim().toLowerCase();
+  if (/block/.test(normalized)) return "record-blocker";
+  if (/linear|sync/.test(normalized)) return "linear-sync";
+  if (/export|podio|google/.test(normalized)) return "stage-export";
+  if (/report|rail|document/.test(normalized)) return "open-report";
+  if (/dry|run|build|test/.test(normalized)) return "dry-run";
+  return "note";
+}
+
+function runShellCommand(command, source = null, freeform = "") {
+  const action = shellCommandCopy(command);
+  state.shellCommandCount += 1;
+  if (action === "open-report") {
+    addShellEvent("Report rail opened", "The current lead report is open for operator review.", "ready", false);
+    openUtilityRail("report", source);
+  } else if (action === "record-blocker") {
+    document.getElementById("statusExport").textContent = "export: [BLOCKED]";
+    document.getElementById("topStatus").textContent = "Blocker recorded: Podio remains gated until access and readback proof.";
+    addShellEvent("Blocker recorded", freeform || "Podio access, controlled write approval, and readback proof are still required.", "blocked");
+  } else if (action === "stage-export") {
+    state.railPreview = {
+      title: "Export staged for review",
+      markdown: "The export package is staged in prep-only mode. No live Podio or Google write was attempted.",
+      updatedAt: Date.now()
+    };
+    document.getElementById("statusExport").textContent = "export: [STAGED]";
+    addShellEvent("Export package staged", "Google Workspace and Podio handoff remain prep-only until access proof clears.", "review", false);
+    openRailWithContinuity(source, "docs");
+  } else if (action === "linear-sync") {
+    document.getElementById("topStatus").textContent = "Linear remains the project source of truth for S11.";
+    addShellEvent("Linear sync noted", "Sprint state stays anchored to Linear; the shell only mirrors local review context.", "ready", false);
+  } else if (action === "dry-run") {
+    document.getElementById("topStatus").textContent = "Dry-run command staged. Run the local worker command from the repo for execution.";
+    addShellEvent("Dry run staged", "Local runtime command captured for operator review; no browser-side shell execution was attempted.", "review", false);
+  } else {
+    addShellEvent("Command captured", freeform || "The command was captured as an operator note for the current review session.", "review");
+  }
+  renderShellPanels();
 }
 
 function clampRailWidth(value) {
@@ -2886,7 +3491,7 @@ function railFlowHtml(row, dossier) {
     <section class="glass-card rail-card">
       <h3>Current stop rules</h3>
       <ul class="mini-list">
-        <li><strong>Company owner</strong><span>Move on unless Joshua overrides the lead.</span></li>
+        <li><strong>Company owner</strong><span>Move on unless the HeirRight review team approves the lead.</span></li>
         <li><strong>Sold inside five years</strong><span>Review before spending time on outreach.</span></li>
         <li><strong>Paid source needed</strong><span>IDI, Intelius, Ancestry, ForeWarn, VitalChek, and PI work stay approval-gated.</span></li>
       </ul>
@@ -3073,6 +3678,7 @@ function renderLoadedState(data, dossier) {
   document.getElementById("statusRun").textContent = `packet: [${String(data.runId ?? "LATEST").slice(0, 38)}]`;
   updateConnectionStatuses();
   loadConnectionStatuses();
+  renderShellPanels();
   renderAll();
 }
 
@@ -3094,6 +3700,7 @@ async function loadRun() {
     document.getElementById("resultsBody").innerHTML = `<tr><td colspan="6"><span class="primary-text">No lead packet loaded.</span><span class="secondary-text">${escapeHtml(error.message)}</span></td></tr>`;
     document.getElementById("statusRun").textContent = "packet: [BLOCKED]";
     updateConnectionStatuses();
+    renderShellPanels();
   }
 }
 
@@ -3178,6 +3785,7 @@ async function chooseExportRoute(route, source = null) {
     document.getElementById("topStatus").textContent = `Export blocked: ${message}`;
     document.getElementById("statusExport").textContent = `${meta.status} [BLOCKED]`;
   }
+  renderShellPanels();
   renderRail();
 }
 
@@ -3211,7 +3819,51 @@ function wireEvents() {
     localStorage.setItem(filterWidthKey, String(state.filterWidth));
     applyFilterWidth();
   });
+  document.querySelectorAll("[data-shell-nav]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-shell-nav]").forEach((item) => item.classList.toggle("is-active", item === button));
+      const label = button.textContent.trim();
+      document.getElementById("topStatus").textContent = `${label} workspace selected.`;
+      addShellEvent(`${label} selected`, "Navigation state updated in the HeirRight operator shell.", "review", false);
+      if (button.dataset.shellNav === "settings") {
+        document.getElementById("signalWeight")?.focus({ preventScroll: false });
+      }
+    });
+  });
   document.getElementById("refresh").addEventListener("click", loadRun);
+  document.getElementById("agentDrawerToggle").addEventListener("click", () => setActivityOpen(!state.activityOpen));
+  document.getElementById("closeAgentDrawer").addEventListener("click", () => setActivityOpen(false));
+  document.getElementById("commandForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const input = document.getElementById("commandInput");
+    const value = input.value.trim();
+    runShellCommand(value || "note", event.submitter, value);
+    input.value = "";
+  });
+  document.querySelectorAll("[data-shell-command]").forEach((button) => {
+    button.addEventListener("click", () => runShellCommand(button.dataset.shellCommand, button));
+  });
+  document.getElementById("signalWeight").addEventListener("input", (event) => {
+    state.shellSettings.signalWeight = event.target.value;
+    syncShellSettings();
+  });
+  document.getElementById("signalWeight").addEventListener("change", () => persistShellSettings("Source signal weight updated"));
+  document.getElementById("taxThreshold").addEventListener("change", (event) => {
+    state.shellSettings.taxThreshold = event.target.value;
+    persistShellSettings("Tax pressure threshold updated");
+  });
+  document.getElementById("reasonCodes").addEventListener("change", (event) => {
+    state.shellSettings.reasonCodes = event.target.value;
+    persistShellSettings("Reason-code set updated");
+  });
+  document.getElementById("deedProofRequired").addEventListener("change", (event) => {
+    state.shellSettings.deedProofRequired = event.target.checked;
+    persistShellSettings("Deed proof gate updated");
+  });
+  document.getElementById("paidSourceApproval").addEventListener("change", (event) => {
+    state.shellSettings.paidSourceApproval = event.target.checked;
+    persistShellSettings("Paid-source approval gate updated");
+  });
   document.getElementById("exportToggle").addEventListener("click", (event) => {
     event.stopPropagation();
     const isOpen = document.getElementById("exportMenu").dataset.open === "true";
@@ -3252,6 +3904,7 @@ function wireEvents() {
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
       setExportMenuOpen(false);
+      setActivityOpen(false);
     }
     if (event.key === "/" && document.activeElement?.tagName !== "INPUT" && document.activeElement?.tagName !== "SELECT") {
       event.preventDefault();
