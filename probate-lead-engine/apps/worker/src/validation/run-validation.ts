@@ -1,6 +1,8 @@
 import { existsSync } from "node:fs";
 import type { SourceFact, SourceKey, SourceSubject } from "@ple/types";
+import { runDailyProduction } from "../daily/run-daily";
 import { buildRawDossier } from "../dossier/build-raw-dossier";
+import { connectionStatuses, exportCompletedReport } from "../export/export-package";
 import { runDryPipeline } from "../index";
 import { fact, nowIso } from "../lib";
 import { persistOutput } from "../storage/write-output";
@@ -76,6 +78,8 @@ async function main(): Promise<void> {
   if (!result.dossier.documentPacket?.formats.html.includes("streamdown-doc")) failures.push("Streamdown HTML output missing.");
   if (result.dossier.documentPacket?.renderer !== "streamdown") failures.push("Document packet renderer is not Streamdown.");
   if (!result.dossier.completedLeadReport?.formats.markdown.includes("Completed Lead Report")) failures.push("Completed lead report markdown missing.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("Date added:")) failures.push("Completed lead report date-added line missing.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("Client Report Snapshot")) failures.push("Completed lead report client snapshot missing.");
   if (!result.dossier.completedLeadReport?.formats.html.includes("Internal draft")) failures.push("Completed lead report review banner missing.");
   if (!result.dossier.completedLeadReport?.reviewGate.externalUseBlocked) failures.push("Completed lead report external-use gate missing.");
   if (!result.dossier.completedLeadReport?.offerMath.reviewFlags.includes("UNDERWRITING_REVIEW_REQUIRED")) failures.push("Offer math underwriting review flag missing.");
@@ -87,6 +91,34 @@ async function main(): Promise<void> {
   if (!podioOffer?.offer_math) failures.push("Podio offer_math payload missing.");
   if (!podioOffer?.lead_bucket) failures.push("Podio lead_bucket payload missing.");
   if (!podioOffer?.outreach_readiness) failures.push("Podio outreach_readiness payload missing.");
+  if (!result.dossier.outreach?.assets.length) failures.push("S8 outreach draft assets missing.");
+  if (result.dossier.outreach.assets.length < 9) failures.push("S8 outreach script inventory incomplete.");
+  if (result.dossier.outreach.assets.some((asset) => asset.status !== "draft" && asset.status !== "needs_compliance_review")) failures.push("S8 outreach asset escaped draft/review status.");
+  if (result.dossier.outreach.assets.some((asset) => asset.automationAllowed || asset.externalUseAllowed)) failures.push("S8 outreach asset incorrectly allows automation or external use.");
+  if (result.dossier.outreach.complianceStatus !== "needs_compliance_review") failures.push("S8 compliance status should require review.");
+  if (!result.dossier.outreach.noAutoSendGuard.enabled) failures.push("S8 no-auto-send guard missing.");
+  for (const blocked of ["call", "voicemail", "text", "email", "letter"] as const) {
+    if (!result.dossier.outreach.noAutoSendGuard.blockedActions.includes(blocked)) failures.push(`S8 no-auto-send guard missing ${blocked}.`);
+  }
+  if (result.dossier.outreach.readiness.status !== "blocked") failures.push("S8 outreach readiness should be blocked before approvals.");
+  if (!result.dossier.outreach.readiness.reviewFlags.includes("COMPLIANCE_REVIEW_REQUIRED")) failures.push("S8 compliance review flag missing.");
+  if (!result.dossier.outreach.readiness.reviewFlags.includes("CONTACT_REVIEW_REQUIRED")) failures.push("S8 contact review flag missing.");
+  const followUps = result.dossier.outreach.followUpTasks;
+  if (followUps.filter((task) => task.channel === "call" && task.attemptNumber !== null).length < 3) failures.push("S8 three-call follow-up pattern missing.");
+  if (!followUps.some((task) => task.id === "voicemail-text-follow-up")) failures.push("S8 voicemail/text follow-up task missing.");
+  if (!followUps.some((task) => task.id === "multi-contact-review")) failures.push("S8 multi-contact review task missing.");
+  if (!followUps.some((task) => task.id === "joshua-escalation" && task.assignedRole === "manager")) failures.push("S8 Joshua escalation task missing.");
+  if (followUps.some((task) => !task.manualOnly)) failures.push("S8 follow-up task is not manual-only.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("Outreach Drafts And Follow-Up")) failures.push("Completed lead report outreach section missing.");
+  if (!result.dossier.completedLeadReport?.formats.markdown.includes("No-auto-send guard: Enabled")) failures.push("Completed lead report no-auto-send guard missing.");
+  const podioPayload = result.dossier.crm.payload as {
+    appModel?: { fields?: { outreach_workflow?: unknown } };
+    podioReadiness?: { blockers?: string[]; csvDryRunRequirements?: string[]; readbackChecks?: string[]; classification?: string };
+  };
+  if (!podioPayload.appModel?.fields?.outreach_workflow) failures.push("Podio outreach_workflow payload missing.");
+  if (!podioPayload.podioReadiness?.csvDryRunRequirements?.length) failures.push("S9 CSV dry-run prep missing.");
+  if (!podioPayload.podioReadiness?.readbackChecks?.length) failures.push("S9 Podio readback checks missing.");
+  if (!podioPayload.podioReadiness?.blockers?.some((item) => item.includes("Live sync is disabled"))) failures.push("S9 live-sync blocker missing.");
   if (!result.dossier.workflow.rules.length) failures.push("Workflow rules missing.");
   if (!result.dossier.workflow.leadQuality.enabledSignals.length) failures.push("Lead-quality settings missing.");
   if (!result.facts.some((item) => item.factType === "owner_type")) failures.push("Owner-type workflow fact missing.");
@@ -116,6 +148,74 @@ async function main(): Promise<void> {
   if (!result.dossier.operatorQueue.items.length) failures.push("Operator queue items missing.");
   if (!result.dossier.evidenceQa.checks.length) failures.push("Source evidence QA checks missing.");
   if (result.dossier.evidenceQa.status === "failed") failures.push("Source evidence QA failed.");
+
+  const dailyResult = await runDailyProduction({
+    counties: ["miami-dade", "broward"],
+    targetRawLeadRange: { min: 200, max: 400 },
+    targetQualifiedLeadRange: { min: 80, max: 150 },
+    seedSource: "manual",
+    startedBy: "automation",
+    seeds: [
+      {
+        propertyAddress: "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+        ownerName: "Fresh public-source validation lead",
+        county: "miami-dade",
+        source: "operator_cli",
+      },
+      {
+        propertyAddress: "20611 NW 33rd Pl, Miami Gardens, FL 33056",
+        ownerName: "Fresh public-source validation lead",
+        county: "miami-dade",
+        source: "operator_cli",
+      },
+      {
+        estateName: "Estate of Broward Daily Review",
+        county: "broward",
+        source: "operator_cli",
+      },
+    ],
+  });
+  if (!dailyResult.id.startsWith("daily-")) failures.push("S14 daily run id missing.");
+  if (dailyResult.rawLeadCount !== 2) failures.push("S14 daily run did not dedupe repeated seeds.");
+  if (dailyResult.duplicateCount !== 1) failures.push("S14 daily duplicate count missing.");
+  if (dailyResult.qualifiedLeadCount !== 0) failures.push("S14 should not count review-placeholder/no-enrichment leads as qualified.");
+  if (!dailyResult.missedVolumeReasons.some((reason) => reason.includes("Qualified lead count"))) failures.push("S14 missed qualified-volume reason missing.");
+  if (!dailyResult.missedVolumeReasons.some((reason) => reason.includes("No production batch seed file"))) failures.push("S14 production seed blocker missing.");
+  if (!dailyResult.blockers.some((blocker) => blocker.includes("No enrichment/contact"))) failures.push("S14 no-enrichment qualification blocker missing.");
+
+  const dryExport = await exportCompletedReport({
+    routes: ["google", "podio"],
+    dossier: result.dossier,
+    dryRun: true,
+  }, {
+    GOOGLE_WORKSPACE_ACCESS_TOKEN: "validation-google-token",
+    GOOGLE_TRACKING_SHEET_ID: "validation-sheet",
+    PODIO_ACCESS_TOKEN: "validation-podio-token",
+    PODIO_APP_ID: "validation-app",
+    PODIO_FIELD_MAP_JSON: JSON.stringify({
+      title: "title",
+      property_address: "property_address",
+      report_link: "report_link",
+    }),
+  });
+  if (!dryExport.ok) failures.push("S15 dry export should prepare both routes.");
+  if (dryExport.routes.length !== 2) failures.push("S15 dry export did not return Google and Podio routes.");
+  if (!dryExport.routes.every((route) => route.mode === "dry_run")) failures.push("S15 dry export routes should stay dry-run.");
+  if (!dryExport.routes.every((route) => route.blockers.some((blocker) => blocker.includes("skipped in dry-run")))) failures.push("S15 dry export readback blockers missing.");
+
+  const blockedExport = await exportCompletedReport({
+    routes: ["google", "podio"],
+    dossier: result.dossier,
+    dryRun: false,
+  }, {});
+  if (blockedExport.ok) failures.push("S15 live export should not succeed without configured credentials.");
+  if (!blockedExport.blockers.some((blocker) => blocker.includes("Missing Google Workspace config"))) failures.push("S15 missing Google config blocker missing.");
+  if (!blockedExport.blockers.some((blocker) => blocker.includes("Missing Podio export config"))) failures.push("S15 missing Podio config blocker missing.");
+
+  const statuses = await connectionStatuses({});
+  for (const name of ["Podio", "Google", "Web Search"] as const) {
+    if (!statuses.some((status) => status.name === name)) failures.push(`S15 connection status missing ${name}.`);
+  }
 
   const estateResult = await runDryPipeline({
     estateName: "Estate of Maria Lopez",

@@ -7,12 +7,12 @@ Phase: Post-Friday milestone execution
 Owner for implementation issues: Claude Cowork / Codex Automation
 Human blocker assignee: sam@solvys.io
 Audience: internal implementation only
-Track cap: 5 child tracks per execution batch
+Track cap: 5 child tracks per execution batch; S12-S15 2.0 Beta pack uses exactly 2 tracks per sprint and 2 sprints per repo branch.
 
 ## Post-Friday Linear Operating Model
 
 - Preserve `HEI-5` through `HEI-28` as completed S1-S4 Friday delivery evidence.
-- Use the active `HeirRight Deal Engine Automation` project for S5-S11, run-point setup, and milestone gates.
+- Use the active `HeirRight Deal Engine Automation` project for S5-S15, run-point setup, and milestone gates.
 - Keep granular agent tickets for execution, but create human testing tickets only at milestone gates.
 - Assign human-only tickets to `sam@solvys.io` only for credentials, approvals, legal/compliance review, live-write permission, or milestone acceptance.
 - Podio remains CRM/work queue of record unless smoke tests disprove it; Macro and Close stay fallback candidates.

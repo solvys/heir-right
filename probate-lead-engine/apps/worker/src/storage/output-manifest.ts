@@ -5,7 +5,10 @@ export type PipelineOutputName =
   | "internal-summary.md"
   | "internal-summary.html"
   | "completed-lead-report.md"
-  | "completed-lead-report.html";
+  | "completed-lead-report.html"
+  | "daily-run.json"
+  | "export-result.json"
+  | "connection-status.json";
 
 export interface PipelineOutput {
   path: string;

@@ -1,4 +1,4 @@
-# HeirRight S1-S11 Run-Point Roadmap
+# HeirRight S1-S15 Run-Point Roadmap
 
 Status: implementation-facing roadmap and run-point plan
 Friday delivery target: completed Friday, May 22, 2026
@@ -6,6 +6,7 @@ Post-Friday owner: Claude Cowork / Codex Automation, with TP/Sam at milestone ga
 Track cap: 5 child tracks max per execution batch
 Historical Linear project: HeirRight Friday Delivery preserves completed S1-S4 evidence
 Active Linear project: HeirRight Deal Engine Automation
+2.0 Beta rule: S12-S15 use whole sprints, exactly two tracks per sprint, and two sprints per repo branch.
 
 ## New Onboarding Inputs
 
@@ -164,6 +165,8 @@ Zapier should not be the primary automation engine. The worker owns orchestratio
 
 ## Project Semi-Automation Setup
 
+Status: **Done** (2026-06-01, Linear `HEI-29` / `HEI-37`–`HEI-40`)
+
 Goal: make the HeirRight project the first semi-automated Solvys run-point workflow.
 
 Included setup:
@@ -311,15 +314,44 @@ Acceptance:
 
 ## Current Implementation Status
 
-Implemented in the workspace:
+Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automation` is the status source of truth (`HEI-29` through `HEI-90`).
 
-- `@ple/types` includes `SourceFact`, `RawDossier`, `CrmAdapter`, `DocumentPacket`, and related review/audit types.
-- `@ple/worker` runs a local dry pipeline and writes `output/latest-run.json`.
+### Sprint completion (post-Friday)
+
+| Sprint | Linear | Status | Completed |
+| --- | --- | --- | --- |
+| R0 — Run-point semi-automation setup | `HEI-29`, `HEI-37`–`HEI-40` | Done | 2026-06-01 |
+| S5 — Workflow rules + tax/deed depth | `HEI-30`, `HEI-41`–`HEI-45` | Done | 2026-05-28 |
+| S6 — Probate + heirship research | `HEI-31`, `HEI-46`–`HEI-49`, `HEI-55` | Done | 2026-06-01 |
+| S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
+| S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
+| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
+| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | In Progress; intake packet and prototype gallery landed | 2026-06-03 |
+| S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
+| S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
+| S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
+| S14 — Daily lead production + qualification | `HEI-85`, `HEI-87`–`HEI-88` | Done; production seeds needed for volume proof | 2026-06-02 |
+| S15 — Google/Podio export + readback | `HEI-86`, `HEI-89`–`HEI-90` | Done; live credentials/readback needed for milestone proof | 2026-06-02 |
+
+Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) still blocks on S9 Podio access/readback validation; `HEI-77` (30-Day Workflow Automation) is In Progress with S14/S15 evidence attached and remains blocked on live Podio/Google readback plus production volume seeds; `HEI-78` remains open for the 90-Day Deal Engine gate.
+
+### Implemented in the workspace
+
+- `@ple/types` includes `SourceFact`, `RawDossier`, `CrmAdapter`, `DocumentPacket`, probate/heirship models, completed-lead-report schema, and offer/profit types.
+- `@ple/worker` runs a local dry pipeline and writes `output/latest-run.json`; supports estate-only seeds via `--estate` and `--case-number`.
+- Workflow rule evaluation, tax/deed adapters, disqualification queue, and source-evidence QA (S5).
+- Estate-name search path, probate docket model, marriage/death indicators, family-tree hypothesis, and paid/manual source governance (S6).
+- Completed lead report renderer (markdown/HTML), offer/profit math, CRM field expansion, and human review gate (S7).
+- Outreach draft assets, compliance review state, manual follow-up tasks, outreach-ready blockers, no-auto-send guard, report/Podio/artifact wiring, and validation checks (S8).
+- Google OAuth beta access, protected artifact/worker runtime, account state, and allowed-domain/admin-email gating (S12).
+- Streamdown report rail, client report snapshot shape, report cover sheet, neutral frosted UI, and operator export-readiness copy (S13).
+- Daily county production ledger, dedupe/dead-letter accounting, raw/review/qualified count separation, and qualification blockers for source-health/no-enrichment/placeholder records (S14).
+- Google Workspace and Podio export/readback service paths, `/api/exports`, `/api/connections/status`, Export dropdown result/blocker rendering, and footer status indicators (S15).
 - Miami-Dade Property Search and Official Records adapters perform live public app reachability checks and produce review flags.
-- `PodioAdapter` currently produces direct-API config requirements and dry-run payloads; Macro and Close adapters remain validation-gated.
-- Internal summary generator emits markdown and HTML draft outputs.
+- `PodioAdapter` produces dry-run payloads with expanded S6/S7/S8 fields plus S9 access, CSV, readback, and blocker prep; live sync remains disabled until Podio access and live-write approval are validated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
+- `site-v2/` scaffold now exists for the S10 website redesign track with a reviewable prototype gallery and shared styles (not launched).
 
 ## Workflow PDF Planning Deltas
 
@@ -339,6 +371,8 @@ The workflow PDF adds the following product requirements beyond the first Friday
 ## Post-Friday Roadmap
 
 ### S5 - Workflow Rules + Tax/Deed Depth
+
+Status: **Done** (2026-05-28, Linear `HEI-30` / `HEI-41`–`HEI-45`)
 
 Goal: encode the real "running the play" qualification rules and lead-quality settings behind the dry-run system.
 
@@ -361,6 +395,8 @@ Tracks:
 
 ### S6 - Probate + Heirship Research
 
+Status: **Done** (2026-06-01, Linear `HEI-31` / `HEI-46`–`HEI-49`, `HEI-55`)
+
 Goal: turn the court/probate/family-tree workflow into an auditable research queue.
 
 Tracks:
@@ -381,6 +417,8 @@ Tracks:
    Inventory IDI, Intelius, Ancestry, ForeWarn, PI requests, voter records, incarceration records, code-enforcement calls, door knocks, and neighbor research as approved/manual/blocked source categories.
 
 ### S7 - Completed Lead Report + Offer Math
+
+Status: **Done** (2026-06-01, Linear `HEI-32` / `HEI-50`–`HEI-54`)
 
 Goal: generate the report format operators actually use before outreach or negotiation, including explainable quality reasons.
 
@@ -403,6 +441,8 @@ Tracks:
 
 ### S8 - Outreach Draft Library + Follow-Up Workflow
 
+Status: **Done** (2026-06-01, local validation; Linear `HEI-33` / `HEI-56`–`HEI-60`)
+
 Goal: preserve HeirRight's scripts and follow-up rhythm without creating unapproved live outreach automation.
 
 Tracks:
@@ -423,6 +463,8 @@ Tracks:
    Enforce no automated calls, texts, emails, or external document sends without explicit future approval.
 
 ### S9 - Podio Claude Cowork Automation + Sales Queue Validation
+
+Status: **Blocked / prep-only** until Podio account invite, app/workspace credentials, CSV exports, and explicit live-write approval are supplied.
 
 Goal: prove the Podio automation path without risking Joshua's existing data or team workflow.
 

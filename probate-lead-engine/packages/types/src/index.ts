@@ -154,6 +154,98 @@ export interface DeploymentConfig {
   featureFlags: Record<string, boolean>;
 }
 
+export interface BetaAccessUser {
+  email: string;
+  name: string;
+  picture: string | null;
+  domain: string;
+  mode: "oauth" | "disabled";
+}
+
+export interface BetaAuthSession {
+  authenticated: boolean;
+  user: BetaAccessUser | null;
+  auth: {
+    required: boolean;
+    configured: boolean;
+    allowedDomains: string[];
+    allowedEmails: string[];
+  };
+}
+
+export interface DailyRunConfig {
+  counties: string[];
+  targetRawLeadRange: { min: number; max: number };
+  targetQualifiedLeadRange: { min: number; max: number };
+  seeds: IntakeSeed[];
+  seedSource: "configured_batch" | "default_review_seeds" | "manual";
+  startedBy: "automation" | "operator_cli";
+}
+
+export interface DailyLeadResult {
+  dedupeKey: string;
+  county: string;
+  runId: string;
+  displayName: string;
+  status: RawDossier["status"];
+  workflowStatus: WorkflowRuleStatus;
+  operatorQueueState: OperatorQueueState;
+  leadBucket: LeadBucket;
+  qualified: boolean;
+  blockers: string[];
+  reportId?: string;
+}
+
+export interface DailyRunResult {
+  id: string;
+  generatedAt: string;
+  config: DailyRunConfig;
+  rawLeadCount: number;
+  qualifiedLeadCount: number;
+  reviewLeadCount: number;
+  duplicateCount: number;
+  errorCount: number;
+  leads: DailyLeadResult[];
+  deadLetters: DeadLetter[];
+  missedVolumeReasons: string[];
+  blockers: string[];
+}
+
+export type ExportRoute = "google" | "podio";
+
+export interface ExportRequest {
+  routes: ExportRoute[];
+  dossier: RawDossier;
+  dryRun?: boolean;
+}
+
+export interface ExportRouteResult {
+  route: ExportRoute;
+  ok: boolean;
+  mode: "live" | "dry_run" | "blocked";
+  externalId?: string;
+  url?: string;
+  readbackOk: boolean;
+  blockers: string[];
+  message: string;
+}
+
+export interface ExportResult {
+  ok: boolean;
+  generatedAt: string;
+  dossierId: string;
+  routes: ExportRouteResult[];
+  blockers: string[];
+}
+
+export interface ConnectionStatus {
+  name: "Podio" | "Google" | "Web Search";
+  ok: boolean;
+  mode: "live" | "dry_run" | "blocked";
+  message: string;
+  checkedAt: string;
+}
+
 export type ReviewFlag =
   | "SOURCE_BLOCKED"
   | "SOURCE_HEALTH_ONLY"
@@ -190,7 +282,12 @@ export type ReviewFlag =
   | "MISSING_OFFER_MATH_FACT"
   | "UNDERWRITING_REVIEW_REQUIRED"
   | "OUTREACH_BLOCKED"
-  | "REPORT_REVIEW_REQUIRED";
+  | "REPORT_REVIEW_REQUIRED"
+  | "SCRIPT_REVIEW_REQUIRED"
+  | "COMPLIANCE_REVIEW_REQUIRED"
+  | "CONTACT_REVIEW_REQUIRED"
+  | "LIVE_OUTREACH_DISABLED"
+  | "NO_AUTO_SEND_GUARD";
 
 export type FactType =
   | "source_status"
@@ -540,6 +637,75 @@ export interface ReportReviewGate {
   reviewFlags: ReviewFlag[];
 }
 
+export type ComplianceReviewStatus = "draft" | "needs_compliance_review" | "approved_manual_use" | "retired" | "blocked";
+
+export type OutreachAssetKind =
+  | "unclassified_associate_call"
+  | "neighbor_call"
+  | "relative_call"
+  | "owner_call"
+  | "only_heir_call"
+  | "closing_call"
+  | "text_message"
+  | "email"
+  | "offer_letter";
+
+export type OutreachChannel = "call" | "voicemail" | "text" | "email" | "letter";
+
+export interface OutreachDraftAsset {
+  id: string;
+  kind: OutreachAssetKind;
+  title: string;
+  intendedUse: string;
+  language: "en" | "es" | "mixed";
+  channel: OutreachChannel;
+  status: ComplianceReviewStatus;
+  sourceDocument: string;
+  body: string;
+  reviewerPlaceholder: string;
+  requiredDisclaimerPlaceholder: string;
+  automationAllowed: boolean;
+  externalUseAllowed: boolean;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface FollowUpTaskTemplate {
+  id: string;
+  title: string;
+  channel: OutreachChannel;
+  cadence: string;
+  attemptNumber: number | null;
+  window: "morning" | "afternoon" | "multi_day" | "manager_review";
+  assignedRole: "operator" | "manager";
+  manualOnly: boolean;
+  description: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OutreachReadinessEvaluation {
+  status: OutreachReadinessStatus;
+  evaluatedAt: string;
+  blockers: string[];
+  nextAction: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface NoAutoSendGuard {
+  enabled: boolean;
+  blockedActions: OutreachChannel[];
+  reason: string;
+  reviewFlags: ReviewFlag[];
+}
+
+export interface OutreachWorkflow {
+  assets: OutreachDraftAsset[];
+  complianceStatus: ComplianceReviewStatus;
+  followUpTasks: FollowUpTaskTemplate[];
+  readiness: OutreachReadinessEvaluation;
+  noAutoSendGuard: NoAutoSendGuard;
+  notes: string[];
+}
+
 export interface OfferProfitField {
   label: string;
   value: number | null;
@@ -686,6 +852,7 @@ export interface RawDossier {
   marriageDeathIndicators: MarriageDeathIndicators;
   familyTree: FamilyTreeHypothesis;
   sourceGovernance: SourceGovernance;
+  outreach: OutreachWorkflow;
   titleEvents: DossierEvent[];
   workflow: WorkflowRuleEvaluation;
   operatorQueue: OperatorQueue;
