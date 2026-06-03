@@ -326,7 +326,7 @@ Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automatio
 | S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
 | S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
 | S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
-| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Todo | — |
+| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | In Progress; intake packet and prototype gallery landed | 2026-06-03 |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
 | S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
 | S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
@@ -351,7 +351,7 @@ Milestone gates: `HEI-76` (Pre-Alaska MVP, due 2026-06-04) still blocks on S9 Po
 - `PodioAdapter` produces dry-run payloads with expanded S6/S7/S8 fields plus S9 access, CSV, readback, and blocker prep; live sync remains disabled until Podio access and live-write approval are validated.
 - `@ple/artifact` serves the latest dry-run result at `http://localhost:4173`.
 - `docs/FRIDAY_HANDOFF_RUNBOOK.md` documents setup, outputs, blockers, and Friday acceptance.
-- `site-v2/` scaffold exists for the S10 website redesign track (not launched).
+- `site-v2/` scaffold now exists for the S10 website redesign track with a reviewable prototype gallery and shared styles (not launched).
 
 ## Workflow PDF Planning Deltas
 
