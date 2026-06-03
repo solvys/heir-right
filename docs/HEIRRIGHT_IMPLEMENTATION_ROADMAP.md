@@ -326,7 +326,7 @@ Last roadmap sync: June 2, 2026. Linear project `HeirRight Deal Engine Automatio
 | S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
 | S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
 | S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
-| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | In Progress; intake packet and prototype gallery landed | 2026-06-03 |
+| S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | In Progress; intake, prototype gallery, and copy/layout drafts landed | 2026-06-03 |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Todo | — |
 | S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
 | S13 — Report rail + operator UI completion | `HEI-82`–`HEI-84` | Done | 2026-06-02 |
@@ -498,7 +498,7 @@ Tracks:
    Present multiple artistic directions for Joshua to choose from.
 
 3. `S10-T3: Copy/Layout Drafts`
-   Prepare 2-3 copy and layout options.
+   Prepare 2-3 copy and layout options. S10-T3 draft packet is ready for Joshua/Sam selection in `docs/HEIRRIGHT_SITE_COPY_LAYOUT_DRAFTS.md`.
 
 4. `S10-T4: Build + Polish`
    Build the selected direction into a sharp, modern site.

@@ -156,8 +156,105 @@ Required corrections before complete:
 - If Browser tooling is callable, capture screenshot proof of the prototype gallery before modifying it further.
 - If Sam picks a direction, convert that selection into a focused public-site draft instead of maintaining three equal concepts.
 
-## Closeout State
+## Initial Closeout State Before Same-Day Continuation
 
 - Ready for review on S10-T1 and S10-T2.
-- Needs more implementation for S10-T3 through S10-T5.
+- Needed more implementation for S10-T3 through S10-T5 before the continuation below.
 - S9 remains blocked and should not be over-claimed as complete.
+
+## Same-Day Continuation - S10-T3 Copy/Layout
+
+- Branch: `codex/heirright-2026-06-03-s10-t3-copy-layout`
+- Pushed remote branch: `origin/codex/heirright-2026-06-03-s10-t3-copy-layout`
+- Pushed ref: `origin/codex/heirright-2026-06-03-s10-t3-copy-layout`
+
+### Lane Worked
+
+- S10-T3 - Copy/Layout Drafts
+
+### What Was Done
+
+- Added [`/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_SITE_COPY_LAYOUT_DRAFTS.md`](/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_SITE_COPY_LAYOUT_DRAFTS.md) with three review-ready homepage copy/layout options:
+  - Civic Ledger, recommended default
+  - Warm Counsel
+  - Fast Relief
+- Updated [`/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/index.html`](/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/index.html) so the existing prototype review page includes the S10-T3 draft choices below the S10-T2 visual gallery.
+- Updated [`/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/styles.css`](/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/styles.css) with responsive selection-card styling.
+- Updated [`/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/README.md`](/Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2/README.md) and [`/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_IMPLEMENTATION_ROADMAP.md`](/Users/tifos/Documents/Codebases/heir-right/docs/HEIRRIGHT_IMPLEMENTATION_ROADMAP.md) so S10-T3 is recorded as landed.
+
+### What Was Not Done
+
+- No public website was built or launched.
+- No S10-T4 build/polish work was started.
+- No legal/disclaimer, testimonial, Texas-market, or intake-destination claim was approved.
+- No Podio, Google, CRM, or live outreach work was attempted.
+
+### Validation Commands / Results
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/artifact build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm build
+```
+
+Passed.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker test
+```
+
+Passed. Validation output reported `ok: true`.
+
+```bash
+cd /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine
+pnpm --filter @ple/worker run:dry -- --address="20611 NW 33rd Pl, Miami Gardens, FL 33056" --owner="Fresh public-source lead"
+```
+
+Passed. Dry run reported:
+
+- `status: ready_for_review`
+- `workflowStatus: review_required`
+- `operatorQueueState: manual_review`
+
+```bash
+python3 -m http.server 4177 --directory /Users/tifos/Documents/Codebases/heir-right/probate-lead-engine/site-v2
+curl -I http://127.0.0.1:4177/
+curl -s http://127.0.0.1:4177/ | rg -n "Copy and layout drafts|Civic Ledger|Approval needed before S10-T4"
+```
+
+Passed. The local site returned `HTTP/1.0 200 OK` and served the S10-T3 markers.
+
+Visual pass: direct Browser tooling was not exposed in this session, so Playwright was used as the fallback. Desktop and 390px mobile screenshots rendered the S10-T3 section, and the mobile pass reported no horizontal overflow. Temporary screenshot files were inspected and removed.
+
+## /solvys-heir-audit
+
+```text
+/solvys-heir-audit
+Source checked: HeirRight deal-flow checklist, canonical repo workflow packet paths, S10 content intake, S10 visual gallery, S10-T3 sprint brief, roadmap, and local site-v2 render
+Backward: turned the S10-T2 direction set into three selection-ready copy/layout options, recommended Civic Ledger as the default, added the S10-T3 review packet, surfaced the draft choices in the prototype page, and kept all copy framed around property review, taxes, title, probate, heirs, and operator next-step clarity
+UX pass: aligned
+Forward: S10-T4 can build the selected public-site direction after Joshua/Sam choose the direction and approve market scope, testimonials, disclaimer language, and intake destination
+Alignment: aligned
+Required corrections before complete:
+- none
+```
+
+### Remaining Blockers / Decisions
+
+- Joshua/Sam still need to choose Civic Ledger, Warm Counsel, or Fast Relief.
+- Texas market scope still needs confirmation.
+- Testimonial reuse and founder-faith language still need approval.
+- Attorney-fee support and consultation disclaimer language still need approval.
+- Intake destination and follow-up owner still need confirmation.
+
+### Next Agent Starting Point
+
+- Start S10-T4 only after direction approval, with Civic Ledger as the default if no preference is supplied.
+- Keep S9 blocked until Podio access, controlled write approval, and readback proof exist.
