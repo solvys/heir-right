@@ -119,7 +119,7 @@ Still needs operator/client approval before production launch:
 - Intake destination and follow-up owner.
 - Whether Texas remains in the public market story.
 - Whether testimonial quotes should be added.
-- Whether founder-faith language should be included, moved to a secondary page, or omitted.
+- Whether company faith language should be included, moved to a secondary page, or omitted.
 - Final disclaimer language for attorney-fee support and consultation claims.
 
 ## Verdict

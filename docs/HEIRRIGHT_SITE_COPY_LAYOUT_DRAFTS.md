@@ -6,7 +6,7 @@ Source posture: based on the S10 content intake, the S10 visual direction galler
 
 ## Recommendation
 
-Use **Civic Ledger** as the production direction unless Joshua or Sam later ask to pivot.
+Use **Civic Ledger** as the production direction unless the HeirRight team later asks to pivot.
 
 Reason: it gives HeirRight the most room to look credible, estate-specific, and premium without sounding like a generic cash-buyer page. It also lines up best with the actual workflow: property review, deed/title checks, taxes, probate, heirs, and then a plain next step.
 
@@ -34,7 +34,7 @@ Secondary CTA:
 
 Trust line:
 
-> Joshua-led review for South Florida families dealing with inherited property, taxes, title questions, and co-heir decisions.
+> Team-led review for South Florida families dealing with inherited property, taxes, title questions, and co-heir decisions.
 
 ### Homepage Layout
 
@@ -47,13 +47,13 @@ Trust line:
 4. What We Can Help With
    Inherited houses, vacant properties, co-heir disagreements, back taxes, title friction, and properties that need a careful sale path.
 5. Proof + Founder Trust
-   Joshua story, approved testimonials, region served, and difficult-property examples.
+   HeirRight team story, approved testimonials, region served, and difficult-property examples.
 6. Contact / Intake
    Address, name, phone, email, best time to reach you, and what is holding up the property.
 
 ### Trust Proof Placeholders
 
-- Approved Joshua founder story.
+- Approved HeirRight company story.
 - Approved testimonial quote.
 - South Florida property-review experience.
 - Attorney-fee support language, pending approved disclaimer.
@@ -75,7 +75,7 @@ Subhead:
 
 Primary CTA:
 
-> Talk with Joshua's team
+> Talk with HeirRight's team
 
 Secondary CTA:
 
@@ -96,7 +96,7 @@ Trust line:
 4. A Calmer Way Forward
    Three-step process: share the property, get the review, choose the next move.
 5. Stories + Proof
-   Approved testimonials and Joshua's personal reason for building HeirRight.
+   Approved testimonials and HeirRight's company story.
 6. Contact / Intake
    Friendly request form with a phone-first fallback.
 
@@ -158,7 +158,7 @@ Trust line:
 ## Recommended CTA Bank
 
 - Request a free property review
-- Talk with Joshua's team
+- Talk with HeirRight's team
 - Start your property review
 - See how the review works
 - Call 786-962-3457
@@ -167,7 +167,7 @@ Trust line:
 ## Selection Notes
 
 - Choose **Civic Ledger** if the priority is premium credibility and a better long-term brand.
-- Choose **Warm Counsel** if Joshua wants the public site to feel more personal and pastoral.
+- Choose **Warm Counsel** if the team wants the public site to feel more personal and pastoral.
 - Choose **Fast Relief** if near-term conversion speed matters most, with careful guardrails against over-promising.
 
 ## Approval Needed Before S10-T4
