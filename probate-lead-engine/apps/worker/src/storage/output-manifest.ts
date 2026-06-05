@@ -8,6 +8,7 @@ export type PipelineOutputName =
   | "completed-lead-report.html"
   | "daily-run.json"
   | "export-result.json"
+  | "podio-live-export-result.json"
   | "connection-status.json";
 
 export interface PipelineOutput {

@@ -99,19 +99,19 @@ Round-robin sales distribution must support one opportunity with multiple contac
 
 ## Required Provider Config
 
-Podio direct/free API path:
+Podio bearer-token export/readback path:
 
-- `PODIO_CLIENT_ID`
-- `PODIO_CLIENT_SECRET`
-- `PODIO_APP_ID`
-- `PODIO_APP_TOKEN`
+- `PODIO_ACCESS_TOKEN`
+- `PODIO_APP_ID=24265877`
+- `PODIO_FIELD_MAP_JSON` or the built-in Texas Equity Pros Leads preset for app `24265877`
+- `PODIO_REPORT_FILE_URL` when a Google/Drive report URL is not produced first
+- `PODIO_LIVE_WRITE_APPROVED=true` for the one approved controlled test write
+- `PODIO_TEST_PHONE`, `PODIO_TEST_EMAIL`, and `PODIO_LEAD_POINT_PROFILE_ID` for the required Leads test-only fields
 
-Browser automation fallback path:
+Browser audit fallback path:
 
-- `BROWSERBASE_API_KEY`
-- `BROWSERBASE_PROJECT_ID`
 - documented workspace/app URL
-- operator-approved automation session
+- operator-approved authenticated browser session
 
 Backup/migration fallback:
 
@@ -189,7 +189,9 @@ S8 is implemented locally as draft-only outreach workflow support:
 - follow-up cadence is represented as manual tasks only, including three call attempts, voicemail/text preparation, multi-contact review, and Joshua escalation;
 - the no-auto-send guard blocks calls, voicemails, texts, emails, letters, and offer use until future explicit approval.
 
-S9 remains blocked for live CRM validation. The dry-run payload now carries the readiness packet for Podio access, CSV dry-run mapping, safe live-write test steps, and readback checks, but `sync()` remains disabled until Joshua supplies the workspace/app access and approves a controlled test write.
+S9 is now partially unblocked by authenticated browser audit evidence and a current bearer-token exporter contract. Browser audit confirmed workspace `Texas Equity Pros LLC`, app `Leads`, app id `24265877`, space id `7008942`, and 689 current lead items. The worker now maps the verified Leads schema into the S15 Podio item/comment/task/readback path and still blocks live mutation unless `PODIO_LIVE_WRITE_APPROVED=true` plus controlled test defaults are present.
+
+The controlled test item must be clearly named `HEIRRIGHT TEST - DO NOT WORK - <timestamp>`. Phone and email should remain unset from source data unless verified; for the one app-required controlled write, use explicit test-only values via `PODIO_TEST_PHONE` and `PODIO_TEST_EMAIL`.
 
 ## Failure Behavior
 

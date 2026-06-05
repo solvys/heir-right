@@ -1,5 +1,13 @@
 import type { ConnectionStatus, ExportRequest, ExportResult, ExportRoute, ExportRouteResult, RawDossier } from "@ple/types";
 import { nowIso, slug } from "../lib";
+import {
+  PODIO_LIVE_WRITE_APPROVAL_KEY,
+  podioLiveWriteApproved,
+  podioMissingExportConfig,
+  resolvePodioFieldMap,
+  type PodioFieldKind,
+  type PodioFieldMapEntry,
+} from "./podio-config";
 
 type RuntimeEnv = Record<string, string | undefined>;
 
@@ -162,48 +170,150 @@ async function exportGoogle(dossier: RawDossier, env: RuntimeEnv, dryRun: boolea
   });
 }
 
-function podioFields(dossier: RawDossier, env: RuntimeEnv, reportUrl?: string): Record<string, unknown> {
-  const fieldMap = env.PODIO_FIELD_MAP_JSON ? JSON.parse(env.PODIO_FIELD_MAP_JSON) as Record<string, string> : {};
+interface PodioFieldBuild {
+  fields: Record<string, unknown>;
+  blockers: string[];
+  mapSource: string;
+}
+
+function podioEntryField(entry: PodioFieldMapEntry): string {
+  return typeof entry === "string" ? entry : entry.field;
+}
+
+function podioEntryKind(entry: PodioFieldMapEntry): PodioFieldKind {
+  return typeof entry === "string" ? "text" : (entry.kind ?? "text");
+}
+
+function hasValue(value: unknown): boolean {
+  if (value === undefined || value === null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  return true;
+}
+
+function normalizePodioInput(value: unknown): string {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
+function rawPodioValueByKey(dossier: RawDossier, env: RuntimeEnv, reportUrl?: string): Record<string, unknown> {
+  const leadBucket = dossier.completedLeadReport?.leadQualityProfile.leadBucket ?? "review_required";
+  const reportStatus = dossier.completedLeadReport?.reviewGate.reportStatus ?? "internal_draft";
   const valueByKey: Record<string, unknown> = {
     title: dossier.summary.displayName,
-    estate_name: dossier.summary.estateName,
+    estate_name: dossier.summary.estateName ?? dossier.summary.displayName,
+    lead_status: leadBucket,
+    report_status: reportStatus,
+    deal_status: "needs_to_be_contacted",
     property_address: dossier.property.address.value,
     county: dossier.property.county.value,
     folio: dossier.property.parcelId.value,
-    report_status: dossier.completedLeadReport?.reviewGate.reportStatus,
-    lead_bucket: dossier.completedLeadReport?.leadQualityProfile.leadBucket,
+    lead_bucket: leadBucket,
     next_action: dossier.summary.nextBestAction,
     report_link: reportUrl || env.PODIO_REPORT_FILE_URL,
+    case_number: dossier.summary.caseNumber ?? dossier.property.caseNumber.value,
+    phone: env.PODIO_TEST_PHONE,
+    date_created: nowIso().slice(0, 10),
+    spanish_lead: "no",
+    email: env.PODIO_TEST_EMAIL,
+    lead_source: "HeirRight controlled API test",
+    lead_point: env.PODIO_LEAD_POINT_PROFILE_ID,
+    first_call: "n_a",
+    asking_price: "0",
+    occupancy: "vacant",
+    best_call_time: "anytime",
+    listed: "no",
   };
-  return Object.fromEntries(
-    Object.entries(fieldMap)
-      .filter(([key]) => valueByKey[key] !== undefined && valueByKey[key] !== null)
-      .map(([key, fieldId]) => [fieldId, valueByKey[key]]),
-  );
+  return valueByKey;
+}
+
+function defaultPodioValue(entry: PodioFieldMapEntry, env: RuntimeEnv): unknown {
+  if (typeof entry === "string") return undefined;
+  if (entry.defaultEnv && hasValue(env[entry.defaultEnv])) return env[entry.defaultEnv];
+  if (entry.defaultValue === "today") return nowIso().slice(0, 10);
+  return entry.defaultValue;
+}
+
+function resolveMappedPodioValue(entry: PodioFieldMapEntry, rawValue: unknown, env: RuntimeEnv): unknown {
+  const configured = typeof entry === "string" ? undefined : entry;
+  const defaultValue = defaultPodioValue(entry, env);
+  if (!hasValue(rawValue)) return defaultValue;
+  if (!configured?.valueByInput) return rawValue;
+  const mapped = configured.valueByInput[normalizePodioInput(rawValue)];
+  return mapped ?? defaultValue;
+}
+
+function encodePodioFieldValue(kind: PodioFieldKind, value: unknown): unknown {
+  if (kind === "category") return { value: Number(value) };
+  if (kind === "contact") return { value: Number(value) };
+  if (kind === "date") return { start_date: String(value) };
+  if (kind === "location") return { value: String(value) };
+  return { value: String(value) };
+}
+
+function invalidEncodedValue(kind: PodioFieldKind, value: unknown): string | null {
+  if (kind !== "category" && kind !== "contact") return null;
+  const numeric = Number(value);
+  if (Number.isFinite(numeric) && numeric > 0) return null;
+  return kind === "contact"
+    ? "PODIO_LEAD_POINT_PROFILE_ID must be a numeric Podio profile id for the required Lead point contact field."
+    : `Podio category field value must resolve to a numeric option id; received ${String(value)}.`;
+}
+
+function podioFields(dossier: RawDossier, env: RuntimeEnv, reportUrl?: string): PodioFieldBuild {
+  const fieldMap = resolvePodioFieldMap(env);
+  if (fieldMap.blockers.length) {
+    return { fields: {}, blockers: fieldMap.blockers, mapSource: fieldMap.source };
+  }
+  const valueByKey = rawPodioValueByKey(dossier, env, reportUrl);
+  const fields: Record<string, unknown> = {};
+  const blockers: string[] = [];
+  for (const [key, entry] of Object.entries(fieldMap.map)) {
+    const fieldId = podioEntryField(entry);
+    const kind = podioEntryKind(entry);
+    const mappedValue = resolveMappedPodioValue(entry, valueByKey[key], env);
+    const requiredDefaultEnv = typeof entry === "string" ? undefined : entry.defaultEnv;
+    const requiredForLive = typeof entry !== "string" && entry.requiredForLive;
+    if (!hasValue(mappedValue)) {
+      if (requiredForLive) {
+        blockers.push(`Missing controlled Podio test value ${requiredDefaultEnv ?? key} for required Leads field ${fieldId}.`);
+      }
+      continue;
+    }
+    const invalid = invalidEncodedValue(kind, mappedValue);
+    if (invalid) {
+      blockers.push(invalid);
+      continue;
+    }
+    fields[fieldId] = encodePodioFieldValue(kind, mappedValue);
+  }
+  return { fields, blockers, mapSource: fieldMap.source };
 }
 
 async function exportPodio(dossier: RawDossier, env: RuntimeEnv, dryRun: boolean, reportUrl?: string): Promise<ExportRouteResult> {
-  const required = ["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"];
-  const missingConfig = missing(required, env);
+  const missingConfig = podioMissingExportConfig(env);
+  const fieldBuild = podioFields(dossier, env, reportUrl);
   if (missingConfig.length) {
+    const configDetailBlockers = fieldBuild.blockers.filter((blocker) => !blocker.includes("PODIO_FIELD_MAP_JSON or PODIO_APP_ID=24265877"));
     return routeResult({
       route: "podio",
       ok: false,
       mode: "blocked",
       readbackOk: false,
-      blockers: [`Missing Podio export config: ${missingConfig.join(", ")}`],
-      message: "Podio export is blocked until access token, target app, and field map are configured.",
+      blockers: [`Missing Podio export config: ${missingConfig.join(", ")}`, ...configDetailBlockers],
+      message: "Podio export is blocked until bearer-token access, target app, and a field map or verified Leads preset are configured.",
     });
   }
 
-  const fields = podioFields(dossier, env, reportUrl);
-  if (!Object.keys(fields).length) {
+  if (!Object.keys(fieldBuild.fields).length) {
     return routeResult({
       route: "podio",
       ok: false,
       mode: "blocked",
       readbackOk: false,
-      blockers: ["PODIO_FIELD_MAP_JSON did not map any report fields."],
+      blockers: ["Podio field map did not map any report fields.", ...fieldBuild.blockers],
       message: "Podio export has credentials but no usable field mapping.",
     });
   }
@@ -216,9 +326,33 @@ async function exportPodio(dossier: RawDossier, env: RuntimeEnv, dryRun: boolean
       readbackOk: false,
       externalId: `dry-podio-${slug(dossier.id)}`,
       blockers: ["Live Podio readback skipped in dry-run mode."],
-      message: "Podio item, source note, report link, tasks, and readback are prepared for controlled live export.",
+      message: `Podio item, source note, report link, tasks, and readback are prepared for controlled live export using ${fieldBuild.mapSource}.`,
     });
   }
+
+  if (!podioLiveWriteApproved(env)) {
+    return routeResult({
+      route: "podio",
+      ok: false,
+      mode: "blocked",
+      readbackOk: false,
+      blockers: [`${PODIO_LIVE_WRITE_APPROVAL_KEY}=true is required before creating the controlled test Lead item.`],
+      message: "Podio live export is blocked by the explicit write-approval guard.",
+    });
+  }
+
+  if (fieldBuild.blockers.length) {
+    return routeResult({
+      route: "podio",
+      ok: false,
+      mode: "blocked",
+      readbackOk: false,
+      blockers: fieldBuild.blockers,
+      message: "Podio live export is blocked until required controlled test defaults are configured.",
+    });
+  }
+
+  const podioExternalId = `heirright-${slug(dossier.id)}-${Date.now()}`;
 
   const itemResponse = await fetch(`https://api.podio.com/item/app/${env.PODIO_APP_ID}/`, {
     method: "POST",
@@ -226,7 +360,11 @@ async function exportPodio(dossier: RawDossier, env: RuntimeEnv, dryRun: boolean
       "authorization": `Bearer ${env.PODIO_ACCESS_TOKEN}`,
       "content-type": "application/json; charset=utf-8",
     },
-    body: JSON.stringify({ fields }),
+    body: JSON.stringify({
+      external_id: podioExternalId,
+      fields: fieldBuild.fields,
+      tags: ["heirright-controlled-test", "do-not-work"],
+    }),
   });
   if (!itemResponse.ok) {
     return routeResult({
@@ -260,6 +398,7 @@ async function exportPodio(dossier: RawDossier, env: RuntimeEnv, dryRun: boolean
     body: JSON.stringify({
       value: [
         "HeirRight completed report package is ready for review.",
+        `Controlled test external id: ${podioExternalId}`,
         reportUrl ? `Report link: ${reportUrl}` : "Report link: configure Google export or PODIO_REPORT_FILE_URL before live handoff.",
         `Lead bucket: ${dossier.completedLeadReport?.leadQualityProfile.leadBucket ?? "review_required"}`,
       ].join("\n"),
@@ -325,14 +464,18 @@ export async function exportCompletedReport(request: ExportRequest, env: Runtime
 
 export async function connectionStatuses(env: RuntimeEnv = process.env): Promise<ConnectionStatus[]> {
   const checkedAt = nowIso();
+  const missingPodio = podioMissingExportConfig(env);
+  const podioApproved = podioLiveWriteApproved(env);
   return [
     {
       name: "Podio",
-      ok: !missing(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"], env).length,
-      mode: missing(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"], env).length ? "blocked" : "live",
-      message: missing(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"], env).length
-        ? "Podio export/readback config is missing."
-        : "Podio export config is present; controlled write still requires operator approval.",
+      ok: !missingPodio.length,
+      mode: missingPodio.length ? "blocked" : "live",
+      message: missingPodio.length
+        ? `Podio export/readback config is missing: ${missingPodio.join(", ")}.`
+        : podioApproved
+          ? "Podio bearer-token export config and controlled write approval are present."
+          : `Podio bearer-token export config is present; controlled write still requires ${PODIO_LIVE_WRITE_APPROVAL_KEY}=true.`,
       checkedAt,
     },
     {

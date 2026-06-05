@@ -1,4 +1,11 @@
 import type { CrmAdapter, RawDossier } from "@ple/types";
+import {
+  PODIO_LIVE_WRITE_APPROVAL_KEY,
+  podioMissingExportConfig,
+  TEXAS_EQUITY_PROS_LEADS_APP,
+  TEXAS_EQUITY_PROS_LEADS_APP_ID,
+  TEXAS_EQUITY_PROS_LEADS_WORKSPACE,
+} from "../export/podio-config";
 
 type EnvLookup = Record<string, string | undefined>;
 
@@ -34,31 +41,31 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
   constructor(private readonly env: EnvLookup = process.env) {}
 
   describeRequiredConfig(): string[] {
-    return ["PODIO_CLIENT_ID", "PODIO_CLIENT_SECRET", "PODIO_APP_ID", "PODIO_APP_TOKEN"];
+    return ["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"];
   }
 
   async healthcheck(): Promise<{ ok: boolean; reason?: string; mode: "api" | "browser_fallback" | "dry_run" }> {
-    const missing = this.describeRequiredConfig().filter((key) => !this.env[key]);
+    const missing = podioMissingExportConfig(this.env);
     if (missing.length) {
       return {
         ok: false,
         mode: "dry_run",
-        reason: `Podio API not configured. Missing: ${missing.join(", ")}. Browserbase-style browser automation remains the fallback path.`,
+        reason: `Podio bearer-token exporter is not configured. Missing: ${missing.join(", ")}. Browser automation remains an audit-only fallback.`,
       };
     }
 
-    return { ok: true, mode: "api", reason: "Podio API credentials are present. Live sync still requires explicit validation." };
+    return { ok: true, mode: "api", reason: "Podio bearer-token export config is present. Live sync still requires explicit controlled write/readback validation." };
   }
 
   async dryRun(dossier: RawDossier): Promise<PodioDryRunPayload> {
     const health = await this.healthcheck();
-    const missingConfig = this.describeRequiredConfig().filter((key) => !this.env[key]);
+    const missingConfig = podioMissingExportConfig(this.env);
     return {
       provider: "podio",
       mode: "dry_run",
       appModel: {
-        workspace: "HeirRight Acquisition Ops",
-        app: "Lead Intelligence",
+        workspace: TEXAS_EQUITY_PROS_LEADS_WORKSPACE,
+        app: TEXAS_EQUITY_PROS_LEADS_APP,
         pipelineStages: ["Marketing", "Acquisition", "Disposition"],
         fields: {
           title: dossier.summary.displayName,
@@ -262,13 +269,18 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
       browserAutomationFallback: {
         recommended: !health.ok,
         reason: health.reason ?? "Podio API status unknown.",
-        requiredConfig: ["BROWSERBASE_API_KEY", "PODIO_LOGIN_URL", "PODIO_WORKSPACE_NAME", "PODIO_APP_NAME"],
+        requiredConfig: ["PODIO_BROWSER_SESSION", "PODIO_WORKSPACE_NAME", "PODIO_APP_NAME"],
       },
       podioReadiness: {
         classification: missingConfig.length ? "blocked_missing_access" : "ready_for_controlled_validation",
         requiredAccess: [
-          "Podio workspace invite for HeirRight Acquisition Ops",
-          "Target app ID and app token for Lead Intelligence",
+          `Podio workspace invite for ${TEXAS_EQUITY_PROS_LEADS_WORKSPACE}`,
+          `Target Leads app id ${TEXAS_EQUITY_PROS_LEADS_APP_ID}`,
+          "PODIO_ACCESS_TOKEN bearer token with item/comment/task/readback access",
+          "PODIO_FIELD_MAP_JSON override, or the built-in Texas Equity Pros Leads schema preset",
+          `${PODIO_LIVE_WRITE_APPROVAL_KEY}=true for the one approved controlled test write`,
+          "PODIO_TEST_PHONE and PODIO_TEST_EMAIL only for the clearly labeled controlled test item",
+          "PODIO_LEAD_POINT_PROFILE_ID for the required Lead point contact field",
           "Permission to create one controlled test item",
           "Permission to create one task, one comment, and one report link on that test item",
           "CSV export access for Podio and Google Sheets backup comparison",
@@ -297,7 +309,7 @@ export class PodioAdapter implements CrmAdapter<PodioDryRunPayload> {
           "No-auto-send guard is represented in status fields or notes.",
         ],
         blockers: [
-          ...(missingConfig.length ? [`Missing Podio API config: ${missingConfig.join(", ")}`] : []),
+          ...(missingConfig.length ? [`Missing Podio export config: ${missingConfig.join(", ")}`] : []),
           "Live sync is disabled until the target workspace/app is validated.",
           "No outreach automation is approved.",
           "CSV exports are required before migration confidence.",

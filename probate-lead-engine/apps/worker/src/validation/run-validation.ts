@@ -3,6 +3,7 @@ import type { SourceFact, SourceKey, SourceSubject } from "@ple/types";
 import { runDailyProduction } from "../daily/run-daily";
 import { buildRawDossier } from "../dossier/build-raw-dossier";
 import { connectionStatuses, exportCompletedReport } from "../export/export-package";
+import { PODIO_LIVE_WRITE_APPROVAL_KEY, TEXAS_EQUITY_PROS_LEADS_APP_ID } from "../export/podio-config";
 import { runDryPipeline } from "../index";
 import { fact, nowIso } from "../lib";
 import { persistOutput } from "../storage/write-output";
@@ -202,6 +203,44 @@ async function main(): Promise<void> {
   if (dryExport.routes.length !== 2) failures.push("S15 dry export did not return Google and Podio routes.");
   if (!dryExport.routes.every((route) => route.mode === "dry_run")) failures.push("S15 dry export routes should stay dry-run.");
   if (!dryExport.routes.every((route) => route.blockers.some((blocker) => blocker.includes("skipped in dry-run")))) failures.push("S15 dry export readback blockers missing.");
+
+  const podioPresetDryExport = await exportCompletedReport({
+    routes: ["podio"],
+    dossier: result.dossier,
+    dryRun: true,
+  }, {
+    PODIO_ACCESS_TOKEN: "validation-podio-token",
+    PODIO_APP_ID: TEXAS_EQUITY_PROS_LEADS_APP_ID,
+  });
+  const podioPresetRoute = podioPresetDryExport.routes.find((route) => route.route === "podio");
+  if (!podioPresetDryExport.ok) failures.push("S9/S15 Podio Texas Equity Pros Leads preset should dry-run without PODIO_FIELD_MAP_JSON.");
+  if (podioPresetRoute?.mode !== "dry_run") failures.push("S9/S15 Podio preset route should stay dry-run.");
+  if (!podioPresetRoute?.message.includes("texas_equity_pros_leads_preset")) failures.push("S9/S15 Podio preset route should report the built-in schema source.");
+
+  const podioApprovalBlockedExport = await exportCompletedReport({
+    routes: ["podio"],
+    dossier: result.dossier,
+    dryRun: false,
+  }, {
+    PODIO_ACCESS_TOKEN: "validation-podio-token",
+    PODIO_APP_ID: TEXAS_EQUITY_PROS_LEADS_APP_ID,
+  });
+  if (podioApprovalBlockedExport.ok) failures.push("S9/S15 live Podio export should require explicit write approval.");
+  if (!podioApprovalBlockedExport.blockers.some((blocker) => blocker.includes(PODIO_LIVE_WRITE_APPROVAL_KEY))) failures.push("S9/S15 live Podio approval blocker missing.");
+
+  const podioDefaultsBlockedExport = await exportCompletedReport({
+    routes: ["podio"],
+    dossier: result.dossier,
+    dryRun: false,
+  }, {
+    PODIO_ACCESS_TOKEN: "validation-podio-token",
+    PODIO_APP_ID: TEXAS_EQUITY_PROS_LEADS_APP_ID,
+    [PODIO_LIVE_WRITE_APPROVAL_KEY]: "true",
+  });
+  if (podioDefaultsBlockedExport.ok) failures.push("S9/S15 live Podio export should require controlled test defaults before network write.");
+  for (const key of ["PODIO_TEST_PHONE", "PODIO_TEST_EMAIL", "PODIO_LEAD_POINT_PROFILE_ID"] as const) {
+    if (!podioDefaultsBlockedExport.blockers.some((blocker) => blocker.includes(key))) failures.push(`S9/S15 live Podio default blocker missing ${key}.`);
+  }
 
   const blockedExport = await exportCompletedReport({
     routes: ["google", "podio"],

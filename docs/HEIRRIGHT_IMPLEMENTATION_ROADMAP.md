@@ -325,7 +325,7 @@ Last roadmap sync: June 3, 2026. Linear project `HeirRight Deal Engine Automatio
 | S6 — Probate + heirship research | `HEI-31`, `HEI-46`–`HEI-49`, `HEI-55` | Done | 2026-06-01 |
 | S7 — Completed lead report + offer math | `HEI-32`, `HEI-50`–`HEI-54` | Done | 2026-06-01 |
 | S8 — Outreach draft library | `HEI-33`, `HEI-56`–`HEI-60` | Done | 2026-06-01 |
-| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Blocked on Podio access / live-write approval | — |
+| S9 — Podio Claude Cowork automation | `HEI-34`, `HEI-61`–`HEI-65` | Partially unblocked by Podio browser field audit; blocked on API runtime config, controlled write approval, CSV backup, and live readback | — |
 | S10 — Website redesign | `HEI-35`, `HEI-66`–`HEI-70` | Done; Civic Ledger site built and launch-QA checked with approval notes | 2026-06-03 |
 | S11 — Operator shell foundation | `HEI-36`, `HEI-71`–`HEI-75` | Done; HeirRight shell MVP, composer/drawer, settings, runtime/Linear, admin event contract, and extraction notes landed locally | 2026-06-03 |
 | S12 — Organization access + beta runtime gate | `HEI-79`–`HEI-81` | Done | 2026-06-02 |
@@ -467,7 +467,7 @@ Tracks:
 
 ### S9 - Podio Claude Cowork Automation + Sales Queue Validation
 
-Status: **Blocked / prep-only** until Podio account invite, app/workspace credentials, CSV exports, and explicit live-write approval are supplied.
+Status: **Partially unblocked / local prep ready**. Authenticated browser audit confirmed the Texas Equity Pros LLC `Leads` app and field shape, and the worker now has a guarded bearer-token export/readback path. Live proof still waits on approved API runtime config, one clearly labeled controlled test write, CSV backup access, and successful item/task/comment readback.
 
 Goal: prove the Podio automation path without risking Joshua's existing data or team workflow.
 

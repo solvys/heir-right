@@ -6,11 +6,14 @@ import { runDryPipeline } from "./index";
 interface CloudflareEnv {
   DEPLOYMENT_KEY?: string;
   COUNTY_LIST?: string;
-  PODIO_CLIENT_ID?: string;
-  PODIO_CLIENT_SECRET?: string;
+  PODIO_ACCESS_TOKEN?: string;
   PODIO_APP_ID?: string;
-  PODIO_APP_TOKEN?: string;
-  BROWSERBASE_API_KEY?: string;
+  PODIO_FIELD_MAP_JSON?: string;
+  PODIO_REPORT_FILE_URL?: string;
+  PODIO_LIVE_WRITE_APPROVED?: string;
+  PODIO_TEST_PHONE?: string;
+  PODIO_TEST_EMAIL?: string;
+  PODIO_LEAD_POINT_PROFILE_ID?: string;
   PODIO_LOGIN_URL?: string;
   PODIO_WORKSPACE_NAME?: string;
   PODIO_APP_NAME?: string;

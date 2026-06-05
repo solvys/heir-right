@@ -24,12 +24,12 @@ These items are needed to move from local/dry-run behavior into a client-validat
    - Existing field structure
    - Admin or API access level
    - Whether live writes are approved for testing
-4. Are Podio API credentials available?
-   - `PODIO_CLIENT_ID`
-   - `PODIO_CLIENT_SECRET`
-   - `PODIO_APP_ID`
-   - `PODIO_APP_TOKEN`
-5. If direct Podio API access is unavailable, is browser automation into Podio acceptable only for export/transition validation?
+4. Can Joshua or the Podio admin approve a secure Podio access handoff for the verified Texas Equity Pros Leads app?
+   - Workspace: Texas Equity Pros LLC
+   - App: Leads
+   - Confirm who can approve one clearly labeled test lead
+   - Confirm who can confirm the test lead, note, and review task after it appears
+5. If direct Podio access is unavailable, is an authenticated browser review acceptable only for field discovery and transition validation?
 6. Do you have Cloudflare, Vercel, Railway, or another preferred hosting account for the demo and eventual production system?
 7. Who will own production credentials after handoff?
 8. Can Joshua create or invite a Podio account for Sam to test integration?
