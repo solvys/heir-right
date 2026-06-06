@@ -2567,9 +2567,9 @@
         <span id="statusExport">export: [PREP ONLY]</span>
       </div>
       <div class="connection-statuses" aria-label="Connection status">
-        <span id="podioStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Podio</span>
-        <span id="googleStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Google</span>
-        <span id="webSearchStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Web Search</span>
+        <span id="podioStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Podio · Unknown</span>
+        <span id="googleStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Google · Unknown</span>
+        <span id="webSearchStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Web Search · Unknown</span>
       </div>
     </footer>
   </section>
@@ -2925,9 +2925,9 @@ function defaultShellEvents() {
       at: Date.now()
     },
     {
-      title: "Podio access remains gated",
-      copy: "Live CRM writes stay blocked until credentials, controlled write approval, and readback proof are available.",
-      tone: "blocked",
+      title: "Podio CRM handoff ready",
+      copy: "The latest lead packet can be staged for Podio review. Live CRM writes still require credentials, approval, and readback proof.",
+      tone: "review",
       at: Date.now() - 60000
     }
   ];
@@ -3529,12 +3529,15 @@ function railTimelineHtml(row, dossier) {
 function railDocsHtml(row, dossier) {
   const report = dossier.completedLeadReport;
   const podio = dossier.crm?.payload?.podioReadiness;
+  const podioModel = dossier.crm?.payload?.appModel;
   const exportMeta = state.exportRoute ? exportRouteMeta(state.exportRoute) : null;
   const exportResults = state.exportResult?.routes ?? [];
   const exportBlockers = state.exportResult?.blockers ?? [];
   const familyNodes = report?.contactPlaceholders?.length ?? dossier.familyTree?.hypothesis?.value?.nodes?.length ?? 0;
   const offerMath = report?.offerMath;
   const reportHtml = report?.formats?.html ?? dossier.documentPacket?.formats?.html ?? "<p>Report unavailable.</p>";
+  const mappedFieldCount = Object.keys(podioModel?.fields ?? {}).length;
+  const liveBlockers = (podio?.blockers ?? []).slice(0, 4);
   return `
     <section class="glass-card rail-card">
       <h3>Completed report packet</h3>
@@ -3559,6 +3562,40 @@ function railDocsHtml(row, dossier) {
         <li><strong>External use</strong><span>${report?.reviewGate?.externalUseBlocked ? "Blocked until review clears." : "Needs review before sending."}</span></li>
       </ul>
     </section>
+    <section class="glass-card rail-card">
+      <h3>Podio CRM handoff</h3>
+      <p class="copy">This is the visible CRM package for the demo: the app can stage the lead fields, review tasks, source note, and readback checklist without writing to Podio.</p>
+      <ul class="mini-list">
+        <li><strong>Workspace</strong><span>${escapeHtml(podioModel?.workspace ?? "Texas Equity Pros LLC")}</span></li>
+        <li><strong>App</strong><span>${escapeHtml(podioModel?.app ?? "Leads")}</span></li>
+        <li><strong>Pipeline</strong><span>${escapeHtml((podioModel?.pipelineStages ?? ["Marketing", "Acquisition", "Disposition"]).join(" / "))}</span></li>
+        <li><strong>Prepared fields</strong><span>${escapeHtml(mappedFieldCount)} lead fields mapped from the current packet</span></li>
+        <li><strong>Controlled test</strong><span>${escapeHtml(podio?.classification === "ready_for_controlled_validation" ? "Ready for approval and readback" : "Blocked until live access is configured")}</span></li>
+      </ul>
+    </section>
+    <section class="glass-card rail-card">
+      <h3>Podio readback checklist</h3>
+      <div>
+        ${(podio?.readbackChecks ?? []).map((check, index) => `
+          <article class="rail-item">
+            <span class="rail-item-index">${String(index + 1).padStart(2, "0")}</span>
+            <span>
+              <span class="rail-item-title">${escapeHtml(check)}</span>
+              <span class="rail-item-copy">Must be proven after a controlled live test item is created.</span>
+            </span>
+            ${statusPill("review", "Proof")}
+          </article>
+        `).join("") || `<p class="copy">Readback checks will appear once the Podio packet is loaded.</p>`}
+      </div>
+    </section>
+    ${liveBlockers.length ? `
+      <section class="glass-card rail-card">
+        <h3>Live Podio blockers</h3>
+        <ul class="mini-list">
+          ${liveBlockers.map((blocker) => `<li><strong>Needs setup</strong><span>${escapeHtml(blocker)}</span></li>`).join("")}
+        </ul>
+      </section>
+    ` : ""}
     ${exportResults.length ? `
       <section class="glass-card rail-card">
         <h3>Export result</h3>
@@ -3598,11 +3635,30 @@ function renderAll() {
   applyFilters();
 }
 
-function setConnectionChip(id, tone, label) {
+function connectionVisibleState(tone, status) {
+  if (status) return status;
+  if (tone === "ready") return "Live";
+  if (tone === "review") return "Prep";
+  if (tone === "blocked") return "Blocked";
+  return "Unknown";
+}
+
+function connectionName(id) {
+  return {
+    podioStatus: "Podio",
+    googleStatus: "Google",
+    webSearchStatus: "Web Search"
+  }[id] ?? "Connection";
+}
+
+function setConnectionChip(id, tone, label, visibleState = null) {
   const chip = document.getElementById(id);
   chip.className = `connection-chip ${tone}`;
   chip.title = label;
-  chip.setAttribute("aria-label", `${chip.textContent.trim()}: ${label}`);
+  const name = connectionName(id);
+  const status = connectionVisibleState(tone, visibleState);
+  chip.innerHTML = `<span class="connection-dot" aria-hidden="true"></span>${escapeHtml(name)} · ${escapeHtml(status)}`;
+  chip.setAttribute("aria-label", `${name} ${status}: ${label}`);
 }
 
 function connectionTone(status) {
@@ -3634,9 +3690,9 @@ function updateConnectionStatuses() {
   const webConnection = connectionByName("Web Search");
 
   if (podioConnection || googleConnection || webConnection) {
-    setConnectionChip("podioStatus", connectionTone(podioConnection), podioConnection?.message ?? "Podio status unavailable.");
-    setConnectionChip("googleStatus", connectionTone(googleConnection), googleConnection?.message ?? "Google status unavailable.");
-    setConnectionChip("webSearchStatus", connectionTone(webConnection), webConnection?.message ?? "Web Search status unavailable.");
+    setConnectionChip("podioStatus", connectionTone(podioConnection), podioConnection?.message ?? "Podio status unavailable.", displayStatus(podioConnection?.mode));
+    setConnectionChip("googleStatus", connectionTone(googleConnection), googleConnection?.message ?? "Google status unavailable.", displayStatus(googleConnection?.mode));
+    setConnectionChip("webSearchStatus", connectionTone(webConnection), webConnection?.message ?? "Web Search status unavailable.", displayStatus(webConnection?.mode));
     return;
   }
 
@@ -3651,12 +3707,14 @@ function updateConnectionStatuses() {
   setConnectionChip(
     "podioStatus",
     podioBlocked ? "blocked" : "review",
-    podioBlocked ? "Podio is not connected. Export package is prep-only." : "Podio package is staged for a controlled test."
+    podioBlocked ? "Podio is not connected. Export package is prep-only." : "Podio package is staged for a controlled test.",
+    podioBlocked ? "Prep blocked" : "Prep ready"
   );
   setConnectionChip(
     "googleStatus",
     "review",
-    "Google Workspace export is staged only. No live Docs or Sheets write has run."
+    "Google Workspace export is staged only. No live Docs or Sheets write has run.",
+    "Prep only"
   );
   const publicSourceOk = (state.data?.facts ?? []).some((fact) => {
     const value = fact.value;
@@ -3665,7 +3723,8 @@ function updateConnectionStatuses() {
   setConnectionChip(
     "webSearchStatus",
     publicSourceOk ? "ready" : "review",
-    publicSourceOk ? "Public web search sources are reachable in the latest packet." : "Public web search needs source validation."
+    publicSourceOk ? "Public web search sources are reachable in the latest packet." : "Public web search needs source validation.",
+    publicSourceOk ? "Sources checked" : "Needs check"
   );
 }
 
@@ -3752,28 +3811,30 @@ async function chooseExportRoute(route, source = null) {
   state.exportResult = null;
   state.railPreview = {
     title: meta.title,
-    markdown: `${meta.copy} Sending export request...`,
+    markdown: `${meta.copy} Staging a review-only handoff package now. No live CRM write will be attempted from this demo surface.`,
     updatedAt: Date.now()
   };
   openRailWithContinuity(source, "docs");
   document.getElementById("statusExport").textContent = meta.status;
-  document.getElementById("topStatus").textContent = `Exporting completed report to ${meta.label}...`;
+  document.getElementById("topStatus").textContent = `Staging completed report handoff for ${meta.label}...`;
   try {
     const response = await fetch("/api/exports", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
         routes: routesForExport(route),
-        dryRun: false,
+        dryRun: true,
       }),
     });
     const result = await response.json();
     state.exportResult = result;
-    const blockers = result.blockers?.length ?? 0;
-    document.getElementById("topStatus").textContent = blockers
-      ? `${meta.label} export has ${blockers} blocker${blockers === 1 ? "" : "s"}.`
-      : `Completed report exported to ${meta.label}.`;
-    document.getElementById("statusExport").textContent = result.ok ? `${meta.status} [DONE]` : `${meta.status} [BLOCKED]`;
+    const blockers = (result.blockers ?? []).filter((blocker) => !/skipped in dry-run mode/i.test(blocker));
+    document.getElementById("topStatus").textContent = result.ok
+      ? `${meta.label} handoff staged for review. Live readback still needs approval before any CRM write.`
+      : blockers.length
+        ? `${meta.label} handoff has ${blockers.length} blocker${blockers.length === 1 ? "" : "s"}.`
+        : `${meta.label} handoff is blocked.`;
+    document.getElementById("statusExport").textContent = result.ok ? `${meta.status} [STAGED]` : `${meta.status} [BLOCKED]`;
     await loadConnectionStatuses();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

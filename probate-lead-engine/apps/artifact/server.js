@@ -202,16 +202,25 @@ function hasAll(keys) {
   return keys.every((key) => Boolean(process.env[key]));
 }
 
+function podioMissingLocalConfig() {
+  const missing = ["PODIO_ACCESS_TOKEN", "PODIO_APP_ID"].filter((key) => !process.env[key]);
+  if (!process.env.PODIO_FIELD_MAP_JSON && process.env.PODIO_APP_ID !== "24265877") {
+    missing.push("PODIO_FIELD_MAP_JSON or PODIO_APP_ID=24265877");
+  }
+  return missing;
+}
+
 function localConnectionStatuses() {
   const checkedAt = new Date().toISOString();
+  const missingPodio = podioMissingLocalConfig();
   return [
     {
       name: "Podio",
-      ok: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"]),
-      mode: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"]) ? "live" : "blocked",
-      message: hasAll(["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"])
+      ok: !missingPodio.length,
+      mode: missingPodio.length ? "blocked" : "live",
+      message: !missingPodio.length
         ? "Podio export config is present; controlled write still needs approval."
-        : "Podio export/readback config is missing.",
+        : `Podio export/readback config is missing: ${missingPodio.join(", ")}.`,
       checkedAt,
     },
     {
@@ -287,8 +296,22 @@ function localExportRoute(route, dryRun) {
   const routeName = route === "google" ? "Google" : "Podio";
   const required = route === "google"
     ? ["GOOGLE_WORKSPACE_ACCESS_TOKEN", "GOOGLE_TRACKING_SHEET_ID"]
-    : ["PODIO_ACCESS_TOKEN", "PODIO_APP_ID", "PODIO_FIELD_MAP_JSON"];
-  const missing = required.filter((key) => !process.env[key]);
+    : [];
+  const missing = route === "podio" ? podioMissingLocalConfig() : required.filter((key) => !process.env[key]);
+  if (dryRun) {
+    return {
+      route,
+      ok: true,
+      mode: "dry_run",
+      externalId: `dry-${route}-${Date.now()}`,
+      readbackOk: false,
+      blockers: [
+        `Live ${routeName} readback skipped in dry-run mode.`,
+        ...(missing.length ? [`Live ${routeName} config still needed before controlled write/readback: ${missing.join(", ")}`] : []),
+      ],
+      message: `${routeName} handoff package is staged from the latest lead packet. No live write was attempted.`,
+    };
+  }
   if (!dryRun && !workerApiBase()) {
     return {
       route,
