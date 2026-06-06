@@ -454,23 +454,11 @@
 
     body[data-theme="dark"] .btn.primary {
       color: #fff;
-      border-color: rgba(255,255,255,.34);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.12) 43%, rgba(255,255,255,0) 65%),
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.48), rgba(255,255,255,0) 38%),
-        #0a84ff;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.58),
-        inset 0 -1px 0 rgba(0,0,0,.18),
-        0 12px 28px rgba(10,132,255,.28);
+      background: #0a84ff;
+      border-color: rgba(10,132,255,.36);
     }
 
-    body[data-theme="dark"] .btn.primary:hover {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.48), rgba(255,255,255,.16) 43%, rgba(255,255,255,0) 65%),
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.54), rgba(255,255,255,0) 38%),
-        #0a84ff;
-    }
+    body[data-theme="dark"] .btn.primary:hover { background: #0077ed; }
     body[data-theme="dark"] .nav-item,
     body[data-theme="dark"] .field label,
     body[data-theme="dark"] .field-title,
@@ -686,7 +674,6 @@
     .quick-actions::-webkit-scrollbar { display: none; }
 
     .btn {
-      position: relative;
       min-height: 38px;
       display: inline-flex;
       align-items: center;
@@ -699,7 +686,7 @@
       padding: 8px 11px;
       font-size: 13px;
       font-weight: 720;
-      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease);
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
       white-space: nowrap;
     }
 
@@ -715,39 +702,13 @@
     }
 
     .btn.primary {
-      overflow: hidden;
-      border-color: rgba(255,255,255,.48);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.46), rgba(255,255,255,.16) 43%, rgba(255,255,255,0) 65%),
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.52), rgba(255,255,255,0) 38%),
-        #0a84ff;
+      border-color: rgba(10,132,255,.28);
+      background: #0a84ff;
       color: white;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.62),
-        inset 0 -1px 0 rgba(0,0,0,.14),
-        0 12px 28px rgba(10,132,255,.26);
-      -webkit-backdrop-filter: saturate(170%) blur(14px);
-      backdrop-filter: saturate(170%) blur(14px);
+      box-shadow: 0 10px 24px rgba(10,132,255,.18);
     }
 
-    .btn.primary:hover {
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,255,255,.18) 43%, rgba(255,255,255,0) 65%),
-        radial-gradient(circle at 24% 0%, rgba(255,255,255,.6), rgba(255,255,255,0) 38%),
-        #0a84ff;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.7),
-        inset 0 -1px 0 rgba(0,0,0,.16),
-        0 14px 32px rgba(10,132,255,.3);
-    }
-
-    .btn.primary:active {
-      transform: translateY(1px);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.45),
-        inset 0 2px 12px rgba(0,0,0,.12),
-        0 8px 18px rgba(10,132,255,.22);
-    }
+    .btn.primary:hover { background: #0077ed; }
     .btn.icon-only { width: 38px; padding: 0; }
     .btn.quick {
       min-height: 36px;
