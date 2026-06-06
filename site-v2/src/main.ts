@@ -38,11 +38,51 @@ function setupReviewForm(): void {
   const status = document.querySelector<HTMLElement>("[data-form-status]");
   if (!form || !status) return;
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+  const setStatus = (message: string, state: "success" | "error" | "loading") => {
+    status.textContent = message;
     status.hidden = false;
-    form.classList.add("is-prepared");
+    status.dataset.state = state;
     status.focus();
+  };
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const payload = Object.fromEntries(formData.entries());
+
+    form.classList.add("is-prepared");
+    form.setAttribute("aria-busy", "true");
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Submitting...";
+    }
+    setStatus("Submitting the review request...", "loading");
+
+    try {
+      const response = await fetch("/api/review-request", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json() as { ok?: boolean; receiptId?: string; message?: string };
+      if (!response.ok || !result.ok) {
+        throw new Error(result.message ?? "The request could not be submitted.");
+      }
+
+      form.reset();
+      setStatus(`Review request received. Confirmation ${result.receiptId}.`, "success");
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "The request could not be submitted.", "error");
+    } finally {
+      form.removeAttribute("aria-busy");
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Submit review request";
+      }
+    }
   });
 }
 

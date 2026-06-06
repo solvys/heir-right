@@ -135,8 +135,14 @@ textarea {
     transform 160ms ease;
 }
 
+.nav-links a:link,
+.nav-links a:visited,
+.nav-links a:any-link {
+  color: var(--muted) !important;
+}
+
 .nav-links a:hover {
-  color: var(--ink);
+  color: var(--ink) !important;
 }
 
 .nav-cta,
@@ -160,11 +166,22 @@ textarea {
   color: #fff;
 }
 
+.nav-cta:link,
+.nav-cta:visited,
+.nav-cta:any-link,
+.button.primary:link,
+.button.primary:visited,
+.button.primary:any-link {
+  background: var(--deep) !important;
+  border-color: var(--deep) !important;
+  color: #fff !important;
+}
+
 .nav-cta:hover,
 .button.primary:hover,
 .review-form button:hover {
-  background: var(--blue);
-  border-color: var(--blue);
+  background: var(--blue) !important;
+  border-color: var(--blue) !important;
   transform: translateY(-1px);
 }
 
@@ -174,8 +191,16 @@ textarea {
   border-color: rgba(15, 42, 36, 0.22);
 }
 
+.button.secondary:link,
+.button.secondary:visited,
+.button.secondary:any-link {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(15, 42, 36, 0.22) !important;
+  color: var(--deep) !important;
+}
+
 .button.secondary:hover {
-  border-color: var(--deep);
+  border-color: var(--deep) !important;
   transform: translateY(-1px);
 }
 
@@ -259,11 +284,11 @@ textarea {
   z-index: 2;
   right: 28px;
   bottom: 28px;
-  left: 28px;
+  left: auto;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  max-width: 760px;
+  width: min(50vw, 640px);
 }
 
 .hero-proof span {
@@ -281,6 +306,7 @@ textarea {
 
 .section {
   padding: 96px 64px;
+  scroll-margin-top: 104px;
 }
 
 .review-section {
@@ -494,15 +520,42 @@ textarea {
   font-weight: 800;
 }
 
+.phone-link:link,
+.phone-link:visited,
+.phone-link:any-link {
+  color: var(--deep) !important;
+}
+
 .existing-form-link {
   margin-left: 18px;
   color: var(--copper);
 }
 
+.existing-form-link:link,
+.existing-form-link:visited,
+.existing-form-link:any-link {
+  color: var(--copper) !important;
+}
+
 .review-form {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+}
+
+.field-trap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  max-width: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .review-form label {
@@ -510,8 +563,8 @@ textarea {
   gap: 8px;
 }
 
-.review-form label:nth-child(3),
-.review-form label:nth-child(4),
+.review-form label:nth-of-type(4),
+.review-form label:nth-of-type(5),
 .review-form button,
 .form-note,
 .form-status {
@@ -554,6 +607,12 @@ textarea {
   width: 100%;
 }
 
+.review-form button:disabled {
+  cursor: wait;
+  opacity: 0.76;
+  transform: none;
+}
+
 .form-note,
 .form-status {
   margin: 0;
@@ -566,6 +625,15 @@ textarea {
   background: var(--sage);
   color: var(--deep);
   font-weight: 800;
+}
+
+.form-status[data-state="error"] {
+  background: #f3d8d3;
+  color: #7d2419;
+}
+
+.form-status[data-state="loading"] {
+  background: var(--soft);
 }
 
 .faq-section {
@@ -653,6 +721,7 @@ textarea {
 
   .section {
     padding: 76px 24px;
+    scroll-margin-top: 86px;
   }
 
   .section-heading h2,
@@ -668,6 +737,170 @@ textarea {
   .contact-section,
   .site-footer {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 981px) and (max-width: 1120px) {
+  .hero {
+    min-height: clamp(680px, 86svh, 760px);
+    padding: 112px 48px 72px;
+  }
+
+  .hero h1 {
+    font-size: clamp(4.8rem, 7vw, 5.2rem);
+  }
+
+  .section {
+    padding: 88px 44px;
+  }
+
+  .issue-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .issue-grid article {
+    min-height: 220px;
+  }
+
+  .contact-section {
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.08fr);
+  }
+}
+
+@media (min-width: 700px) and (max-width: 980px) {
+  .site-nav {
+    inset: 14px 18px auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .brand {
+    gap: 10px;
+    font-size: 1.25rem;
+  }
+
+  .brand-mark,
+  .brand-mark svg {
+    width: 34px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 14px;
+    font-size: 0.84rem;
+  }
+
+  .nav-cta {
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .hero {
+    min-height: clamp(700px, 82svh, 820px);
+    padding: 112px 40px 96px;
+  }
+
+  .hero-content {
+    width: min(100%, 650px);
+  }
+
+  .hero h1 {
+    max-width: 620px;
+    font-size: clamp(4rem, 8vw, 5.1rem);
+  }
+
+  .hero-lede {
+    font-size: clamp(1.6rem, 3vw, 2rem);
+  }
+
+  .hero p:not(.hero-lede) {
+    max-width: 620px;
+    font-size: 1.05rem;
+  }
+
+  .hero-proof {
+    right: 40px;
+    bottom: 30px;
+    left: 40px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: auto;
+    max-width: none;
+  }
+
+  .hero-proof span {
+    min-height: 58px;
+    padding: 0 12px;
+    font-size: 0.92rem;
+  }
+
+  .section {
+    padding: 82px 40px;
+    scroll-margin-top: 96px;
+  }
+
+  .section-heading {
+    margin-bottom: 36px;
+  }
+
+  .section-heading h2,
+  .fit-copy h2,
+  .proof-copy h2,
+  .contact-copy h2 {
+    font-size: clamp(2.35rem, 5vw, 3rem);
+  }
+
+  .issue-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .issue-grid article {
+    min-height: 236px;
+  }
+
+  .issue-grid span {
+    margin-bottom: 32px;
+  }
+
+  .fit-section {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 32px;
+  }
+
+  .fit-copy {
+    max-width: none;
+  }
+
+  .fit-list div {
+    min-height: 82px;
+    padding: 18px;
+    font-size: 1.18rem;
+  }
+
+  .proof-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .proof-grid article {
+    min-height: 250px;
+    padding: 20px;
+  }
+
+  .contact-section {
+    gap: 22px;
+  }
+
+  .contact-copy,
+  .review-form {
+    padding: 26px;
+  }
+
+  .site-footer {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.8fr);
+    padding: 42px 40px;
   }
 }
 
@@ -728,6 +961,12 @@ textarea {
   .hero-proof span:nth-child(2),
   .hero-proof span:nth-child(3) {
     display: none;
+  }
+
+  .hero-proof {
+    right: 18px;
+    left: 18px;
+    width: auto;
   }
 
   .issue-grid,
