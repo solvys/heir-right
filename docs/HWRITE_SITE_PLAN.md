@@ -122,7 +122,7 @@ pnpm test
 - Whether Texas remains public market copy or becomes secondary proof.
 - Approved disclaimer language for attorney-fee and consultation claims.
 - Approved testimonial/review quotes.
-- Approved logo package or final mark selection from `docs/HWRITE_VISUAL_DIRECTION.md`.
+- Final logo asset package; current demo mark is the HR Monogram in `docs/HWRITE_VISUAL_DIRECTION.md`.
 
 ## Acceptance Checklist
 

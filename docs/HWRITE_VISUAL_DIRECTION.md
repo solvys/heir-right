@@ -84,7 +84,17 @@ Avoid:
 
 ## Logo Direction Board
 
-The current inline mark in `site-v2/index.html` is a good first concept: a shield/house/key hybrid. It works because it carries protection, property, and access without overexplaining the workflow.
+Current demo mark: an original overlapping HR monogram requested for the June 6 demo pass. It should read as a luxury civic-record brand mark while staying distinct from any protected third-party logo or trade dress.
+
+### Concept D - HR Monogram
+
+Use an overlapping H and R inside a compact rounded ledger plaque.
+
+- Best for: premium client-facing polish, recognizability in admin sidebars, and a stronger HeirRight wordmark pairing.
+- Keep: copper frame, deep green or ink H stroke, record-blue R stroke, simple geometry that survives at 24-40 px.
+- Avoid: copying any existing luxury monogram, using double-R initials, adding tiny text, or implying legal certification.
+
+Earlier inline mark in `site-v2/index.html` used a shield/house/key hybrid. It worked because it carried protection, property, and access without overexplaining the workflow. Keep that concept available only as a fallback if the monogram does not test well.
 
 ### Concept A - Estate Shield
 
@@ -110,7 +120,7 @@ Use a key silhouette where the teeth form a small roof or doorway.
 - Keep: very simple geometry and strong single-color use.
 - Avoid: locksmith cues or luxury-real-estate flourishes.
 
-Recommended next step: keep Concept A for the current site and test Concept B only if the team wants the site to feel more records-first than protective.
+Recommended next step: keep Concept D for the current demo and test Concept B only if the team wants the site to feel more records-first than premium.
 
 ## Admin Shell Fit
 
@@ -144,4 +154,4 @@ Do not add heavy scroll choreography unless the public site later moves into a l
 
 ## Final Direction
 
-Use Civic Ledger with the Estate Shield mark unless TP/Sam requests a warmer family-first direction. This is the shortest path to a credible HeirRight public site that matches the existing operator workflow.
+Use Civic Ledger with the HR Monogram mark for the current demo unless TP/Sam requests a warmer family-first direction. This is the shortest path to a credible HeirRight public site that matches the existing operator workflow.

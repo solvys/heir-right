@@ -90,13 +90,18 @@
       display: grid;
       grid-template-rows: auto minmax(0, 1fr) auto;
       border-right: 1px solid var(--line);
-      background: rgba(242,242,247,.74);
-      backdrop-filter: saturate(185%) blur(30px);
-      -webkit-backdrop-filter: saturate(185%) blur(30px);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.22), rgba(255,255,255,.08)),
+        rgba(255,255,255,.10);
+      box-shadow: inset -1px 0 0 rgba(255,255,255,.34), 18px 0 48px rgba(15,23,42,.04);
+      backdrop-filter: saturate(190%) blur(34px);
+      -webkit-backdrop-filter: saturate(190%) blur(34px);
     }
 
     body[data-theme="dark"] .sidebar {
-      background: rgba(28,28,30,.78);
+      background:
+        linear-gradient(180deg, rgba(58,58,60,.22), rgba(28,28,30,.10)),
+        rgba(28,28,30,.18);
     }
 
     .sidebar-top {
@@ -105,7 +110,7 @@
       gap: 8px;
       min-height: 64px;
       padding: 10px 8px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
     }
 
     .icon-button {
@@ -140,15 +145,51 @@
     }
 
     .brand-mark {
-      width: 26px;
-      height: 26px;
+      width: 32px;
+      height: 32px;
       display: grid;
       place-items: center;
-      color: #51515a;
-      background: var(--ios-fill);
-      border: 1px solid rgba(16,24,40,.06);
-      border-radius: 8px;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(255,255,255,.76), rgba(255,255,255,.34));
+      border: 1px solid rgba(16,24,40,.08);
+      border-radius: 9px;
       flex: 0 0 auto;
+      box-shadow: 0 10px 20px rgba(16,24,40,.06);
+    }
+
+    .brand-mark svg,
+    .toggle-logo svg,
+    .avatar svg {
+      width: 23px;
+      height: 23px;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .monogram-frame {
+      stroke: rgba(183, 121, 31, .88);
+      stroke-width: 2.1;
+      fill: rgba(255, 255, 255, .2);
+    }
+
+    .monogram-h {
+      stroke: currentColor;
+      stroke-width: 3.6;
+    }
+
+    .monogram-r {
+      stroke: #0a84ff;
+      stroke-width: 3.25;
+    }
+
+    .toggle-logo {
+      display: none;
+      color: var(--text);
+    }
+
+    .toggle-panel-icon {
+      display: block;
     }
 
     .workspace.is-collapsed .brand,
@@ -162,6 +203,12 @@
 
     .workspace.is-collapsed .sidebar-top,
     .workspace.is-auto-collapsed .sidebar-top { justify-content: center; }
+
+    .workspace.is-collapsed .toggle-panel-icon,
+    .workspace.is-auto-collapsed .toggle-panel-icon { display: none; }
+
+    .workspace.is-collapsed .toggle-logo,
+    .workspace.is-auto-collapsed .toggle-logo { display: block; }
 
     .nav-list {
       display: grid;
@@ -193,17 +240,33 @@
       border: 1px solid transparent;
       border-radius: 8px;
       text-align: left;
-      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease);
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), box-shadow .18s var(--ease);
     }
 
-    .nav-item:hover,
-    .nav-item.is-active {
+    .nav-item:hover {
       color: #1d1d1f;
-      background: rgba(255,255,255,.70);
-      border-color: rgba(16,24,40,.08);
+      background: rgba(255,255,255,.36);
     }
 
-    .nav-icon { display: grid; place-items: center; }
+    .nav-item.is-active {
+      color: #0a84ff;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: 0 0 0 1px rgba(10,132,255,.12), 0 0 18px rgba(10,132,255,.18);
+    }
+
+    .nav-icon {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+    }
+
+    .nav-item.is-active .nav-icon {
+      background: rgba(10,132,255,.10);
+      box-shadow: 0 0 0 1px rgba(10,132,255,.14), 0 0 20px rgba(10,132,255,.26);
+    }
     .nav-label {
       min-width: 0;
       overflow: hidden;
@@ -229,10 +292,10 @@
 
     .workspace.is-collapsed .nav-item.is-active,
     .workspace.is-auto-collapsed .nav-item.is-active {
-      color: var(--text);
-      background: rgba(255,255,255,.78);
-      border-color: rgba(16,24,40,.12);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.55), 0 8px 24px rgba(15,23,42,.07);
+      color: #0a84ff;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
     }
 
     .workspace.is-collapsed .nav-label,
@@ -322,11 +385,11 @@
       height: 32px;
       display: grid;
       place-items: center;
-      border-radius: 50%;
+      border-radius: 9px;
       color: #1f2937;
-      background: var(--ios-fill-strong);
-      font-weight: 760;
-      font-size: 12px;
+      background: linear-gradient(180deg, rgba(255,255,255,.76), rgba(255,255,255,.34));
+      border: 1px solid rgba(16,24,40,.08);
+      box-shadow: 0 10px 20px rgba(16,24,40,.06);
     }
 
     .user-name,
@@ -360,11 +423,12 @@
     body[data-theme="dark"] .btn,
     body[data-theme="dark"] .icon-button,
     body[data-theme="dark"] .brand-mark,
+    body[data-theme="dark"] .avatar,
     body[data-theme="dark"] .field select,
     body[data-theme="dark"] .field input:not([type="checkbox"]),
     body[data-theme="dark"] .filter-note,
     body[data-theme="dark"] .metric,
-    body[data-theme="dark"] .shell-mode,
+    body[data-theme="dark"] .shell-info-popover,
     body[data-theme="dark"] .shell-composer,
     body[data-theme="dark"] .command-form,
     body[data-theme="dark"] .agent-drawer,
@@ -377,7 +441,9 @@
     body[data-theme="dark"] .rail-context,
     body[data-theme="dark"] .rail-segment,
     body[data-theme="dark"] .pager button,
-    body[data-theme="dark"] .connection-chip,
+    body[data-theme="dark"] .quick-actions,
+    body[data-theme="dark"] .composer-actions,
+    body[data-theme="dark"] .connection-statuses,
     body[data-theme="dark"] .export-popover,
     body[data-theme="dark"] .fact-grid,
     body[data-theme="dark"] .doc-frame {
@@ -387,12 +453,24 @@
     }
 
     body[data-theme="dark"] .btn.primary {
-      color: #1c1c1e;
-      background: #f5f5f7;
-      border-color: rgba(245,245,247,.18);
+      color: #fff;
+      border-color: rgba(255,255,255,.34);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,.12) 43%, rgba(255,255,255,0) 65%),
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.48), rgba(255,255,255,0) 38%),
+        #0a84ff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.58),
+        inset 0 -1px 0 rgba(0,0,0,.18),
+        0 12px 28px rgba(10,132,255,.28);
     }
 
-    body[data-theme="dark"] .btn.primary:hover { background: #e5e5ea; }
+    body[data-theme="dark"] .btn.primary:hover {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.48), rgba(255,255,255,.16) 43%, rgba(255,255,255,0) 65%),
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.54), rgba(255,255,255,0) 38%),
+        #0a84ff;
+    }
     body[data-theme="dark"] .nav-item,
     body[data-theme="dark"] .field label,
     body[data-theme="dark"] .field-title,
@@ -400,9 +478,8 @@
     body[data-theme="dark"] .btn.quick { color: var(--muted); }
 
     body[data-theme="dark"] .nav-item:hover,
-    body[data-theme="dark"] .nav-item.is-active,
     body[data-theme="dark"] .btn.quick:hover,
-    body[data-theme="dark"] .shell-mode strong,
+    body[data-theme="dark"] .shell-info-row strong,
     body[data-theme="dark"] .setting-card strong,
     body[data-theme="dark"] .runtime-card strong,
     body[data-theme="dark"] .activity-event strong,
@@ -414,6 +491,24 @@
     body[data-theme="dark"] .rail-card h3,
     body[data-theme="dark"] .next-action strong {
       color: var(--text);
+    }
+
+    body[data-theme="dark"] .nav-item.is-active {
+      color: #64aaff;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: 0 0 0 1px rgba(100,170,255,.14), 0 0 18px rgba(100,170,255,.20);
+    }
+
+    body[data-theme="dark"] .nav-item.is-active .nav-icon {
+      background: rgba(100,170,255,.12);
+      box-shadow: 0 0 0 1px rgba(100,170,255,.16), 0 0 20px rgba(100,170,255,.28);
+    }
+
+    body[data-theme="dark"] .btn.quick,
+    body[data-theme="dark"] .connection-chip {
+      background: transparent;
+      border-color: transparent;
     }
 
     body[data-theme="dark"] th { background: rgba(28,28,30,.92); }
@@ -458,7 +553,7 @@
       gap: 12px;
       align-items: center;
       padding: 10px 16px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
       background: rgba(250,250,252,.74);
       backdrop-filter: saturate(180%) blur(28px);
       -webkit-backdrop-filter: saturate(180%) blur(28px);
@@ -573,11 +668,14 @@
       position: relative;
       z-index: 2;
       display: flex;
-      gap: 8px;
+      gap: 0;
       min-width: 0;
       flex: 0 1 auto;
       overflow-x: auto;
       scrollbar-width: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.52);
     }
 
     .quick-actions .btn,
@@ -588,6 +686,7 @@
     .quick-actions::-webkit-scrollbar { display: none; }
 
     .btn {
+      position: relative;
       min-height: 38px;
       display: inline-flex;
       align-items: center;
@@ -600,7 +699,7 @@
       padding: 8px 11px;
       font-size: 13px;
       font-weight: 720;
-      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease);
+      transition: background .18s var(--ease), border-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease);
       white-space: nowrap;
     }
 
@@ -616,35 +715,133 @@
     }
 
     .btn.primary {
-      border-color: rgba(16,24,40,.18);
-      background: var(--accent);
+      overflow: hidden;
+      border-color: rgba(255,255,255,.48);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.46), rgba(255,255,255,.16) 43%, rgba(255,255,255,0) 65%),
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.52), rgba(255,255,255,0) 38%),
+        #0a84ff;
       color: white;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.62),
+        inset 0 -1px 0 rgba(0,0,0,.14),
+        0 12px 28px rgba(10,132,255,.26);
+      -webkit-backdrop-filter: saturate(170%) blur(14px);
+      backdrop-filter: saturate(170%) blur(14px);
     }
 
-    .btn.primary:hover { background: #27272a; }
+    .btn.primary:hover {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.54), rgba(255,255,255,.18) 43%, rgba(255,255,255,0) 65%),
+        radial-gradient(circle at 24% 0%, rgba(255,255,255,.6), rgba(255,255,255,0) 38%),
+        #0a84ff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.7),
+        inset 0 -1px 0 rgba(0,0,0,.16),
+        0 14px 32px rgba(10,132,255,.3);
+    }
+
+    .btn.primary:active {
+      transform: translateY(1px);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.45),
+        inset 0 2px 12px rgba(0,0,0,.12),
+        0 8px 18px rgba(10,132,255,.22);
+    }
     .btn.icon-only { width: 38px; padding: 0; }
     .btn.quick {
       min-height: 36px;
       color: #374151;
-      background: rgba(255,255,255,.50);
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      position: relative;
     }
 
-    .shell-mode-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 14px;
+    .quick-actions .btn.quick + .btn.quick::before,
+    .composer-actions .btn.quick + .btn.quick::before,
+    .connection-chip + .connection-chip::before,
+    .footer-token + .footer-token::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      bottom: 7px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(16,24,40,.18) 24%, rgba(16,24,40,.18) 76%, transparent);
     }
 
-    .shell-mode {
-      min-width: 0;
-      padding: 9px;
+    .quick-actions .btn.quick:hover,
+    .composer-actions .btn.quick:hover {
+      background: rgba(255,255,255,.38);
+    }
+
+    .workbench-title-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .shell-info-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+
+    .shell-info-button {
+      width: 30px;
+      height: 30px;
+      color: #0a84ff;
+      border-radius: 50%;
+      background: rgba(10,132,255,.10);
+    }
+
+    .shell-info-popover {
+      position: absolute;
+      left: calc(100% + 10px);
+      top: 0;
+      z-index: 120;
+      width: min(330px, calc(100vw - 40px));
+      padding: 4px 0;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: rgba(255,255,255,.54);
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 20px 52px rgba(15,23,42,.14);
+      backdrop-filter: saturate(190%) blur(28px);
+      -webkit-backdrop-filter: saturate(190%) blur(28px);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(-4px);
+      transition: opacity .18s var(--ease), transform .18s var(--ease);
     }
 
-    .shell-mode strong,
+    .shell-info-wrap:hover .shell-info-popover,
+    .shell-info-wrap:focus-within .shell-info-popover {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+
+    .shell-info-row {
+      position: relative;
+      display: grid;
+      gap: 3px;
+      padding: 10px 12px;
+    }
+
+    .shell-info-row + .shell-info-row::before {
+      content: "";
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      top: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16,24,40,.13) 14%, rgba(16,24,40,.13) 86%, transparent);
+    }
+
+    .shell-info-row strong,
     .setting-card strong,
     .runtime-card strong,
     .activity-event strong {
@@ -655,7 +852,7 @@
       line-height: 1.24;
     }
 
-    .shell-mode span,
+    .shell-info-row span,
     .setting-card span,
     .runtime-card span,
     .activity-event span {
@@ -958,12 +1155,14 @@
     }
 
     .workbench-head {
+      position: relative;
+      z-index: 12;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 16px;
       align-items: start;
       padding: 18px 18px 14px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
       background: rgba(255,255,255,.38);
       backdrop-filter: saturate(180%) blur(18px);
       -webkit-backdrop-filter: saturate(180%) blur(18px);
@@ -988,16 +1187,29 @@
     .summary-metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(82px, 1fr));
-      gap: 8px;
+      gap: 0;
       width: min(460px, 38vw);
+      border-radius: 8px;
+      background: rgba(255,255,255,.34);
     }
 
     .metric {
+      position: relative;
       min-width: 0;
       padding: 8px 9px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255,255,255,.58);
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .metric + .metric::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(16,24,40,.16) 22%, rgba(16,24,40,.16) 78%, transparent);
     }
 
     .metric-label {
@@ -1018,10 +1230,12 @@
     }
 
     .workbench-body {
+      position: relative;
+      z-index: 1;
       min-width: 0;
       min-height: 0;
       display: grid;
-      grid-template-columns: minmax(520px, .98fr) minmax(300px, .52fr);
+      grid-template-columns: minmax(520px, 1fr) minmax(320px, 360px);
       overflow: hidden;
       transition: grid-template-columns .36s var(--ease-out);
     }
@@ -1240,7 +1454,13 @@
       min-height: 0;
       display: grid;
       grid-template-rows: auto minmax(0, 1fr);
-      background: rgba(255,255,255,.34);
+      border-left: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.08)),
+        rgba(255,255,255,.10);
+      box-shadow: inset 1px 0 0 rgba(255,255,255,.34), -18px 0 48px rgba(15,23,42,.04);
+      backdrop-filter: saturate(190%) blur(34px);
+      -webkit-backdrop-filter: saturate(190%) blur(34px);
       overflow: hidden;
       transition: opacity .22s var(--ease), transform .36s var(--ease-out);
     }
@@ -1252,13 +1472,24 @@
     }
 
     .detail-head {
+      position: relative;
       min-width: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
       align-items: start;
       padding: 16px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
+    }
+
+    .detail-head::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16,24,40,.14) 14%, rgba(16,24,40,.14) 86%, transparent);
     }
 
     .detail-title {
@@ -1636,6 +1867,22 @@
       min-width: 0;
       display: grid;
       gap: 2px;
+      appearance: none;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      text-align: left;
+      cursor: text;
+    }
+
+    .rail-context-copy:focus-visible {
+      outline: 2px solid rgba(10,132,255,.34);
+      outline-offset: 4px;
+      border-radius: 6px;
+    }
+
+    .rail-context-copy:hover .rail-context-title {
+      color: #0a84ff;
     }
 
     .rail-context-kicker,
@@ -1664,6 +1911,35 @@
 
     .rail-context .pill {
       align-self: center;
+    }
+
+    .rail-rename-input {
+      display: none;
+      min-width: 0;
+      width: 100%;
+      min-height: 30px;
+      border: 1px solid rgba(10,132,255,.34);
+      border-radius: 7px;
+      padding: 5px 8px;
+      outline: 0;
+      background: rgba(255,255,255,.92);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 760;
+      box-shadow: 0 0 0 3px rgba(10,132,255,.10);
+    }
+
+    .rail-context.is-renaming {
+      align-items: start;
+    }
+
+    .rail-context.is-renaming .rail-context-title,
+    .rail-context.is-renaming .rail-context-meta {
+      display: none;
+    }
+
+    .rail-context.is-renaming .rail-rename-input {
+      display: block;
     }
 
     .rail-tabs {
@@ -1891,6 +2167,12 @@
       background: rgba(255,255,255,.66);
     }
 
+    .command-form .btn.primary {
+      min-height: 34px;
+      border-radius: 999px;
+      padding-inline: 18px;
+    }
+
     .command-form input {
       min-width: 0;
       border: 0;
@@ -1906,9 +2188,12 @@
       min-width: 0;
       display: flex;
       justify-content: flex-end;
-      gap: 7px;
+      gap: 0;
       overflow-x: auto;
       scrollbar-width: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.52);
     }
 
     .composer-actions::-webkit-scrollbar { display: none; }
@@ -2001,12 +2286,13 @@
       min-width: 0;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0;
       overflow: hidden;
       white-space: nowrap;
     }
 
-    .footer-left span {
+    .footer-left span,
+    .breadcrumb-current {
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -2015,21 +2301,80 @@
     .connection-statuses {
       justify-content: flex-end;
       overflow: visible;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255,255,255,.52);
     }
 
     .connection-chip {
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       min-height: 24px;
       padding: 3px 8px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      background: rgba(255,255,255,.58);
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       color: #4b5563;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
       font-size: 12px;
       font-weight: 680;
+    }
+
+    .footer-breadcrumb {
+      min-width: 240px;
+      max-width: min(540px, 48vw);
+      flex: 1 1 300px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: 10px;
+      padding-right: 10px;
+      position: relative;
+    }
+
+    .footer-breadcrumb::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      right: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(16,24,40,.18) 24%, rgba(16,24,40,.18) 76%, transparent);
+    }
+
+    .breadcrumb-button {
+      width: 24px;
+      height: 24px;
+      display: inline-grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .breadcrumb-button:hover {
+      color: #0a84ff;
+      background: rgba(10,132,255,.10);
+    }
+
+    .breadcrumb-current {
+      color: var(--text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .footer-token {
+      position: relative;
+      flex: 0 0 auto;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 9px;
     }
 
     .connection-dot {
@@ -2100,7 +2445,10 @@
 
     @media (max-width: 1180px) {
       .content { grid-template-columns: var(--filters-width, 320px) minmax(0, 1fr); }
-      .shell-mode-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .shell-info-popover {
+        left: 0;
+        top: calc(100% + 8px);
+      }
       .research-rail {
         top: 0;
         bottom: 0;
@@ -2132,7 +2480,6 @@
         overflow: visible;
       }
       .top-status { text-align: left; }
-      .shell-mode-strip { grid-template-columns: 1fr; }
       .shell-composer { grid-template-columns: 1fr; }
       .composer-actions { justify-content: flex-start; }
       .settings-grid,
@@ -2171,9 +2518,25 @@
   <aside id="primarySidebar" class="sidebar" aria-label="Primary navigation">
     <div class="sidebar-top">
       <button id="sidebarToggle" class="icon-button" type="button" title="Collapse sidebar" aria-label="Collapse sidebar" aria-controls="primarySidebar" aria-expanded="true">
-        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M9 5v14M6.8 9h.4M6.8 12h.4M6.8 15h.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <span class="toggle-panel-icon" aria-hidden="true">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="4" y="5" width="16" height="14" rx="3" stroke="currentColor" stroke-width="1.7"/><path d="M9 5v14M6.8 9h.4M6.8 12h.4M6.8 15h.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </span>
+        <span class="toggle-logo" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
+            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
+            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+          </svg>
+        </span>
       </button>
       <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
+            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
+            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+          </svg>
+        </span>
         <span>HeirRight</span>
       </div>
     </div>
@@ -2194,7 +2557,13 @@
         </button>
       </div>
       <div class="user-strip">
-        <span class="avatar">HR</span>
+        <span class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
+            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
+            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+          </svg>
+        </span>
         <span>
           <span class="user-name">HeirRight Ops</span>
           <span class="user-meta">Company workspace</span>
@@ -2266,9 +2635,6 @@
             <h2 class="pane-title">Start here</h2>
             <p class="pane-copy">Choose the county and the missing information you want to clean up first.</p>
           </div>
-          <button id="filterWidthToggle" class="icon-button filter-width-toggle" type="button" aria-label="Expand filters" title="Expand filters" aria-pressed="false">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5 3 12l5 7M16 5l5 7-5 7M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
         </div>
         <div class="filter-scroll">
           <div class="field">
@@ -2336,26 +2702,33 @@
       <section class="workbench" aria-label="Lead results and selected details">
         <div class="workbench-head">
           <div>
-            <h1>Find Estates</h1>
-            <p class="lead-help">Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</p>
-            <div class="shell-mode-strip" aria-label="Operator shell status">
-              <section class="shell-mode">
-                <strong>CRM queue first</strong>
-                <span>Research, review, and handoff stay centered on lead files.</span>
-              </section>
-              <section class="shell-mode">
-                <strong>Command center ready</strong>
-                <span>Composer captures commands without approving live outreach.</span>
-              </section>
-              <section class="shell-mode">
-                <strong>Linear authoritative</strong>
-                <span>Sprint state and blockers stay synced to the project plan.</span>
-              </section>
-              <section class="shell-mode">
-                <strong>Prep-only exports</strong>
-                <span>Podio and Google require access and readback proof.</span>
-              </section>
+            <div class="workbench-title-row">
+              <h1>Find Estates</h1>
+              <div class="shell-info-wrap">
+                <button class="icon-button shell-info-button" type="button" aria-label="More operator shell context" aria-describedby="shellInfoPopover">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 11v5m0-9h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div id="shellInfoPopover" class="shell-info-popover" role="tooltip">
+                  <div class="shell-info-row">
+                    <strong>CRM queue first</strong>
+                    <span>Research, review, and handoff stay centered on lead files.</span>
+                  </div>
+                  <div class="shell-info-row">
+                    <strong>Command center ready</strong>
+                    <span>Composer captures commands without approving live outreach.</span>
+                  </div>
+                  <div class="shell-info-row">
+                    <strong>Linear authoritative</strong>
+                    <span>Sprint state and blockers stay synced to the project plan.</span>
+                  </div>
+                  <div class="shell-info-row">
+                    <strong>Prep-only exports</strong>
+                    <span>Podio and Google require access and readback proof.</span>
+                  </div>
+                </div>
+              </div>
             </div>
+            <p class="lead-help">Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</p>
           </div>
           <div id="summaryMetrics" class="summary-metrics" aria-label="Lead summary metrics"></div>
         </div>
@@ -2500,12 +2873,13 @@
       <aside id="researchRail" class="research-rail" data-open="false" aria-label="HeirRight Research Rail">
         <div id="railResizer" class="rail-resizer" role="separator" aria-orientation="vertical" aria-label="Resize report rail"></div>
         <div class="rail-chrome">
-          <div class="rail-context" aria-live="polite">
-            <span class="rail-context-copy">
+          <div id="railContext" class="rail-context" aria-live="polite">
+            <div id="railContextCopy" class="rail-context-copy" role="button" tabindex="0" aria-label="Rename report rail">
               <span class="rail-context-kicker">Report rail</span>
               <span id="railContextTitle" class="rail-context-title">No lead selected</span>
               <span id="railContextMeta" class="rail-context-meta">Choose a file to review</span>
-            </span>
+              <input id="railRenameInput" class="rail-rename-input" type="text" autocomplete="off" aria-label="Report rail name">
+            </div>
             <span id="railContextPill" class="pill neutral">Waiting</span>
           </div>
           <div class="rail-tabs">
@@ -2561,10 +2935,19 @@
 
     <footer class="statusbar" aria-label="System status">
       <div class="footer-left">
-        <span id="statusRun">packet: [LOADING]</span>
-        <span id="statusSelected">selected: [NONE]</span>
-        <span id="statusRail">rail: [CLOSED]</span>
-        <span id="statusExport">export: [PREP ONLY]</span>
+        <div class="footer-breadcrumb" aria-label="Lead breadcrumb">
+          <button id="footerBack" class="breadcrumb-button" type="button" aria-label="Back">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m15 18-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="footerForward" class="breadcrumb-button" type="button" aria-label="Forward">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9 18 6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span id="statusCrumb" class="breadcrumb-current">[Loading]</span>
+        </div>
+        <span id="statusRun" class="footer-token">packet: [LOADING]</span>
+        <span id="statusSelected" class="footer-token">selected: [NONE]</span>
+        <span id="statusRail" class="footer-token">rail: [CLOSED]</span>
+        <span id="statusExport" class="footer-token">export: [PREP ONLY]</span>
       </div>
       <div class="connection-statuses" aria-label="Connection status">
         <span id="podioStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Podio · Unknown</span>
@@ -2593,9 +2976,11 @@ const state = {
   railPreview: null,
   exportRoute: null,
   filled: new Set(),
+  railNames: {},
   activityOpen: false,
   shellCommandCount: 0,
   shellEvents: [],
+  railRenaming: false,
   shellSettings: {
     signalWeight: "3",
     taxThreshold: "2",
@@ -2608,6 +2993,7 @@ const state = {
 const railWidthKey = "heirright:research-rail-width";
 const filterWidthKey = "heirright:filter-rail-width";
 const filledKey = "heirright:filled-report-gaps";
+const railNamesKey = "heirright:rail-names";
 const themeKey = "heirright:theme";
 const shellSettingsKey = "heirright:shell-settings";
 const columnMap = {
@@ -2878,6 +3264,115 @@ function selectedRow() {
   return state.rows.find((row) => row.id === state.selectedId) ?? state.rows[0] ?? null;
 }
 
+function railNameFor(row = selectedRow()) {
+  if (!row) return "";
+  const saved = state.railNames?.[row.id];
+  return saved && saved.trim() ? saved.trim() : row.title;
+}
+
+function persistRailNames() {
+  localStorage.setItem(railNamesKey, JSON.stringify(state.railNames ?? {}));
+}
+
+function setRailRenaming(isRenaming) {
+  const context = document.getElementById("railContext");
+  const copy = document.getElementById("railContextCopy");
+  if (!context || !copy) return;
+  context.classList.toggle("is-renaming", isRenaming);
+  copy.setAttribute("aria-label", isRenaming ? "Editing report rail name" : "Rename report rail");
+}
+
+function startRailRename() {
+  const row = selectedRow();
+  const input = document.getElementById("railRenameInput");
+  if (!row || !input) return;
+  state.railRenaming = true;
+  setRailRenaming(true);
+  input.value = railNameFor(row);
+  requestAnimationFrame(() => {
+    input.focus();
+    input.select();
+  });
+}
+
+function finishRailRename(save = true) {
+  if (!state.railRenaming) return;
+  const row = selectedRow();
+  const input = document.getElementById("railRenameInput");
+  state.railRenaming = false;
+  setRailRenaming(false);
+  if (!row || !input) return;
+  if (save) {
+    const nextName = input.value.trim().replace(/\s+/g, " ");
+    if (nextName && nextName !== row.title) state.railNames[row.id] = nextName;
+    else delete state.railNames[row.id];
+    persistRailNames();
+    addShellEvent("Report rail renamed", "The report rail label was updated locally for this review session.", "review", false);
+  }
+  syncRailContext(row);
+}
+
+function titleCasePhrase(value) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\b([a-z])/g, (match) => match.toUpperCase())
+    .replace(/\bFl\b/g, "FL")
+    .replace(/\bNw\b/g, "NW")
+    .replace(/\bNe\b/g, "NE")
+    .replace(/\bSw\b/g, "SW")
+    .replace(/\bSe\b/g, "SE");
+}
+
+function formatPersonName(value) {
+  const cleaned = String(value || "")
+    .replace(/\s+-\s+.*$/, "")
+    .replace(/\b(est of|estate of)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned || /needs review|current estate|internal report/i.test(cleaned)) return "Lead File";
+  if (cleaned.includes(",")) {
+    const [last, ...rest] = cleaned.split(",").map((part) => part.trim()).filter(Boolean);
+    const first = rest.join(", ");
+    return first ? `${titleCasePhrase(last)}, ${titleCasePhrase(first)}` : titleCasePhrase(last);
+  }
+  const words = cleaned.split(" ").filter(Boolean);
+  if (words.length >= 2) return `${titleCasePhrase(words.slice(1).join(" "))}, ${titleCasePhrase(words[0])}`;
+  return titleCasePhrase(cleaned);
+}
+
+function cityStateFromAddress(value) {
+  const parts = String(value || "").split(",").map((part) => part.trim()).filter(Boolean);
+  const city = parts.length >= 2 ? parts[1] : "";
+  const stateMatch = (parts[2] || "").match(/\b[A-Z]{2}\b/i);
+  return `${titleCasePhrase(city || "City needs review")}, ${(stateMatch?.[0] || "FL").toUpperCase()}`;
+}
+
+function leadCrumb(row = selectedRow()) {
+  if (!row) return "[No lead selected]";
+  const owner = row.owner || claimValue(state.dossier?.property?.ownerName, row.title || "Lead file");
+  const address = row.address || claimValue(state.dossier?.property?.address, state.data?.seed?.propertyAddress || "");
+  return `[${formatPersonName(owner)}; ${cityStateFromAddress(address)}]`;
+}
+
+function updateFooterLeadContext(row = selectedRow()) {
+  const crumb = leadCrumb(row);
+  const statusCrumb = document.getElementById("statusCrumb");
+  const statusRun = document.getElementById("statusRun");
+  const statusSelected = document.getElementById("statusSelected");
+  if (statusCrumb) {
+    statusCrumb.textContent = crumb;
+    statusCrumb.title = crumb;
+  }
+  if (statusRun) {
+    statusRun.textContent = row ? "packet: [latest]" : "packet: [blocked]";
+    statusRun.title = row ? `Latest packet for ${crumb}` : "No lead packet loaded";
+  }
+  if (statusSelected) {
+    statusSelected.textContent = row ? "selected: [current]" : "selected: [none]";
+    statusSelected.title = row ? `Selected lead ${crumb}` : "No selected lead";
+  }
+}
+
 function applyTheme(theme, persist = true) {
   const nextTheme = theme === "dark" ? "dark" : "light";
   document.body.dataset.theme = nextTheme;
@@ -2905,6 +3400,14 @@ function loadSavedState() {
     if (Array.isArray(storedFilled)) state.filled = new Set(storedFilled.map(String));
   } catch {
     state.filled = new Set();
+  }
+  try {
+    const storedRailNames = JSON.parse(localStorage.getItem(railNamesKey) ?? "{}");
+    state.railNames = storedRailNames && typeof storedRailNames === "object" && !Array.isArray(storedRailNames)
+      ? storedRailNames
+      : {};
+  } catch {
+    state.railNames = {};
   }
   loadShellSettings();
   state.shellEvents = defaultShellEvents();
@@ -3188,19 +3691,34 @@ function animateRailContinuity(origin) {
 }
 
 function syncRailContext(row) {
+  const context = document.getElementById("railContext");
+  const copy = document.getElementById("railContextCopy");
   const title = document.getElementById("railContextTitle");
   const meta = document.getElementById("railContextMeta");
   const pill = document.getElementById("railContextPill");
+  const input = document.getElementById("railRenameInput");
   if (!title || !meta || !pill) return;
   if (!row) {
+    context?.classList.remove("is-renaming");
+    if (copy) {
+      copy.setAttribute("aria-disabled", "true");
+      copy.setAttribute("aria-label", "No report rail selected");
+    }
     title.textContent = "No lead selected";
     meta.textContent = "Choose a file to review";
     pill.className = "pill neutral";
     pill.textContent = "Waiting";
     return;
   }
-  title.textContent = row.title;
+  const railTitle = railNameFor(row);
+  if (copy) {
+    copy.removeAttribute("aria-disabled");
+    copy.setAttribute("aria-label", `Rename report rail: ${railTitle}`);
+  }
+  title.textContent = railTitle;
+  title.title = "Click to rename report rail";
   meta.textContent = `${row.kind} · ${row.address}`;
+  if (input && !state.railRenaming) input.value = railTitle;
   pill.className = `pill ${row.tone}`;
   pill.textContent = row.tone === "blocked" ? "Blocked" : row.tone === "ready" ? "Ready" : "Review";
 }
@@ -3266,7 +3784,7 @@ function openRailPreview(sectionId, source = null) {
     updatedAt: Date.now()
   };
   openRailWithContinuity(source, section.id === "podio" ? "docs" : "flow");
-  document.getElementById("statusSelected").textContent = `selected: [${section.short.toUpperCase()}]`;
+  updateFooterLeadContext(row);
 }
 
 function fillSection(sectionId) {
@@ -3417,7 +3935,7 @@ function renderDetail() {
   document.querySelectorAll("[data-chip]").forEach((chip) => {
     chip.addEventListener("click", () => openRailPreview(chip.dataset.chip, chip));
   });
-  document.getElementById("statusSelected").textContent = `selected: [${row.title.toUpperCase().slice(0, 28)}]`;
+  updateFooterLeadContext(row);
 }
 
 function renderRail() {
@@ -3734,7 +4252,7 @@ function renderLoadedState(data, dossier) {
   state.rows = buildRows(data, dossier);
   state.selectedId = state.selectedId ?? state.rows[0]?.id ?? null;
   document.getElementById("topStatus").textContent = `${data.facts?.length ?? 0} evidence items loaded from the latest run.`;
-  document.getElementById("statusRun").textContent = `packet: [${String(data.runId ?? "LATEST").slice(0, 38)}]`;
+  updateFooterLeadContext(selectedRow());
   updateConnectionStatuses();
   loadConnectionStatuses();
   renderShellPanels();
@@ -3757,7 +4275,7 @@ async function loadRun() {
     state.selectedId = null;
     document.getElementById("topStatus").textContent = error.message;
     document.getElementById("resultsBody").innerHTML = `<tr><td colspan="6"><span class="primary-text">No lead packet loaded.</span><span class="secondary-text">${escapeHtml(error.message)}</span></td></tr>`;
-    document.getElementById("statusRun").textContent = "packet: [BLOCKED]";
+    updateFooterLeadContext(null);
     updateConnectionStatuses();
     renderShellPanels();
   }
@@ -3875,11 +4393,14 @@ function wireEvents() {
   document.getElementById("themeToggle").addEventListener("click", () => {
     applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
   });
-  document.getElementById("filterWidthToggle").addEventListener("click", () => {
-    state.filterWidth = state.filterWidth >= 360 ? 320 : 380;
-    localStorage.setItem(filterWidthKey, String(state.filterWidth));
-    applyFilterWidth();
-  });
+  const filterWidthToggle = document.getElementById("filterWidthToggle");
+  if (filterWidthToggle) {
+    filterWidthToggle.addEventListener("click", () => {
+      state.filterWidth = state.filterWidth >= 360 ? 320 : 380;
+      localStorage.setItem(filterWidthKey, String(state.filterWidth));
+      applyFilterWidth();
+    });
+  }
   document.querySelectorAll("[data-shell-nav]").forEach((button) => {
     button.addEventListener("click", () => {
       document.querySelectorAll("[data-shell-nav]").forEach((item) => item.classList.toggle("is-active", item === button));
@@ -3892,8 +4413,35 @@ function wireEvents() {
     });
   });
   document.getElementById("refresh").addEventListener("click", loadRun);
+  document.getElementById("footerBack").addEventListener("click", () => window.history.back());
+  document.getElementById("footerForward").addEventListener("click", () => window.history.forward());
   document.getElementById("agentDrawerToggle").addEventListener("click", () => setActivityOpen(!state.activityOpen));
   document.getElementById("closeAgentDrawer").addEventListener("click", () => setActivityOpen(false));
+  document.getElementById("railContextCopy").addEventListener("click", (event) => {
+    if (event.target.id === "railRenameInput") return;
+    if (state.railRenaming) return;
+    startRailRename();
+  });
+  document.getElementById("railContextCopy").addEventListener("keydown", (event) => {
+    if (event.target.id === "railRenameInput" || state.railRenaming) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      startRailRename();
+    }
+  });
+  document.getElementById("railRenameInput").addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      finishRailRename(true);
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      finishRailRename(false);
+    }
+  });
+  document.getElementById("railRenameInput").addEventListener("blur", () => finishRailRename(true));
   document.getElementById("commandForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const input = document.getElementById("commandInput");

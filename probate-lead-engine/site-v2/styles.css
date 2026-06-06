@@ -322,12 +322,36 @@ a {
   font-weight: 700;
 }
 
-.nav-mark::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: currentColor;
+.nav-logo {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  color: currentColor;
+}
+
+.nav-logo svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.nav-logo .monogram-frame {
+  stroke: rgba(184, 107, 68, 0.9);
+  stroke-width: 2.1;
+  fill: rgba(255, 255, 255, 0.15);
+}
+
+.nav-logo .monogram-h {
+  stroke: currentColor;
+  stroke-width: 3.6;
+}
+
+.nav-logo .monogram-r {
+  stroke: #32495a;
+  stroke-width: 3.25;
 }
 
 .hero-copy {

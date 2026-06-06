@@ -1,6 +1,12 @@
-const { copyFileSync, mkdirSync } = require("node:fs");
+const { copyFileSync, existsSync, mkdirSync } = require("node:fs");
 const { join } = require("node:path");
 
 mkdirSync(join(__dirname, "dist"), { recursive: true });
 copyFileSync(join(__dirname, "src", "index.html"), join(__dirname, "dist", "index.html"));
+const latestRunPath = join(__dirname, "..", "worker", "output", "latest-run.json");
+if (existsSync(latestRunPath)) {
+  copyFileSync(latestRunPath, join(__dirname, "dist", "latest-run.json"));
+} else if (existsSync(join(__dirname, "demo", "latest-run.json"))) {
+  copyFileSync(join(__dirname, "demo", "latest-run.json"), join(__dirname, "dist", "latest-run.json"));
+}
 console.log("artifact built: dist/index.html");
