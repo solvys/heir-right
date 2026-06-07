@@ -179,20 +179,10 @@
       stroke-linejoin: round;
     }
 
-    .monogram-frame {
-      stroke: rgba(183, 121, 31, .88);
-      stroke-width: 2.1;
-      fill: rgba(255, 255, 255, .2);
-    }
-
-    .monogram-h {
+    .shield-placeholder {
+      fill: none;
       stroke: currentColor;
-      stroke-width: 3.6;
-    }
-
-    .monogram-r {
-      stroke: #0a84ff;
-      stroke-width: 3.25;
+      stroke-width: 2.25;
     }
 
     .toggle-logo {
@@ -438,7 +428,6 @@
     body[data-theme="dark"] .field select,
     body[data-theme="dark"] .field input:not([type="checkbox"]),
     body[data-theme="dark"] .filter-note,
-    body[data-theme="dark"] .metric,
     body[data-theme="dark"] .shell-info-popover,
     body[data-theme="dark"] .shell-composer,
     body[data-theme="dark"] .command-form,
@@ -467,6 +456,14 @@
       color: #fff;
       background: #0a84ff;
       border-color: rgba(10,132,255,.36);
+    }
+
+    body[data-theme="dark"] .shell-info-popover {
+      background: rgba(44,44,46,.92);
+    }
+
+    body[data-theme="dark"] .export-popover {
+      background: rgba(44,44,46,.92);
     }
 
     body[data-theme="dark"] .btn.primary:hover { background: #0077ed; }
@@ -766,6 +763,7 @@
       width: 30px;
       height: 30px;
       color: #0a84ff;
+      border: 0;
       border-radius: 50%;
       background: rgba(10,132,255,.10);
     }
@@ -973,7 +971,7 @@
 
     .pane-head {
       padding: 16px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 0;
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
@@ -1057,7 +1055,7 @@
     .field select:focus,
     .field input:focus {
       border-color: var(--focus-ring);
-      background: rgba(255,255,255,.94);
+      background-color: rgba(255,255,255,.94);
     }
 
     .switch-row,
@@ -1149,20 +1147,13 @@
       font-weight: 820;
     }
 
-    .lead-help {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.42;
-    }
-
     .summary-metrics {
       display: grid;
       grid-template-columns: repeat(4, minmax(82px, 1fr));
       gap: 0;
       width: min(460px, 38vw);
       border-radius: 8px;
-      background: rgba(255,255,255,.34);
+      background: transparent;
     }
 
     .metric {
@@ -1181,7 +1172,11 @@
       top: 8px;
       bottom: 8px;
       width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(16,24,40,.16) 22%, rgba(16,24,40,.16) 78%, transparent);
+      background: linear-gradient(180deg, transparent, rgba(16,24,40,.34) 18%, rgba(16,24,40,.34) 82%, transparent);
+    }
+
+    body[data-theme="dark"] .metric + .metric::before {
+      background: linear-gradient(180deg, transparent, rgba(235,235,245,.38) 18%, rgba(235,235,245,.38) 82%, transparent);
     }
 
     .metric-label {
@@ -1586,6 +1581,25 @@
     .setting-card input[type="range"] {
       width: 100%;
       accent-color: var(--accent);
+    }
+
+    .field select,
+    .setting-card select {
+      appearance: none;
+      -webkit-appearance: none;
+      padding-right: 42px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='m6 9 6 6 6-6' stroke='%236e7681' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 14px 14px;
+    }
+
+    body[data-theme="dark"] .field select,
+    body[data-theme="dark"] .setting-card select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='m6 9 6 6 6-6' stroke='%23a1a1aa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 14px 14px;
     }
 
     .toggle-line {
@@ -2484,6 +2498,14 @@
         right: auto;
         width: min(280px, calc(100vw - 28px));
       }
+      .shell-info-popover {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        top: 140px;
+        width: auto;
+        max-width: none;
+      }
       .content { grid-template-columns: 1fr; overflow: visible; }
       .filters { max-height: none; }
       .filter-resizer { display: none; }
@@ -2518,18 +2540,16 @@
         </span>
         <span class="toggle-logo" aria-hidden="true">
           <svg viewBox="0 0 64 64">
-            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
-            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
-            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+            <path class="shield-placeholder" d="M32 8 49 14.5v16.8c0 10.8-6.8 18.3-17 24.7-10.2-6.4-17-14.9-17-24.7V14.5L32 8Z" />
+            <path class="shield-placeholder" d="M32 17v30" />
           </svg>
         </span>
       </button>
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 64 64">
-            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
-            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
-            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+            <path class="shield-placeholder" d="M32 8 49 14.5v16.8c0 10.8-6.8 18.3-17 24.7-10.2-6.4-17-14.9-17-24.7V14.5L32 8Z" />
+            <path class="shield-placeholder" d="M32 17v30" />
           </svg>
         </span>
         <span>HeirRight</span>
@@ -2561,9 +2581,8 @@
       <div class="user-strip">
         <span class="avatar" aria-hidden="true">
           <svg viewBox="0 0 64 64">
-            <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
-            <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
-            <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
+            <path class="shield-placeholder" d="M32 8 49 14.5v16.8c0 10.8-6.8 18.3-17 24.7-10.2-6.4-17-14.9-17-24.7V14.5L32 8Z" />
+            <path class="shield-placeholder" d="M32 17v30" />
           </svg>
         </span>
         <span>
@@ -2586,13 +2605,13 @@
         <div id="exportMenu" class="export-menu" data-open="false">
           <button id="exportToggle" class="btn primary export-toggle" type="button" aria-haspopup="menu" aria-expanded="false">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v11m0-11 4 4m-4-4-4 4M6 11v8h12v-8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            Export
+            Prep export
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
-          <div id="exportPopover" class="export-popover" role="menu" aria-label="Choose export route">
+          <div id="exportPopover" class="export-popover" role="menu" aria-label="Choose handoff route">
             <button class="export-option" type="button" role="menuitem" data-export-route="google">
               <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h11A2.5 2.5 0 0 1 20 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="1.7"/><path d="m5 8 7 5 7-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-              <span><strong>Google Workspace</strong><span>Create the completed report package for Docs or Sheets review.</span></span>
+              <span><strong>Google Workspace</strong><span>Prepare the completed report package for Docs or Sheets review.</span></span>
             </button>
             <button class="export-option" type="button" role="menuitem" data-export-route="podio">
               <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M5 6h14v12H5V6Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 10h8M8 14h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
@@ -2600,7 +2619,7 @@
             </button>
             <button class="export-option" type="button" role="menuitem" data-export-route="both">
               <span class="export-option-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M8 7h10v12H8V7Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1M11 11h4M11 15h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
-              <span><strong>Google + Podio</strong><span>Stage one completed report package for both export routes.</span></span>
+              <span><strong>Google + Podio</strong><span>Prepare one completed report package for both handoff routes.</span></span>
             </button>
           </div>
         </div>
@@ -2683,7 +2702,7 @@
               <option value="heirs">Heirs or family tree</option>
               <option value="probate">Probate status</option>
               <option value="phones">Phone numbers</option>
-              <option value="podio">Podio export</option>
+              <option value="podio">CRM handoff</option>
             </select>
           </div>
           <label class="switch-row">
@@ -2712,6 +2731,10 @@
                 </button>
                 <div id="shellInfoPopover" class="shell-info-popover" role="tooltip">
                   <div class="shell-info-row">
+                    <strong>Start here</strong>
+                    <span>Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</span>
+                  </div>
+                  <div class="shell-info-row">
                     <strong>CRM queue first</strong>
                     <span>Research, review, and handoff stay centered on lead files.</span>
                   </div>
@@ -2720,17 +2743,16 @@
                     <span>Composer captures commands without approving live outreach.</span>
                   </div>
                   <div class="shell-info-row">
-                    <strong>Linear authoritative</strong>
-                    <span>Sprint state and blockers stay synced to the project plan.</span>
+                    <strong>Project plan authoritative</strong>
+                    <span>Sprint state and blockers stay anchored to the review plan.</span>
                   </div>
                   <div class="shell-info-row">
-                    <strong>Prep-only exports</strong>
+                    <strong>Approval-gated handoffs</strong>
                     <span>Podio and Google require access and readback proof.</span>
                   </div>
                 </div>
               </div>
             </div>
-            <p class="lead-help">Start by choosing a county and what information is missing. Then open a file and fill the missing report sections before outreach.</p>
           </div>
           <div id="summaryMetrics" class="summary-metrics" aria-label="Lead summary metrics"></div>
         </div>
@@ -2793,6 +2815,11 @@
                 <p id="evidenceSummary" class="copy">No evidence loaded yet.</p>
               </section>
               <section class="glass-card detail-card">
+                <h3 class="card-title">30-Day milestone blockers</h3>
+                <p class="copy">Resolve these before claiming lead volume or live CRM handoff.</p>
+                <ul id="milestoneBlockers" class="mini-list"></ul>
+              </section>
+              <section class="glass-card detail-card">
                 <h3 class="card-title">Report gaps</h3>
                 <div id="detailChips" class="chip-list"></div>
               </section>
@@ -2836,22 +2863,22 @@
                   </div>
                 </div>
               </section>
-              <section class="glass-card shell-panel" aria-label="Runtime and Linear sync">
+              <section class="glass-card shell-panel" aria-label="Internal validation and project plan">
                 <div>
-                  <p class="eyebrow">Runtime</p>
-                  <h3 class="card-title">Local runs and Linear sync</h3>
+                  <p class="eyebrow">Internal</p>
+                  <h3 class="card-title">Validation and project plan</h3>
                 </div>
                 <div class="runtime-grid">
                   <div class="runtime-card">
-                    <span><strong>Latest dry run</strong><span id="runtimeRunId">Waiting for packet</span></span>
-                    <button class="btn" type="button" data-shell-command="dry-run">Stage</button>
+                    <span><strong>Latest review pass</strong><span id="runtimeRunId">Waiting for packet</span></span>
+                    <button class="btn" type="button" data-shell-command="dry-run">Note</button>
                   </div>
                   <div class="runtime-card">
-                    <span><strong>Artifact preview</strong><span>Served from the latest local packet.</span></span>
+                    <span><strong>Lead packet preview</strong><span>Served from the latest review packet.</span></span>
                     <button class="btn" type="button" data-shell-command="open-report">Open</button>
                   </div>
                   <div class="runtime-card">
-                    <span><strong>Linear source of truth</strong><span id="linearSyncState">S11 shell foundation in progress</span></span>
+                    <span><strong>Project plan source</strong><span id="linearSyncState">Operator shell polish in progress</span></span>
                     <button class="btn" type="button" data-shell-command="linear-sync">Sync</button>
                   </div>
                 </div>
@@ -2917,8 +2944,8 @@
       <div class="composer-actions" aria-label="Common commands">
         <button class="btn quick" type="button" data-shell-command="open-report">Report</button>
         <button class="btn quick" type="button" data-shell-command="record-blocker">Blocker</button>
-        <button class="btn quick" type="button" data-shell-command="stage-export">Stage export</button>
-        <button class="btn quick" type="button" data-shell-command="linear-sync">Linear</button>
+        <button class="btn quick" type="button" data-shell-command="stage-export">Prep export</button>
+        <button class="btn quick" type="button" data-shell-command="linear-sync">Plan</button>
       </div>
     </section>
 
@@ -2949,7 +2976,7 @@
         <span id="statusRun" class="footer-token">packet: [LOADING]</span>
         <span id="statusSelected" class="footer-token">selected: [NONE]</span>
         <span id="statusRail" class="footer-token">rail: [CLOSED]</span>
-        <span id="statusExport" class="footer-token">export: [PREP ONLY]</span>
+        <span id="statusExport" class="footer-token">handoff: [PREP ONLY]</span>
       </div>
       <div class="connection-statuses" aria-label="Connection status">
         <span id="podioStatus" class="connection-chip neutral"><span class="connection-dot" aria-hidden="true"></span>Podio · Unknown</span>
@@ -2964,6 +2991,7 @@
 const state = {
   data: null,
   dossier: null,
+  dailyRun: null,
   session: null,
   connections: [],
   exportResult: null,
@@ -3160,11 +3188,11 @@ function buildMissingSections(dossier) {
     },
     {
       id: "podio",
-      label: "Prepare Podio export",
-      short: "Podio export",
+      label: "Prepare CRM handoff",
+      short: "CRM handoff",
       type: "podio",
       source: "CRM prep",
-      copy: "Prepare the CRM package, missing config list, test-write steps, and readback checks.",
+      copy: "Prepare the CRM handoff package, missing setup list, controlled-write steps, and readback checks.",
       tasks: (dossier.crm?.payload?.podioReadiness?.blockers ?? []).map((blocker) => ({ title: "Podio access", nextAction: blocker }))
     }
   ];
@@ -3424,14 +3452,14 @@ function persistFilled() {
 function defaultShellEvents() {
   return [
     {
-      title: "S11 shell foundation loaded",
-      copy: "HeirRight navigation, composer, settings, runtime, and admin event surfaces are active.",
+      title: "Operator shell loaded",
+      copy: "HeirRight navigation, review settings, activity, and handoff controls are active.",
       tone: "ready",
       at: Date.now()
     },
     {
-      title: "Podio CRM handoff ready",
-      copy: "The latest lead packet can be staged for Podio review. Live CRM writes still require credentials, approval, and readback proof.",
+      title: "CRM handoff prep ready",
+      copy: "The latest lead packet can be prepared for Podio review. Live CRM writes still require credentials, approval, and readback proof.",
       tone: "review",
       at: Date.now() - 60000
     }
@@ -3506,8 +3534,58 @@ function renderShellPanels() {
   if (blockers) blockers.textContent = String((state.exportResult?.blockers?.length ?? 0) + 1);
   if (events) events.textContent = String(Math.max(state.shellEvents.length, defaultShellEvents().length));
   if (runtimeRunId) runtimeRunId.textContent = state.data?.runId ? String(state.data.runId).slice(0, 38) : "Waiting for packet";
-  if (linearSyncState) linearSyncState.textContent = state.activityOpen ? "Activity drawer open" : "S11 shell foundation in progress";
+  if (linearSyncState) linearSyncState.textContent = state.activityOpen ? "Activity drawer open" : "S11 operator shell review";
   renderActivityDrawer();
+}
+
+function uniqueItems(items) {
+  return [...new Set(items.map((item) => String(item || "").trim()).filter(Boolean))];
+}
+
+function operatorBlockerText(value) {
+  return String(value || "")
+    .replace(/Raw lead count/i, "Raw leads")
+    .replace(/Qualified lead count/i, "Qualified leads")
+    .replace(/No production batch seed file was provided; default review seeds do not satisfy contract volume\./i, "Production county seed file is still needed before volume targets can be claimed.")
+    .replace(/Lead bucket is review_required, not qualified\./i, "Lead is still in review, not qualified.")
+    .replace(/Workflow status is review_required\./i, "Workflow still needs operator review.")
+    .replace(/Operator queue is manual_review\./i, "Operator queue still needs manual review.")
+    .replace(/No enrichment\/contact run has been approved or completed\./i, "Contact research has not been approved or completed.")
+    .replace(/Report has (\d+) missing section\(s\)\./i, "$1 report sections still need review.")
+    .replace(/Live (Google|Podio) readback skipped in dry-run mode\./i, "$1 readback has not run yet.")
+    .replace(/Live (Google|Podio) config still needed before controlled write\/readback: /i, "$1 setup still needed before controlled write/readback: ");
+}
+
+function milestoneBlockers(dossier) {
+  const blockers = [];
+  const dailyRun = state.dailyRun;
+  const dailyMisses = dailyRun?.missedVolumeReasons ?? [];
+  if (dailyMisses.length) {
+    blockers.push(...dailyMisses.slice(0, 3).map(operatorBlockerText));
+  } else {
+    blockers.push("Production county seed file is still needed before volume targets can be claimed.");
+  }
+
+  const podio = dossier?.crm?.payload?.podioReadiness ?? {};
+  if ((podio.missingConfig?.length ?? 0) || (podio.blockers?.length ?? 0)) {
+    blockers.push("Podio handoff still needs access, an approved controlled test item, and readback proof.");
+  }
+
+  const reportMissing = dossier?.completedLeadReport?.missingData?.length ?? buildMissingSections(dossier ?? {}).length;
+  if (reportMissing > 0) {
+    blockers.push(`${reportMissing} report section${reportMissing === 1 ? "" : "s"} still need review before a completed lead claim.`);
+  }
+
+  blockers.push("Google Workspace handoff still needs approved Drive, Docs, and tracking Sheet configuration.");
+  return uniqueItems(blockers).slice(0, 6);
+}
+
+function renderMilestoneBlockers(dossier) {
+  const list = document.getElementById("milestoneBlockers");
+  if (!list) return;
+  list.innerHTML = milestoneBlockers(dossier).map((blocker) => `
+    <li><strong>Needs review</strong><span>${escapeHtml(blocker)}</span></li>
+  `).join("");
 }
 
 function setActivityOpen(open) {
@@ -3545,24 +3623,24 @@ function runShellCommand(command, source = null, freeform = "") {
     addShellEvent("Report rail opened", "The current lead report is open for operator review.", "ready", false);
     openUtilityRail("report", source);
   } else if (action === "record-blocker") {
-    document.getElementById("statusExport").textContent = "export: [BLOCKED]";
+    document.getElementById("statusExport").textContent = "handoff: [BLOCKED]";
     document.getElementById("topStatus").textContent = "Blocker recorded: Podio remains gated until access and readback proof.";
     addShellEvent("Blocker recorded", freeform || "Podio access, controlled write approval, and readback proof are still required.", "blocked");
   } else if (action === "stage-export") {
     state.railPreview = {
-      title: "Export staged for review",
-      markdown: "The export package is staged in prep-only mode. No live Podio or Google write was attempted.",
+      title: "Handoff package prepared for review",
+      markdown: "The handoff package is prepared in review-only mode. No live Podio or Google write was attempted.",
       updatedAt: Date.now()
     };
-    document.getElementById("statusExport").textContent = "export: [STAGED]";
-    addShellEvent("Export package staged", "Google Workspace and Podio handoff remain prep-only until access proof clears.", "review", false);
+    document.getElementById("statusExport").textContent = "handoff: [PREPARED]";
+    addShellEvent("Handoff package prepared", "Google Workspace and Podio handoff remain prep-only until access proof clears.", "review", false);
     openRailWithContinuity(source, "docs");
   } else if (action === "linear-sync") {
-    document.getElementById("topStatus").textContent = "Linear remains the project source of truth for S11.";
-    addShellEvent("Linear sync noted", "Sprint state stays anchored to Linear; the shell only mirrors local review context.", "ready", false);
+    document.getElementById("topStatus").textContent = "The project plan remains the source of truth for S11.";
+    addShellEvent("Project plan sync noted", "Sprint state stays anchored to the project plan; the shell only mirrors local review context.", "ready", false);
   } else if (action === "dry-run") {
-    document.getElementById("topStatus").textContent = "Dry-run command staged. Run the local worker command from the repo for execution.";
-    addShellEvent("Dry run staged", "Local runtime command captured for operator review; no browser-side shell execution was attempted.", "review", false);
+    document.getElementById("topStatus").textContent = "Review pass noted. Run the local validation command from the repo for execution.";
+    addShellEvent("Review pass noted", "Internal validation was captured for review; no browser-side execution was attempted.", "review", false);
   } else {
     addShellEvent("Command captured", freeform || "The command was captured as an operator note for the current review session.", "review");
   }
@@ -3931,6 +4009,7 @@ function renderDetail() {
   const evidencePct = Math.round((row.evidence / row.evidenceTotal) * 100);
   document.getElementById("evidenceFill").style.width = `${Math.min(100, evidencePct)}%`;
   document.getElementById("evidenceSummary").textContent = `${row.evidence} of ${row.evidenceTotal} report sections have evidence attached.`;
+  renderMilestoneBlockers(dossier);
   document.getElementById("detailChips").innerHTML = row.missing.length
     ? row.missing.map((item) => `<button class="chip" type="button" data-chip="${escapeHtml(item.id)}">${escapeHtml(item.label)}</button>`).join("")
     : `<span class="copy">No missing sections for this view.</span>`;
@@ -3963,8 +4042,8 @@ function renderRail() {
       <div class="rail-title-row">
         <div>
           <p class="eyebrow">Review packet</p>
-          <h2 class="rail-title">Fill these sections before export</h2>
-          <p class="copy">Use this rail as the shared workspace for the selected lead, report preview, and export prep.</p>
+          <h2 class="rail-title">Fill these sections before handoff</h2>
+          <p class="copy">Use this rail as the shared workspace for the selected lead, report preview, and handoff prep.</p>
         </div>
         ${statusPill(row.tone, row.tone === "blocked" ? "Blocked" : row.tone === "ready" ? "Ready" : "Review")}
       </div>
@@ -4025,7 +4104,7 @@ function railTimelineHtml(row, dossier) {
     ["County records checked", `${row.evidence} evidence sections attached so far.`],
     ["Report gaps visible", `${row.missing.length} missing section${row.missing.length === 1 ? "" : "s"} still need review.`],
     ["Operator review", decisionCopy(dossier).next],
-    ["Export prep", "Podio and Google Workspace stay prep-only until access and approval are clear."]
+    ["Handoff prep", "Podio and Google Workspace stay prep-only until access and approval are clear."]
   ];
   return `
     <section class="glass-card rail-card">
@@ -4061,7 +4140,7 @@ function railDocsHtml(row, dossier) {
   return `
     <section class="glass-card rail-card">
       <h3>Completed report packet</h3>
-      <p class="copy">This Streamdown-rendered report is the source of truth for Google Workspace, Podio, or both.</p>
+      <p class="copy">This rendered report is the source of truth for Google Workspace, Podio, or both.</p>
       <ul class="report-cover mini-list">
         <li><strong>Date added</strong><span>${escapeHtml(new Date(report?.generatedAt ?? dossier.generatedAt ?? Date.now()).toLocaleDateString())}</span></li>
         <li><strong>Property</strong><span>${escapeHtml(dossier.property?.address?.value ?? row.address ?? "Needs review")}</span></li>
@@ -4070,12 +4149,12 @@ function railDocsHtml(row, dossier) {
         <li><strong>Offer status</strong><span>${escapeHtml(offerMath?.offerAmount?.note ?? "Draft until underwriting review")}</span></li>
         <li><strong>Missing data</strong><span>${escapeHtml(`${report?.missingData?.length ?? row.missing.length} open section${(report?.missingData?.length ?? row.missing.length) === 1 ? "" : "s"}`)}</span></li>
       </ul>
-      <iframe class="doc-frame" data-renderer="streamdown" sandbox="" title="Streamdown rendered lead report" srcdoc="${escapeHtml(reportHtml)}"></iframe>
+      <iframe class="doc-frame" data-renderer="streamdown" sandbox="" title="Rendered lead report" srcdoc="${escapeHtml(reportHtml)}"></iframe>
     </section>
     <section class="glass-card rail-card">
-      <h3>Export readiness</h3>
+      <h3>Handoff readiness</h3>
       <ul class="mini-list">
-        <li><strong>Selected route</strong><span>${escapeHtml(exportMeta?.label ?? "Choose an export route from the header.")}</span></li>
+        <li><strong>Selected route</strong><span>${escapeHtml(exportMeta?.label ?? "Choose a handoff route from the header.")}</span></li>
         <li><strong>Podio status</strong><span>${escapeHtml(displayStatus(dossier.crm?.status, "Prep only"))}</span></li>
         <li><strong>Missing config</strong><span>${escapeHtml((podio?.missingConfig ?? []).join(", ") || "None recorded")}</span></li>
         <li><strong>Readback checks</strong><span>${escapeHtml(podio?.readbackChecks?.length ?? 0)} required</span></li>
@@ -4112,19 +4191,19 @@ function railDocsHtml(row, dossier) {
       <section class="glass-card rail-card">
         <h3>Live Podio blockers</h3>
         <ul class="mini-list">
-          ${liveBlockers.map((blocker) => `<li><strong>Needs setup</strong><span>${escapeHtml(blocker)}</span></li>`).join("")}
+          ${liveBlockers.map((blocker) => `<li><strong>Needs setup</strong><span>${escapeHtml(operatorBlockerText(blocker))}</span></li>`).join("")}
         </ul>
       </section>
     ` : ""}
     ${exportResults.length ? `
       <section class="glass-card rail-card">
-        <h3>Export result</h3>
+        <h3>Handoff result</h3>
         <ul class="mini-list">
           ${exportResults.map((result) => `
             <li>
               <strong>${escapeHtml(displayStatus(result.route))}</strong>
-              <span>${escapeHtml(result.message ?? "Export result recorded.")}</span>
-              <span>${escapeHtml(result.mode ?? "blocked")} · readback ${result.readbackOk ? "passed" : "not proven"}</span>
+              <span>${escapeHtml(result.message ?? "Handoff result recorded.")}</span>
+              <span>${escapeHtml(handoffModeLabel(result.mode))} · readback ${result.readbackOk ? "passed" : "not proven"}</span>
             </li>
           `).join("")}
         </ul>
@@ -4132,9 +4211,9 @@ function railDocsHtml(row, dossier) {
     ` : ""}
     ${exportBlockers.length ? `
       <section class="glass-card rail-card">
-        <h3>Export blockers</h3>
+        <h3>Handoff blockers</h3>
         <ul class="mini-list">
-          ${exportBlockers.map((blocker) => `<li><strong>Needs setup</strong><span>${escapeHtml(blocker)}</span></li>`).join("")}
+          ${exportBlockers.map((blocker) => `<li><strong>Needs setup</strong><span>${escapeHtml(operatorBlockerText(blocker))}</span></li>`).join("")}
         </ul>
       </section>
     ` : ""}
@@ -4161,6 +4240,13 @@ function connectionVisibleState(tone, status) {
   if (tone === "review") return "Prep";
   if (tone === "blocked") return "Blocked";
   return "Unknown";
+}
+
+function handoffModeLabel(mode) {
+  if (mode === "dry_run") return "prep only";
+  if (mode === "blocked") return "blocked";
+  if (mode === "live") return "live";
+  return displayStatus(mode, "review");
 }
 
 function connectionName(id) {
@@ -4227,13 +4313,13 @@ function updateConnectionStatuses() {
   setConnectionChip(
     "podioStatus",
     podioBlocked ? "blocked" : "review",
-    podioBlocked ? "Podio is not connected. Export package is prep-only." : "Podio package is staged for a controlled test.",
+    podioBlocked ? "Podio is not connected. Handoff package is prep-only." : "Podio package is prepared for a controlled test.",
     podioBlocked ? "Prep blocked" : "Prep ready"
   );
   setConnectionChip(
     "googleStatus",
     "review",
-    "Google Workspace export is staged only. No live Docs or Sheets write has run.",
+    "Google Workspace handoff is prep-only. No live Docs or Sheets write has run.",
     "Prep only"
   );
   const publicSourceOk = (state.data?.facts ?? []).some((fact) => {
@@ -4253,12 +4339,22 @@ function renderLoadedState(data, dossier) {
   state.dossier = dossier;
   state.rows = buildRows(data, dossier);
   state.selectedId = state.selectedId ?? state.rows[0]?.id ?? null;
-  document.getElementById("topStatus").textContent = `${data.facts?.length ?? 0} evidence items loaded from the latest run.`;
+  document.getElementById("topStatus").textContent = `${data.facts?.length ?? 0} evidence items loaded from the latest lead review.`;
   updateFooterLeadContext(selectedRow());
   updateConnectionStatuses();
   loadConnectionStatuses();
   renderShellPanels();
   renderAll();
+}
+
+async function loadDailyRun() {
+  try {
+    const response = await fetch("/daily-run.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("No daily run loaded.");
+    return await response.json();
+  } catch {
+    return null;
+  }
 }
 
 async function loadRun() {
@@ -4267,11 +4363,13 @@ async function loadRun() {
     const response = await fetch("/latest-run.json", { cache: "no-store" });
     if (!response.ok) throw new Error("No latest lead found. Run the lead review pipeline first.");
     const data = await response.json();
-    if (!data.dossier) throw new Error("The latest run did not include a dossier.");
+    if (!data.dossier) throw new Error("The latest lead review did not include a dossier.");
+    state.dailyRun = await loadDailyRun();
     renderLoadedState(data, data.dossier);
   } catch (error) {
     state.data = null;
     state.dossier = null;
+    state.dailyRun = null;
     state.rows = [];
     state.filteredRows = [];
     state.selectedId = null;
@@ -4287,21 +4385,21 @@ function exportRouteMeta(route) {
   const routes = {
     google: {
       label: "Google Workspace",
-      status: "export: [GOOGLE]",
-      title: "Export to Google Workspace",
-      copy: "Stage the completed report for Google Docs or Sheets review. Use this when the team needs a clean document package before outreach."
+      status: "handoff: [GOOGLE]",
+      title: "Prepare Google Workspace handoff",
+      copy: "Prepare the completed report for Google Docs or Sheets review. Use this when the team needs a clean document package before outreach."
     },
     podio: {
       label: "Podio",
-      status: "export: [PODIO]",
-      title: "Export to Podio",
-      copy: "Stage the completed report and lead fields for Podio. Use this when the file is ready for CRM handoff."
+      status: "handoff: [PODIO]",
+      title: "Prepare Podio handoff",
+      copy: "Prepare the completed report and lead fields for Podio. Use this when the file is ready for CRM handoff."
     },
     both: {
       label: "Google + Podio",
-      status: "export: [GOOGLE + PODIO]",
-      title: "Export to Google + Podio",
-      copy: "Stage one completed report package for Google Workspace review and Podio handoff."
+      status: "handoff: [GOOGLE + PODIO]",
+      title: "Prepare Google + Podio handoff",
+      copy: "Prepare one completed report package for Google Workspace review and Podio handoff."
     }
   };
   return routes[route] ?? routes.both;
@@ -4323,20 +4421,20 @@ async function chooseExportRoute(route, source = null) {
   const meta = exportRouteMeta(route);
   setExportMenuOpen(false);
   if (!state.dossier) {
-    document.getElementById("topStatus").textContent = "Load the latest lead packet before choosing an export route.";
-    document.getElementById("statusExport").textContent = "export: [WAITING]";
+    document.getElementById("topStatus").textContent = "Load the latest lead packet before choosing a handoff route.";
+    document.getElementById("statusExport").textContent = "handoff: [WAITING]";
     return;
   }
   state.exportRoute = route;
   state.exportResult = null;
   state.railPreview = {
     title: meta.title,
-    markdown: `${meta.copy} Staging a review-only handoff package now. No live CRM write will be attempted from this demo surface.`,
+    markdown: `${meta.copy} Preparing a review-only handoff package now. No live CRM write will be attempted from this demo surface.`,
     updatedAt: Date.now()
   };
   openRailWithContinuity(source, "docs");
   document.getElementById("statusExport").textContent = meta.status;
-  document.getElementById("topStatus").textContent = `Staging completed report handoff for ${meta.label}...`;
+  document.getElementById("topStatus").textContent = `Preparing completed report handoff for ${meta.label}...`;
   try {
     const response = await fetch("/api/exports", {
       method: "POST",
@@ -4350,11 +4448,11 @@ async function chooseExportRoute(route, source = null) {
     state.exportResult = result;
     const blockers = (result.blockers ?? []).filter((blocker) => !/skipped in dry-run mode/i.test(blocker));
     document.getElementById("topStatus").textContent = result.ok
-      ? `${meta.label} handoff staged for review. Live readback still needs approval before any CRM write.`
+      ? `${meta.label} handoff prepared for review. Live readback still needs approval before any CRM write.`
       : blockers.length
         ? `${meta.label} handoff has ${blockers.length} blocker${blockers.length === 1 ? "" : "s"}.`
         : `${meta.label} handoff is blocked.`;
-    document.getElementById("statusExport").textContent = result.ok ? `${meta.status} [STAGED]` : `${meta.status} [BLOCKED]`;
+    document.getElementById("statusExport").textContent = result.ok ? `${meta.status} [PREPARED]` : `${meta.status} [BLOCKED]`;
     await loadConnectionStatuses();
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -4363,7 +4461,7 @@ async function chooseExportRoute(route, source = null) {
       blockers: [message],
       routes: [],
     };
-    document.getElementById("topStatus").textContent = `Export blocked: ${message}`;
+    document.getElementById("topStatus").textContent = `Handoff blocked: ${message}`;
     document.getElementById("statusExport").textContent = `${meta.status} [BLOCKED]`;
   }
   renderShellPanels();
@@ -4378,7 +4476,7 @@ function openUtilityRail(kind, source = null) {
       markdown: "Review the report preview and fill missing sections before outreach.",
       updatedAt: Date.now()
     };
-    document.getElementById("statusExport").textContent = "export: [REPORT VIEW]";
+    document.getElementById("statusExport").textContent = "handoff: [REPORT VIEW]";
     openRailWithContinuity(origin, "docs");
     return;
   }

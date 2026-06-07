@@ -7,6 +7,7 @@ const { join } = require("node:path");
 const port = Number(process.env.PORT || 4173);
 const root = join(__dirname, "dist");
 const workerOutput = join(__dirname, "..", "worker", "output", "latest-run.json");
+const dailyRunOutput = join(__dirname, "..", "worker", "output", "daily-run.json");
 const sessionCookie = process.env.AUTH_SESSION_COOKIE || "hr_session";
 const stateCookie = process.env.AUTH_STATE_COOKIE || "hr_oauth_state";
 const sessionTtlSeconds = Number(process.env.AUTH_SESSION_TTL_SECONDS || 60 * 60 * 12);
@@ -309,7 +310,7 @@ function localExportRoute(route, dryRun) {
         `Live ${routeName} readback skipped in dry-run mode.`,
         ...(missing.length ? [`Live ${routeName} config still needed before controlled write/readback: ${missing.join(", ")}`] : []),
       ],
-      message: `${routeName} handoff package is staged from the latest lead packet. No live write was attempted.`,
+      message: `${routeName} handoff package is prepared from the latest lead packet. No live write was attempted.`,
     };
   }
   if (!dryRun && !workerApiBase()) {
@@ -484,7 +485,7 @@ createServer((req, res) => {
 
   const session = readSession(req);
   if (authRequired() && !session) {
-    if (url.pathname === "/latest-run.json" || url.pathname.startsWith("/api/")) {
+    if (url.pathname === "/latest-run.json" || url.pathname === "/daily-run.json" || url.pathname.startsWith("/api/")) {
       sendJson(res, 401, { ok: false, error: "auth_required", loginUrl: "/auth/login" });
       return;
     }
@@ -523,6 +524,24 @@ createServer((req, res) => {
     }
     res.writeHead(200, { "content-type": "application/json" });
     res.end(readFileSync(workerOutput));
+    return;
+  }
+
+  if (url.pathname === "/daily-run.json") {
+    const proxied = proxyWorkerJson("/daily-run.json");
+    proxied.then((response) => {
+      if (response) {
+        res.writeHead(response.status, { "content-type": response.contentType, "cache-control": "no-store" });
+        res.end(response.body);
+        return;
+      }
+      if (!existsSync(dailyRunOutput)) {
+        sendJson(res, 404, { error: "Run the daily production review first." });
+        return;
+      }
+      res.writeHead(200, { "content-type": "application/json", "cache-control": "no-store" });
+      res.end(readFileSync(dailyRunOutput));
+    }).catch((error) => sendJson(res, 502, { ok: false, error: error.message }));
     return;
   }
 
