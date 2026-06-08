@@ -15,6 +15,29 @@ function setupNavigation(): void {
 }
 
 function setupAnchorScroll(): void {
+  const scrollToTarget = (target: HTMLElement) => {
+    const nav = document.querySelector<HTMLElement>("[data-site-nav]");
+    const navOffset = nav ? nav.getBoundingClientRect().height + 20 : 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - navOffset;
+    const behavior: ScrollBehavior = reducedMotion ? "auto" : "smooth";
+
+    window.scrollTo({ top, behavior });
+
+    if (!target.hasAttribute("tabindex")) {
+      target.setAttribute("tabindex", "-1");
+    }
+    target.focus({ preventScroll: true });
+
+    if (!reducedMotion) {
+      window.setTimeout(() => {
+        const distanceFromOffset = Math.abs(target.getBoundingClientRect().top - navOffset);
+        if (distanceFromOffset > 32) {
+          window.scrollTo({ top, behavior: "auto" });
+        }
+      }, 720);
+    }
+  };
+
   document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (event) => {
       const hash = link.getAttribute("href");
@@ -25,11 +48,59 @@ function setupAnchorScroll(): void {
 
       event.preventDefault();
       window.history.pushState(null, "", hash);
-      target.scrollIntoView({
-        behavior: reducedMotion ? "auto" : "smooth",
-        block: "start"
-      });
+      scrollToTarget(target);
     });
+  });
+}
+
+function setupHeroMotion(): void {
+  const hero = document.querySelector<HTMLElement>(".hero");
+  const blurTexts = document.querySelectorAll<HTMLElement>("[data-blur-text]");
+  if (!hero || blurTexts.length === 0) return;
+
+  hero.classList.add("is-motion-ready");
+
+  const reveal = (target: HTMLElement) => {
+    target.classList.add("is-visible");
+    hero.classList.add("is-visible");
+  };
+
+  blurTexts.forEach((target) => {
+    const words = target.textContent?.trim().split(/\s+/).filter(Boolean) ?? [];
+    target.textContent = "";
+    target.setAttribute("aria-label", words.join(" "));
+
+    words.forEach((word, index) => {
+      const span = document.createElement("span");
+      span.className = "blur-word";
+      span.textContent = word;
+      span.setAttribute("aria-hidden", "true");
+      span.style.setProperty("--word-delay", `${index * 100}ms`);
+      target.append(span);
+    });
+
+    if (reducedMotion) {
+      reveal(target);
+      return;
+    }
+
+    if (target.getBoundingClientRect().top < window.innerHeight) {
+      reveal(target);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          reveal(target);
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(target);
   });
 }
 
@@ -88,4 +159,5 @@ function setupReviewForm(): void {
 
 setupNavigation();
 setupAnchorScroll();
+setupHeroMotion();
 setupReviewForm();

@@ -19,23 +19,33 @@
   </head>
   <body>
     <header class="site-nav" data-site-nav>
-      <a class="brand" href="#top" aria-label="HeirRight home">
-        <span class="brand-mark" aria-hidden="true">
+      <a class="brand nav-logo" href="#top" aria-label="HeirRight home">
+        <span class="brand-mark liquid-glass" aria-hidden="true">
           <svg viewBox="0 0 64 64">
             <rect class="monogram-frame" x="8" y="6" width="48" height="52" rx="8" />
             <path class="monogram-h" d="M19 16v32M19 32h18M37 16v32" />
             <path class="monogram-r" d="M31 16h12c7 0 11 4 11 10s-4 10-11 10H31m13 0 10 12" />
           </svg>
         </span>
-        <span>HeirRight</span>
+        <span class="brand-name">HeirRight</span>
       </a>
-      <nav class="nav-links" aria-label="Primary navigation">
-        <a href="#review">Review</a>
-        <a href="#process">Process</a>
-        <a href="#fit">Fit</a>
-        <a href="#questions">Questions</a>
-      </nav>
-      <a class="nav-cta" href="#contact">Request Review</a>
+      <div class="nav-center liquid-glass">
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a href="#top">Home</a>
+          <a href="#review">Review</a>
+          <a href="#process">Process</a>
+          <a href="#fit">Fit</a>
+          <a href="#questions">Questions</a>
+        </nav>
+        <a class="nav-cta" href="#contact" aria-label="Request Review">
+          <span class="nav-cta-full">Request Review</span>
+          <span class="nav-cta-short" aria-hidden="true">Review</span>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 17 17 7M7 7h10v10" />
+          </svg>
+        </a>
+      </div>
+      <span class="nav-balance" aria-hidden="true"></span>
     </header>
 
     <main id="top">
@@ -45,25 +55,62 @@
           src="/assets/property-review-dossier.png"
           alt="Inherited property review folder with property photo, tax receipts, and family tree notes"
         />
-        <div class="hero-content">
-          <h1>Inherited Property Review</h1>
-          <p class="hero-lede">
+        <div class="hero-content" data-hero-reveal>
+          <div class="hero-badge liquid-glass hero-animate" style="--delay: 120ms">
+            <span>Review</span>
+            <p>Title, tax, probate, and heir questions clarified before the next step</p>
+          </div>
+          <h1 class="hero-title blur-words" data-blur-text>Inherited Property Review</h1>
+          <p class="hero-lede hero-animate" style="--delay: 640ms">
             Untangle the estate. Keep the next step clear.
           </p>
-          <p>
+          <p class="hero-summary hero-animate" style="--delay: 820ms">
             HeirRight helps families review title issues, taxes, liens, probate
             questions, and heir coordination before deciding whether to sell,
             hold, or resolve the property another way.
           </p>
-          <div class="hero-actions">
-            <a class="button primary" href="#contact">Request a free property review</a>
-            <a class="button secondary" href="tel:+17869623457">Call 786-962-3457</a>
+          <div class="hero-actions hero-animate" style="--delay: 1040ms">
+            <a class="button primary liquid-glass-strong" href="#contact">
+              Request a free property review
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </a>
+            <a class="button secondary hero-call-link" href="tel:+17869623457">
+              <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 4 20 12 6 20V4Z" />
+              </svg>
+              Call 786-962-3457
+            </a>
+          </div>
+          <div class="hero-stats hero-animate" style="--delay: 1220ms" aria-label="HeirRight review highlights">
+            <article class="hero-stat-card liquid-glass">
+              <svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5V21l-3-1.8-3 1.8-3-1.8L8 21l-4-2.4V5.5Z" />
+                <path d="M8 8h8M8 12h8M8 16h5" />
+              </svg>
+              <strong>5 Review Areas</strong>
+              <span>Title, taxes, liens, probate, and heirs</span>
+            </article>
+            <article class="hero-stat-card liquid-glass">
+              <svg class="stat-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 21a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17Z" />
+                <path d="M3.5 12h17M12 3.5c2.25 2.25 3.25 5 3.25 8.5s-1 6.25-3.25 8.5M12 3.5C9.75 5.75 8.75 8.5 8.75 12s1 6.25 3.25 8.5" />
+              </svg>
+              <strong>Team-Led</strong>
+              <span>Clear review before any offer conversation</span>
+            </article>
           </div>
         </div>
-        <div class="hero-proof" aria-label="Review highlights">
-          <span>Team-led review</span>
-          <span>Title and tax questions</span>
-          <span>South Florida focus</span>
+        <div class="hero-partners hero-animate" style="--delay: 1380ms" aria-label="Review focus areas">
+          <span class="liquid-glass">Focused on inherited-property issues families ask about first</span>
+          <div>
+            <p>Title</p>
+            <p>Taxes</p>
+            <p>Liens</p>
+            <p>Probate</p>
+            <p>Heirs</p>
+          </div>
         </div>
       </section>
 
