@@ -246,6 +246,44 @@ export interface ConnectionStatus {
   checkedAt: string;
 }
 
+export type MilestoneEvidenceGateStatus = "passed" | "review_required" | "blocked";
+
+export interface MilestoneEvidenceGate {
+  id: string;
+  label: string;
+  status: MilestoneEvidenceGateStatus;
+  evidence: string;
+  nextAction: string;
+  blockers: string[];
+}
+
+export interface ThirtyDayMilestoneEvidence {
+  milestone: "30-Day Workflow Automation Milestone";
+  generatedAt: string;
+  overallStatus: "ready_for_human_review" | "blocked";
+  operatorSummary: string;
+  dailyRun: {
+    id: string;
+    seedSource: DailyRunConfig["seedSource"];
+    counties: string[];
+    rawLeadCount: number;
+    rawLeadTarget: DailyRunConfig["targetRawLeadRange"];
+    qualifiedLeadCount: number;
+    qualifiedLeadTarget: DailyRunConfig["targetQualifiedLeadRange"];
+    reviewLeadCount: number;
+    duplicateCount: number;
+    errorCount: number;
+    missedVolumeReasons: string[];
+  };
+  exportReadiness: {
+    connectionStatuses: ConnectionStatus[];
+    dryRunRoutes: ExportRouteResult[];
+  };
+  gates: MilestoneEvidenceGate[];
+  blockers: string[];
+  nextActions: string[];
+}
+
 export type ReviewFlag =
   | "SOURCE_BLOCKED"
   | "SOURCE_HEALTH_ONLY"

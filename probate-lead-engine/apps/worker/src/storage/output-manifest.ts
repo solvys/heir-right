@@ -9,7 +9,9 @@ export type PipelineOutputName =
   | "daily-run.json"
   | "export-result.json"
   | "podio-live-export-result.json"
-  | "connection-status.json";
+  | "connection-status.json"
+  | "thirty-day-milestone-evidence.json"
+  | "thirty-day-milestone-evidence.md";
 
 export interface PipelineOutput {
   path: string;

@@ -6,6 +6,7 @@ import { connectionStatuses, exportCompletedReport } from "../export/export-pack
 import { PODIO_LIVE_WRITE_APPROVAL_KEY, TEXAS_EQUITY_PROS_LEADS_APP_ID } from "../export/podio-config";
 import { runDryPipeline } from "../index";
 import { fact, nowIso } from "../lib";
+import { generateThirtyDayMilestoneEvidence, renderThirtyDayMilestoneEvidenceMarkdown } from "../milestone/thirty-day-evidence";
 import { persistOutput } from "../storage/write-output";
 
 function fixtureFact(input: {
@@ -255,6 +256,17 @@ async function main(): Promise<void> {
   for (const name of ["Podio", "Google", "Web Search"] as const) {
     if (!statuses.some((status) => status.name === name)) failures.push(`S15 connection status missing ${name}.`);
   }
+
+  const thirtyDayEvidence = await generateThirtyDayMilestoneEvidence({});
+  const thirtyDayEvidenceMarkdown = renderThirtyDayMilestoneEvidenceMarkdown(thirtyDayEvidence);
+  if (thirtyDayEvidence.milestone !== "30-Day Workflow Automation Milestone") failures.push("HEI-77 milestone evidence title missing.");
+  if (thirtyDayEvidence.overallStatus !== "blocked") failures.push("HEI-77 default evidence should be blocked without production seeds and live readback.");
+  if (!thirtyDayEvidence.gates.some((item) => item.id === "production_seed_batch" && item.status === "blocked")) failures.push("HEI-77 production seed blocker missing.");
+  if (!thirtyDayEvidence.gates.some((item) => item.id === "qualified_lead_volume" && item.status === "blocked")) failures.push("HEI-77 qualified-volume blocker missing.");
+  if (!thirtyDayEvidence.gates.some((item) => item.id === "qualification_integrity" && item.status === "passed")) failures.push("HEI-77 qualification-integrity gate missing.");
+  if (!thirtyDayEvidence.gates.some((item) => item.id === "external_use_guard" && item.status === "passed")) failures.push("HEI-77 external-use guard gate missing.");
+  if (!thirtyDayEvidenceMarkdown.includes("HeirRight 30-Day Milestone Evidence")) failures.push("HEI-77 evidence markdown heading missing.");
+  if (!thirtyDayEvidenceMarkdown.includes("Not ready for 30-Day acceptance")) failures.push("HEI-77 evidence markdown summary missing.");
 
   const estateResult = await runDryPipeline({
     estateName: "Estate of Maria Lopez",
